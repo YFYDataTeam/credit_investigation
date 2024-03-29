@@ -38,13 +38,13 @@ def read_config(path):
 #         connection_string = f'{user}/{pw}@{host}:{port}/{database}'
 #         self.conn = oracledb.connect(connection_string)
 
-    def read_table(self, sql):
-        warnings.filterwarnings('ignore')
+def read_table(self, sql):
+    warnings.filterwarnings('ignore')
 
-        result = pd.read_sql(sql, con=self.conn)
-        result.columns = result.columns.str.lower()
+    result = pd.read_sql(sql, con=self.conn)
+    result.columns = result.columns.str.lower()
 
-        return result
+    return result
 
 
 class MySQLAgent:

@@ -77,5 +77,13 @@ def epa_invest():
 
     裁處總次數: {row_count}
     """
+
+    EPA_dict = {
+        "invest_type": "環保署汙染紀錄",
+        "company_name": company_name,
+        "company_account": company_account,
+        "company_status": company_status,
+        "penalty_times": row_count
+    }
     
-    return EPA_report
+    return EPA_dict

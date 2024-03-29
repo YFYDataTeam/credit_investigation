@@ -23,3 +23,6 @@ if __name__ == "__main__":
         load_dotenv("setting/.env.dev")
 
     uvicorn.run("main:app", host="0.0.0.0" , port=int(os.getenv("PORT")) , reload=bool(os.getenv("RELOAD")) )
+
+
+    # python run.py --dev
