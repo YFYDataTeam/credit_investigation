@@ -1,12 +1,16 @@
 from fastapi import FastAPI
 from setting.config import get_settings
-
+from src.epa_report import epa_invest
 
 app = FastAPI()
 
+
+
+
 @app.get("/")
 def hello_word():
-    return "Hello World!"
+    epa_invest_result = epa_invest()
+    return epa_invest_result
 
 
 @app.get("/users/{user_id}")

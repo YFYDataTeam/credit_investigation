@@ -1,29 +1,42 @@
 # import oracledb
 import pandas as pd
-import os
+import json
 from sqlalchemy import create_engine
 import warnings
 
-class OracleAgent:
-    def __init__(self, config) -> None:
-        self.config = config
-        self.db_connector()
 
-    def db_connector(self):
 
-        oracle_client_dir = './opt/oracle/'
+def read_config(path):
+    try:
+        with open(path, 'r') as file:
+            configs = json.load(file)
 
-        oracle_client_path = os.path.join(oracle_client_dir, os.listdir(oracle_client_dir)[0])
+        return configs
+    except FileNotFoundError:
+        print(f"The file {path} was not found.")
+    except json.JSONDecodeError:
+        print(f"Error decoding JSON from the file {path}.")
 
-        oracledb.init_oracle_client(oracle_client_path)
+# class OracleAgent:
+#     def __init__(self, config) -> None:
+#         self.config = config
+#         self.db_connector()
+
+#     def db_connector(self):
+
+#         oracle_client_dir = './opt/oracle/'
+
+#         oracle_client_path = os.path.join(oracle_client_dir, os.listdir(oracle_client_dir)[0])
+
+#         oracledb.init_oracle_client(oracle_client_path)
         
-        user = self.config['user']
-        pw = self.config['pw']
-        host = self.config['host']
-        port = self.config['port']
-        database = self.config['database']
-        connection_string = f'{user}/{pw}@{host}:{port}/{database}'
-        self.conn = oracledb.connect(connection_string)
+#         user = self.config['user']
+#         pw = self.config['pw']
+#         host = self.config['host']
+#         port = self.config['port']
+#         database = self.config['database']
+#         connection_string = f'{user}/{pw}@{host}:{port}/{database}'
+#         self.conn = oracledb.connect(connection_string)
 
     def read_table(self, sql):
         warnings.filterwarnings('ignore')
