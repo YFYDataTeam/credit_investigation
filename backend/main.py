@@ -1,8 +1,19 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from setting.config import get_settings
 from src.epa_report import epa_invest
 
 app = FastAPI()
+
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
 
 @app.get("/epa_report")
@@ -11,9 +22,9 @@ def hello_word():
     return epa_invest_result
 
 
-@app.get("/users/{user_id}")
-def get_users(user_id: int, qry: str = None):
-    return {"user_id": user_id, "query": qry}
+# @app.get("/users/{user_id}")
+# def get_users(user_id: int, qry: str = None):
+#     return {"user_id": user_id, "query": qry}
 
 
 @app.get("/info")
