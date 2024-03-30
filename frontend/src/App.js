@@ -17,12 +17,14 @@ async function fetchEpaReport() {
     
     // Construct the EPA report content
     const epaReportContent = `
+      
       <p>公司名稱: ${data.company_name}</p>
       <p>統一編號: ${data.company_account}</p>
       <p>公司目前狀態: ${data.company_status}</p>
       <p>報告類別: ${data.invest_type}</p>
       <p>裁處總次數: ${data.penalty_times}</p>
     `;
+
     
     // Set the HTML content of the #epaReport div
     epaReportElement.innerHTML = epaReportContent;

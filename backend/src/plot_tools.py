@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import io
 
 
 
@@ -20,13 +21,20 @@ def cat_value_count_bar_plot(df, column, color, title, xlabel, y_label):
     for i, count in enumerate(distribution):
         plt.text(i, count + 0.1, str(count), ha='center')
 
+
     plt.title(title)
     plt.xlabel(xlabel)
     plt.ylabel(y_label)
     plt.xticks(rotation=0)
     plt.grid(axis='y', linestyle='--', alpha=0.9)
     plt.tight_layout()
-    plt.show()
+
+    img_buf = io.BytesIO()
+    plt.savefig(img_buf, format='png')
+    img_buf.seek(0)
+    plt.close('all')
+
+    return img_buf
 
 
 def num_value_count_bar_plot(df, column, color, title, xlabel, ylabel):

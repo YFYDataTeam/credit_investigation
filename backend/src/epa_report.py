@@ -15,8 +15,6 @@ def epa_invest():
     job_configs = configs["CREDITREPORT"]['VM1_mysql_conn_info']
     sql_agent = MySQLAgent(job_configs)
 
-
-
     query = """
         select * from company
     """
@@ -55,7 +53,6 @@ def epa_invest():
     """
     df_epa = sql_agent.read_table(query=query)
     df_epa.columns = df_epa.columns.str.lower()
-    df_epa.head()
 
     # 共有幾筆紀錄
     row_count = df_epa.shape[0]
@@ -68,15 +65,7 @@ def epa_invest():
     latest_penalty_money = df_epa.loc[df_epa['penalty_date'] == df_epa['penalty_date'].max(), 'penalty_money'].values[0]
 
 
-    EPA_report = f"""
-    公司名稱: {company_name}
-    統一編號: {company_account}
-    公司目前狀態: {company_status}
-
-    報告類別: 環保署汙染紀錄
-
-    裁處總次數: {row_count}
-    """
+    plot_is_improve = cat_value_count_bar_plot(df_epa, 'is_improve', 'skyblue', '環保署裁處後的改善情況', '改善情況類別', '次數')
 
     EPA_dict = {
         "invest_type": "環保署汙染紀錄",
@@ -86,4 +75,4 @@ def epa_invest():
         "penalty_times": row_count
     }
     
-    return EPA_dict
+    return EPA_dict, plot_is_improve
