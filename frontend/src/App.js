@@ -12,12 +12,11 @@ async function fetchEpaReport() {
   }
   
   // Function to display EPA report on the web page
-  function displayEpaReport(data) {
+function displayEpaReport(data) {
     const epaReportElement = document.getElementById('epaReport');
-    
+
     // Construct the EPA report content
-    const epaReportContent = `
-      
+    let epaReportContent = `
       <p>公司名稱: ${data.company_name}</p>
       <p>統一編號: ${data.company_account}</p>
       <p>公司目前狀態: ${data.company_status}</p>
@@ -25,10 +24,16 @@ async function fetchEpaReport() {
       <p>裁處總次數: ${data.penalty_times}</p>
     `;
 
-    
+    // Check if there is a plot image and add it to the content
+    if (data.plot_image) {
+        epaReportContent += `<img src="data:image/png;base64,${data.plot_image}" alt="Plot Image" style="max-width: 100%; height: auto;">`;
+    } else {
+        epaReportContent += `<p>No plot image available.</p>`;
+    }
+
     // Set the HTML content of the #epaReport div
     epaReportElement.innerHTML = epaReportContent;
-  }
+}
   
   // Call the fetchEpaReport function when the page loads
   window.onload = fetchEpaReport;

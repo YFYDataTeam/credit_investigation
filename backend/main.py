@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Response, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
 import base64
 from setting.config import get_settings
 from src.epa_report import epa_invest
@@ -23,14 +23,14 @@ def epa_invest_result():
     epa_invest_result, plot_is_improve = epa_invest()
 
     if plot_is_improve:
-        plot_is_improve_base64 = base64.b64encode(plot_is_improve.getvalue())
+        plot_is_improve_base64 = base64.b64encode(plot_is_improve.getvalue()).decode('utf8')
     else:
         plot_is_improve_base64 = None
 
     # Construct response
     response_data = {
-        **epa_invest_result
-        #"plot_image": plot_is_improve_base64
+        **epa_invest_result,
+        "plot_image": plot_is_improve_base64
     }
 
     return JSONResponse(content=response_data)
