@@ -1,0 +1,88 @@
+
+
+/*-------------------------------------
+		1.General css (Reset code)
+--------------------------------------*/
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #fff;
+}
+  /* .hero {
+    background-color: #007bff;
+    color: #fff;
+    text-align: center;
+    padding: 50px 0;
+  } */
+.container {
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+h1, h2 {
+    text-align: center;
+    color: #333;
+}
+.section {
+    margin-top: 20px;
+}
+.section-title {
+    font-size: 24px;
+    color: #333;
+    border-bottom: 2px solid #ccc;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+.section-content {
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 4px;
+}
+
+/*=============Style css=========*/
+
+/*-------------------------------------
+        2. Header
+--------------------------------------*/
+
+
+/*-------------------------------------
+        3.  Welcome-hero
+--------------------------------------*/
+
+.welcome-hero{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position:relative;
+    background:url(../images/banner1.jpg)no-repeat;
+    background-size:cover;
+    background-position: center;
+    height:780px;
+}
+
+.welcome-hero:before {
+    position: absolute;
+    content: " ";
+    top: 0;
+    left: 0;
+    background: rgba(23, 48, 35, 0.65);
+    width: 100%;
+    height: 100%;
+    z-index: 1; 
+}
+
+.header-text h1 { 
+    position: relative; 
+    color: #fff;
+    font-size: 120px;
+    font-weight: 700;
+    text-transform: uppercase;
+    line-height: 1.5;
+    z-index: 2; 
+}
