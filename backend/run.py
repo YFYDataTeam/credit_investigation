@@ -1,11 +1,17 @@
 import argparse
 import os
+import json
 
 from dotenv import load_dotenv
 import uvicorn
 
 
+
 if __name__ == "__main__":
+
+    with open('config.json') as config_file:
+        config = json.load(config_file)
+        endpoint = config['endpoint']
 
     # parser = argparse.ArgumentParser(description="Run the server in different modes.")
     # parser.add_argument("--prod",action="store_true", help="Run the server in production mode.")

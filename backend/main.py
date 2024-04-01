@@ -1,3 +1,4 @@
+import json
 import uvicorn
 from pydantic import BaseModel
 from fastapi import FastAPI
@@ -5,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response
 import base64
 # from setting.config import get_settings
+from src.utils import read_config
 from src.credit_invest import CreditInvest
 
 app = FastAPI()
@@ -20,7 +22,7 @@ app.add_middleware(
 )
 
 
-conn_path = "./conn/connections.json"
+conn_path = "./backend/conn/connections.json"
 credit_invest = CreditInvest(conn_path=conn_path)
 
 class BasicInfo(BaseModel):
@@ -76,6 +78,13 @@ def epa_invest_result():
 
 
 if __name__ == "__main__":
+
+    configs = read_config('./frontend/public/configs.json')
+    host = configs.get('host', '127.0.0.1')  # Default to 127.0.0.1 if not specified
+    port = configs.get('port', 8000)
+
+    # for debug
     # basic_info_dict = credit_invest.basic_info(company_id='27450696')
     # epa_invest_result, plot_is_improve = credit_invest.epa_analysis()
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+
+    uvicorn.run(app, host=host, port=port)

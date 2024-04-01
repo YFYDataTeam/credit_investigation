@@ -1,6 +1,14 @@
 // App.js
 
+
+// get the endpoint config
+// fetch('C:/Users/sean.chang/yfy/git/credit_investigation/frontend/public/configs.json').then(response => response.json()).then(config => {
+//   const endpoint = config.endpoint
+// })
 endpoint = 'http://localhost:8000/'
+
+
+//
 
 async function fetchBasicInfo(){
   try{
