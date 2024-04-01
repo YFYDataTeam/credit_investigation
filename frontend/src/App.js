@@ -53,6 +53,8 @@ function displayEpaReport(data) {
     let epaReportContent = `
       <p>報告類別: ${data.invest_type}</p>
       <p>裁處總次數: ${data.penalty_times}</p>
+      <p>最高裁處金額紀錄: ${data.max_penalty_money}</p>
+      <p>最近一次裁處金額: ${data.latest_penalty_money}</p>
     `;
 
     // Check if there is a plot image and add it to the content
