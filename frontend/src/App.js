@@ -1,9 +1,35 @@
 // App.js
 
+endpoint = 'http://localhost:8000/'
+
+async function fetchBasicInfo(){
+  try{
+    const response = await fetch(endpoint + 'basicinfo');
+    const data = await response.json();
+    displayBasicInco(data);
+  } catch (error) {
+    console.error('Error fetching Basic info data:', error);
+  }
+}
+
+function displayBasicInco(data) {
+  const BasicInfoElement = document.getElementById('basicinfo');
+
+  let BasicInfoContent = `
+    <p>公司名稱: ${data.company_name}</p>
+    <p>統一編號: ${data.company_account}</p>
+    <p>公司目前狀態: ${data.company_status}</p>
+  `
+
+  BasicInfoElement.innerHTML = BasicInfoContent;
+}
+
+window.onload = fetchBasicInfo;
+
 // Function to fetch EPA report data from the provided endpoint
 async function fetchEpaReport() {
     try {
-      const response = await fetch('http://localhost:8001/epa_report'); // Fetch data from the provided endpoint
+      const response = await fetch(endpoint + 'epa_invest'); // Fetch data from the provided endpoint
       const data = await response.json();
       displayEpaReport(data);
     } catch (error) {
@@ -17,9 +43,6 @@ function displayEpaReport(data) {
 
     // Construct the EPA report content
     let epaReportContent = `
-      <p>公司名稱: ${data.company_name}</p>
-      <p>統一編號: ${data.company_account}</p>
-      <p>公司目前狀態: ${data.company_status}</p>
       <p>報告類別: ${data.invest_type}</p>
       <p>裁處總次數: ${data.penalty_times}</p>
     `;
@@ -35,6 +58,5 @@ function displayEpaReport(data) {
     epaReportElement.innerHTML = epaReportContent;
 }
   
-  // Call the fetchEpaReport function when the page loads
-  window.onload = fetchEpaReport;
-  
+// Call the fetchEpaReport function when the page loads
+window.onload = fetchEpaReport;

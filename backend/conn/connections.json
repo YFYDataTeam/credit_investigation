@@ -44,6 +44,14 @@
             "host": "10.32.25.8",
             "port": 3306,
             "database": "CrawlerDB"
+        },
+        "BIDB_conn_info":
+        {
+            "user": "ODS_USER1",
+            "pw": "Yfy12345",
+            "host": "yfybiappsdb.yfy.com",
+            "port": 1521,
+            "database": "biprod"
         }
     }
 

@@ -9,43 +9,9 @@ plt.rcParams['font.sans-serif'] = ['Microsoft JhengHei']
 plt.rcParams['axes.unicode_minus'] = False
 
 
-def epa_invest():
+def epa_invest(job_configs, company_account):
 
-    configs = read_config(path="./conn/connections.json")
-    job_configs = configs["CREDITREPORT"]['VM1_mysql_conn_info']
     sql_agent = MySQLAgent(job_configs)
-
-    query = """
-        select * from company
-    """
-    df_company = sql_agent.read_table(query=query)
-
-    i = 0
-    # company = df_company.iloc[i]
-    company = df_company[df_company['business_accounting_no'] == '27450696']
-    company_account = company.business_accounting_no.values[0]
-    company_name = company.company_name.values[0]
-    internal_id = company.internal_id.values[0]
-
-    try:
-        query = f"""
-            select * from companyinfo01
-            where Business_Accounting_No = {company_account}
-        """
-        companyinfo01 = sql_agent.read_table(query=query)
-        companyinfo01.head()
-    except Exception as e:
-        print("An error occurred:", e)
-
-
-    # 公司狀態
-    company_status = companyinfo01['Company_Status_Desc'].values[0]
-
-    # 地址關聯 - neo4j
-
-    # 資本額
-    company_captial = companyinfo01['Capital_Stock_Amount'].values[0]
-
 
     query = f"""
         select * from epa_ems_p_46
@@ -69,10 +35,9 @@ def epa_invest():
 
     EPA_dict = {
         "invest_type": "環保署汙染紀錄",
-        "company_name": company_name,
-        "company_account": company_account,
-        "company_status": company_status,
-        "penalty_times": row_count
+        "penalty_times": row_count,
+        "max_penalty_money": max_penalty_money,
+        "latest_penalty_money": latest_penalty_money
     }
     
     return EPA_dict, plot_is_improve
