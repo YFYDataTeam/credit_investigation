@@ -6,30 +6,30 @@ async function fetchBasicInfo(){
   try{
     const response = await fetch(endpoint + 'basicinfo');
     const data = await response.json();
-    displayBasicInco(data);
+    displayBasicInfo(data);
   } catch (error) {
     console.error('Error fetching Basic info data:', error);
   }
 }
 
-function displayBasicInco(data) {
-  const BasicInfoElement = document.getElementById('basicinfo');
+function displayBasicInfo(data) {
+    const BasicInfoElement = document.getElementById('basicInfo');
 
-  let BasicInfoContent = `
-    <p>公司名稱: ${data.company_name}</p>
-    <p>統一編號: ${data.company_account}</p>
-    <p>公司目前狀態: ${data.company_status}</p>
-  `
+    let BasicInfoContent = `
+      <p>公司名稱: ${data.company_name}</p>
+      <p>統一編號: ${data.company_account}</p>
+      <p>公司目前狀態: ${data.company_status}</p>
+    `;
 
-  BasicInfoElement.innerHTML = BasicInfoContent;
+    BasicInfoElement.innerHTML = BasicInfoContent;
 }
 
-window.onload = fetchBasicInfo;
+window.addEventListener('load', fetchBasicInfo);
 
 // Function to fetch EPA report data from the provided endpoint
 async function fetchEpaReport() {
     try {
-      const response = await fetch(endpoint + 'epa_invest'); // Fetch data from the provided endpoint
+      const response = await fetch(endpoint + 'epa_report'); // Fetch data from the provided endpoint
       const data = await response.json();
       displayEpaReport(data);
     } catch (error) {
@@ -59,4 +59,4 @@ function displayEpaReport(data) {
 }
   
 // Call the fetchEpaReport function when the page loads
-window.onload = fetchEpaReport;
+window.addEventListener('load', fetchEpaReport);

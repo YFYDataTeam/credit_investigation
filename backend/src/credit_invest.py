@@ -8,6 +8,7 @@ class CreditInvest:
         configs = read_config(path=conn_path)
         self.job_configs = configs["CREDITREPORT"]['VM1_mysql_conn_info']
         self.sql_agent = MySQLAgent(self.job_configs)
+        self.company_account = None
 
     # TODO: get the company_id/company_name from frontend
     def basic_info(self, company_id):
