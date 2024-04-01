@@ -47,12 +47,12 @@ h1, h2 {
 /*=============Style css=========*/
 
 /*-------------------------------------
-        2. Header
+                Header
 --------------------------------------*/
 
 
 /*-------------------------------------
-        3.  Welcome-hero
+            Welcome-hero
 --------------------------------------*/
 
 .welcome-hero{
@@ -92,6 +92,12 @@ h1, h2 {
 }
 
 
+/*-------------------------------------
+           basicInfo
+--------------------------------------*/
+
+
+
 #basicInfo {
     margin: 20px 0;
 }
@@ -109,4 +115,28 @@ h1, h2 {
     box-shadow: 0 0 5px rgba(0,0,0,0.1); /* Optional: adds shadow for depth */
     margin: 10px; /* Spacing between columns */
     min-width: 150px; /* Minimum width for each column to prevent them from becoming too narrow */
+}
+
+
+/*-------------------------------------
+            epaReport
+--------------------------------------*/
+
+
+.images-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around; /* Adjust this as needed */
+}
+
+.image-row {
+    display: flex;
+    justify-content: space-around; /* This ensures spacing between the two images in a row */
+    margin-bottom: 20px; /* Space between rows */
+    flex-basis: 100%; /* Ensures the row takes full width */
+}
+
+.epa-image {
+    max-width: 48%; /* Adjust width as needed, considering margin/padding */
+    height: auto; /* Maintain aspect ratio */
 }
