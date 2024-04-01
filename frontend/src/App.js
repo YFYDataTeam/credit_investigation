@@ -21,16 +21,43 @@ async function fetchBasicInfo(){
 }
 
 function displayBasicInfo(data) {
-    const BasicInfoElement = document.getElementById('basicInfo');
+  const BasicInfoElement = document.getElementById('basicInfo');
 
-    let BasicInfoContent = `
-      <p>公司名稱: ${data.company_name}</p>
-      <p>統一編號: ${data.company_account}</p>
-      <p>公司目前狀態: ${data.company_status}</p>
-    `;
+  let BasicInfoContent = `
+    <div class="info-row">
+      <div class="info-column">
+        <h3>公司名稱</h3>
+        <p>${data.company_name}</p>
+      </div>
+      <div class="info-column">
+        <h3>統一編號</h3>
+        <p>${data.company_account}</p>
+      </div>
+      <div class="info-column">
+        <h3>公司目前狀態</h3>
+        <p>${data.company_status}</p>
+      </div>
+    </div>
+    <div class="info-row">
+      <div class="info-column">
+        <h3>資本額</h3>
+        <p>${data.company_captial}</p>
+      </div>
+      <div class="info-column">
+        <h3>董事長</h3>
+        <p>${data.chairman}</p>
+      </div>
+      <div class="info-column">
+        <h3>董事</h3>
+        <p>${data.directors}</p>
+      </div>
+    </div>
+  `;
 
-    BasicInfoElement.innerHTML = BasicInfoContent;
+  BasicInfoElement.innerHTML = BasicInfoContent;
 }
+
+
 
 window.addEventListener('load', fetchBasicInfo);
 

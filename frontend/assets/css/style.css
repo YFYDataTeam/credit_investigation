@@ -90,3 +90,23 @@ h1, h2 {
 .welcome-hero .container {
     background-color: transparent;
 }
+
+
+#basicInfo {
+    margin: 20px 0;
+}
+
+.info-row {
+    display: flex;
+    flex-wrap: wrap; /* This allows columns to wrap onto the next line */
+    justify-content: space-around; /* Adjusts spacing around items */
+    margin-bottom: 20px; /* Spacing between rows */
+}
+
+.info-column {
+    flex: 1; /* Each column takes equal width */
+    padding: 10px; /* Spacing around content */
+    box-shadow: 0 0 5px rgba(0,0,0,0.1); /* Optional: adds shadow for depth */
+    margin: 10px; /* Spacing between columns */
+    min-width: 150px; /* Minimum width for each column to prevent them from becoming too narrow */
+}

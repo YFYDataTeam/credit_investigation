@@ -30,6 +30,8 @@ class BasicInfo(BaseModel):
     company_name: str
     company_status: str
     company_captial: int
+    chairman: str
+    directors: str
 
 
 @app.get("/basicinfo", response_model=BasicInfo)
@@ -84,7 +86,7 @@ if __name__ == "__main__":
     port = configs.get('port', 8000)
 
     # for debug
-    # basic_info_dict = credit_invest.basic_info(company_id='27450696')
+    basic_info_dict = credit_invest.basic_info(company_id='27450696')
     # epa_invest_result, plot_is_improve = credit_invest.epa_analysis()
 
     uvicorn.run(app, host=host, port=port)
