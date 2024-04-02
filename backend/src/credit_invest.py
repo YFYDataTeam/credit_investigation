@@ -36,12 +36,12 @@ class CreditInvest(MySQLAgent):
             print("An error occurred:", e)
 
         # status
-        company_status = companyinfo01['Company_Status_Desc'].values[0]
+        company_status = companyinfo01['company_status_desc'].values[0]
 
         # 地址關聯 - neo4j
 
         # captial
-        company_captial = companyinfo01['Capital_Stock_Amount'].values[0]
+        company_captial = companyinfo01['capital_stock_amount'].values[0]
 
 
         # get director from directorlist
@@ -54,8 +54,8 @@ class CreditInvest(MySQLAgent):
         except Exception as e:
             print("An error occurred:", e)
 
-        chairman = df_director.loc[df_director['Person_Position_Name'] == '董事長', 'Person_Name'].values[0]
-        directors_str = ", ".join(df_director.loc[df_director['Person_Position_Name'] == '董事', 'Person_Name'])
+        chairman = df_director.loc[df_director['person_position_name'] == '董事長', 'person_name'].values[0]
+        directors_str = ", ".join(df_director.loc[df_director['person_position_mame'] == '董事', 'person_name'])
 
         basic_info_dict = {
             "company_account": self.company_account,
@@ -76,7 +76,6 @@ class CreditInvest(MySQLAgent):
             where Business_Accounting_No = {self.company_account}
         """
         df_epa = self.read_table(query=query)
-        df_epa.columns = df_epa.columns.str.lower()
 
         # record count
         row_count = df_epa.shape[0]
@@ -101,6 +100,9 @@ class CreditInvest(MySQLAgent):
         return EPA_dict, plot_is_improve
 
 
+    # TODO: need stock_id and company_account mapping table
     def mops(self):
 
         return
+    
+
