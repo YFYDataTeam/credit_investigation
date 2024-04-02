@@ -9,7 +9,7 @@ __pycache__/
 *.so
 
 
-opt/
+files/
 
 # Distribution / packaging
 .Python
