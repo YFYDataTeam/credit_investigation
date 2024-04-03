@@ -55,7 +55,7 @@ class CreditInvest(MySQLAgent):
             print("An error occurred:", e)
 
         chairman = df_director.loc[df_director['person_position_name'] == '董事長', 'person_name'].values[0]
-        directors_str = ", ".join(df_director.loc[df_director['person_position_mame'] == '董事', 'person_name'])
+        directors_str = ", ".join(df_director.loc[df_director['person_position_name'] == '董事', 'person_name'])
 
         basic_info_dict = {
             "company_account": self.company_account,

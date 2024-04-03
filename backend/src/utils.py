@@ -25,7 +25,7 @@ class OracleAgent:
 
     def db_connector(self):
 
-        oracle_client_dir = './opt/'
+        oracle_client_dir = './files/'
 
         oracle_client_path = os.path.join(oracle_client_dir, os.listdir(oracle_client_dir)[0])
 
