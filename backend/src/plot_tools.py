@@ -57,4 +57,33 @@ def num_value_count_bar_plot(df, column, color, title, xlabel, ylabel):
     plt.xticks(rotation=45)  # Rotate x-axis labels for better visibility
     plt.grid(axis='y', linestyle='--', alpha=0.9)
     plt.tight_layout()
-    plt.show()
+    # plt.show()
+
+    img_buf = io.BytesIO()
+    plt.savefig(img_buf, format='png')
+    img_buf.seek(0)
+    plt.close('all')
+
+    return img_buf
+
+
+
+def portion_pie_plot(df, target_column, title):
+    type_counts = {type: df[target_column].count() for type in set(df[target_column])}
+
+    labels = type_counts.keys()
+    sizes = type_counts.values()
+
+    plt.figure(figsize=(8, 6))
+    plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90)
+    plt.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+
+    plt.title(title)
+    # plt.show()
+
+    img_buf = io.BytesIO()
+    plt.savefig(img_buf, format='png')
+    img_buf.seek(0)
+    plt.close('all')
+
+    return img_buf

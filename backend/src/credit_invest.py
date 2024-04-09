@@ -1,7 +1,12 @@
+import io
 import pandas as pd
-from src.utils import read_config, MySQLAgent
-from src.plot_tools import cat_value_count_bar_plot, num_value_count_bar_plot
+from src.utils import read_config, MySQLAgent, OracleAgent
+from src.plot_tools import cat_value_count_bar_plot, num_value_count_bar_plot, portion_pie_plot
+from datetime import datetime
+import matplotlib.pyplot as plt
 
+plt.rcParams['font.sans-serif'] = ['Microsoft JhengHei'] 
+plt.rcParams['axes.unicode_minus'] = False
 
 class CreditInvest(MySQLAgent):
     def __init__(self, conn_path):
@@ -98,6 +103,84 @@ class CreditInvest(MySQLAgent):
         }
         
         return EPA_dict, plot_is_improve
+    
+    # analyze the pre- and post-timepoint pst data with identical functions
+    def pst_analysis(self, time_config, year_region):
+
+        configs = read_config(path="./conn/connections.json")
+        job_configs = configs["CREDITREPORT"]['BIDB_conn_info']
+        oracle_agent = OracleAgent(job_configs)
+
+        query = f"""
+        select * from ODS.w_yfy_crd_pst_f
+        where debtor_accounting_no = '{self.company_account}'
+
+        """
+        # where debtor_accounting_no = '{company_account}'
+        df = oracle_agent.read_table(query=query)
+        df['agreement_end_date'] = pd.to_datetime(df['agreement_end_date'])
+
+
+
+        current_year = datetime.now().year
+        
+        if time_config == 'past':
+            if df['agreement_end_date'].max() < datetime.now():
+                df_sliced = df[df['agreement_end_date'] <= datetime.now()]
+                years_range = list(range(current_year - year_region, current_year))
+                # for past : max
+                nearest_end_date = df_sliced['agreement_end_date'].max()
+            elif df['agreement_end_date'].max() > datetime.now():
+                return print('過去沒有動產擔保紀錄')
+            
+        elif time_config == 'future':
+            if df['agreement_end_date'].min() >= datetime.now():
+                df_sliced = df[df['agreement_end_date'] > datetime.now()]
+                years_range = list(range(current_year, current_year +  year_region))
+                # for future: min
+                nearest_end_date = df_sliced['agreement_end_date'].min()
+
+            elif df['agreement_end_date'].min() < datetime.now():
+                return print('未來沒有動產擔保紀錄')
+            
+        else:
+            return print('wrong time config for pst_analysis')
+
+
+        # show in terms of different currency
+        total_agreement_currency = df_sliced.groupby(['debtor_title','currency'])['agreement_amount'].agg(total_amount='sum').astype('int64')
+
+
+        # portion of object_type
+        pieplot_img_buf = portion_pie_plot(df_sliced, 'object_type', '抵押品類別分布')
+            
+
+        # count times by agreement_end_date in terms of year
+        data_year = [date.year for date in df_sliced['agreement_end_date']]
+        counts = {year: 0 for year in years_range}
+        for year in data_year:
+            if year in counts:
+                counts[year] += 1
+        years = list(counts.keys())
+        values = list(counts.values())
+        plt.figure(figsize=(10, 6))
+        plt.plot(years, values, marker='o', linestyle='-', color='blue')
+        if time_config == 'past':
+            plt.title(f'過去{year_region}年逐年動產擔保到期次數')
+        elif time_config == 'future':
+            plt.title(f'未來{year_region}年逐年動產擔保到期次數')
+        plt.xlabel('年')
+        plt.ylabel('次數')
+        plt.xticks(years)
+        plt.grid(True)
+        # plt.show()
+        
+        lineplot_img_buf = io.BytesIO()
+        plt.savefig(lineplot_img_buf, format='png')
+        lineplot_img_buf.seek(0)
+        plt.close('all')
+
+        return total_agreement_currency, nearest_end_date, pieplot_img_buf, lineplot_img_buf
 
 
     # TODO: need stock_id and company_account mapping table

@@ -96,3 +96,92 @@ function displayEpaReport(data) {
   
 // Call the fetchEpaReport function when the page loads
 window.addEventListener('load', fetchEpaReport);
+
+
+async function fecthPstReport(){
+  try {
+    const respone = await fetch(endpoint + 'pst_report');
+    const data = await respone.json();
+    displayPstReport(data);
+  } catch(error) {
+    console.error('Error fetching Psrt Report data:', error)
+  }
+}
+
+function displayPstReport(data){
+    const pstReportElement = document.getElementById('pstReport');
+
+    let pstReportContent = `
+    <h3>Report Details</h3>
+    <p>Nearest End Date: ${data.nearest_end_date}</p>
+    <div id="total_agreement_currency"></div>
+    <img src="data:image/png;base64,${data.pieplot_img_buf}" alt="Pie Plot Image" style="max-width: 100%; height: auto;">
+    <img src="data:image/png;base64,${data.lineplot_img_buf}" alt="Line Plot Image" style="max-width: 100%; height: auto;">
+  `;
+  
+  pstReportElement.innerHTML = pstReportContent;
+ 
+  displayTotalAgreement(data.total_agreement_currency);
+}
+
+function displayTotalAgreement(df){
+  const totalAgreementElement = document.getElementById(total_agreement_currency);
+
+  let totalAgreementContent = '<h4>過去5年動產擔保紀錄總額</h4>';
+  df.forEach(row => {
+    totalAgreementContent += `
+          <div>
+              <p>Debtor Title: ${row.debtor_title}</p>
+              <p>Currency: ${row.currency}</p>
+              <p>Total Amount: ${row.total_amount}</p>
+          </div>
+      `;
+  });
+
+  totalAgreementElement.innerHTML = totalAgreement
+
+}
+
+
+// async function fetchPstReport(timeConfig) {
+//   try {
+//     let url = new URL(endpoint + 'pst_report');
+//     url.searchParams.append('time_config', timeConfig);
+    
+//     const response = await fetch(url);
+//     const data = await response.json();
+//     return data; // Return the fetched data
+//   } catch (error) {
+//     console.error(`Error fetching Pst Report data for ${timeConfig}:`, error);
+//     return null; // Return null in case of an error
+//   }
+// }
+
+// async function fetchAndDisplayReports() {
+//   // Use Promise.all to fetch both reports concurrently
+//   const [pastData, futureData] = await Promise.all([
+//     fetchPstReport('past'),
+//     fetchPstReport('future')
+//   ]);
+
+//   // Assuming you want to display these reports in separate sections
+//   if (pastData) displayPstReport(pastData, 'pastReport');
+//   if (futureData) displayPstReport(futureData, 'futureReport');
+// }
+
+// function displayPstReport(data, elementId) {
+//   const reportElement = document.getElementById(elementId);
+
+//   let reportContent = `
+//     <h3>Report Details (${data.time_config})</h3>
+//     <p>Nearest End Date: ${data.nearest_end_date}</p>
+//     <div>Total Agreement Currency: ${data.total_agreement_currency}</div>
+//     <img src="data:image/png;base64,${data.pieplot_img_buf}" alt="Pie Plot Image" style="max-width: 100%; height: auto;">
+//     <img src="data:image/png;base64,${data.lineplot_img_buf}" alt="Line Plot Image" style="max-width: 100%; height: auto;">
+//   `;
+  
+//   reportElement.innerHTML = reportContent;
+// }
+
+// // Trigger the data fetch and display when ready
+// fetchAndDisplayReports();

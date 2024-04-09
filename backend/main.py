@@ -1,7 +1,7 @@
 import json
 import uvicorn
 from pydantic import BaseModel
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response
 import base64
@@ -41,6 +41,8 @@ def basic_info_result():
 
     return basic_info_dict
 
+# class EpaReport(BaseModel)
+
 @app.get("/epa_report")
 def epa_invest_result():
     credit_invest.basic_info(company_id='27450696')
@@ -59,6 +61,17 @@ def epa_invest_result():
 
     return JSONResponse(content=response_data)
 
+# class PstReport(BaseModel)
+
+@app.get('/pst_report')
+def pst_invest_result(time_config: str = Query(..., enum=['past', 'future']),
+                      year_region: int = Query(None)):
+
+
+    result = credit_invest.pst_analysis(company_id='27450696', time_config=time_config, year_region=year_region)
+
+
+    return result
 
 # @app.get("/users/{user_id}")
 # def get_users(user_id: int, qry: str = None):
