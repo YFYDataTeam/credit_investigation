@@ -8,14 +8,30 @@
 endpoint = 'http://localhost:8000/'
 
 
+let isSubmitting = false;
+
 document.getElementById('GetIDFromInput').addEventListener('submit', async (event) => {
-  event.preventDefault(); 
+  event.preventDefault();
+  if (isSubmitting) {
+    console.log('Submission already in progress. Please wait.');
+    return; // Exit if already submitting
+  }
+
   const company_id = document.getElementById('companyID').value;
 
-  fetchBasicInfo(company_id);
-  fetchEpaReport(company_id)
-  
-})
+  if (company_id.trim() !== '') {
+    isSubmitting = true; // Set the flag
+
+    // Call your API functions
+    await fetchBasicInfo(company_id);
+    await fetchEpaReport(company_id);
+
+    isSubmitting = false; // Reset the flag
+  } else {
+    console.log('No company ID entered. API call prevented.');
+  }
+});
+
 
 async function fetchBasicInfo(company_id){
   try{
