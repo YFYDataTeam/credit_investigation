@@ -10,8 +10,8 @@ plt.rcParams['axes.unicode_minus'] = False
 
 class CreditInvest(MySQLAgent):
     def __init__(self, conn_path):
-        configs = read_config(path=conn_path)
-        self.job_configs = configs["CREDITREPORT"]['VM1_mysql_conn_info']
+        self.configs = read_config(path=conn_path)
+        self.job_configs = self.configs["CREDITREPORT"]['VM1_mysql_conn_info']
         super().__init__(self.job_configs)
         self.company_account = None
 
@@ -82,6 +82,9 @@ class CreditInvest(MySQLAgent):
         """
         df_epa = self.read_table(query=query)
 
+        if df_epa.empty:
+            return {"message": "No data found for the specified company account."}, None
+
         # record count
         row_count = df_epa.shape[0]
 
@@ -107,8 +110,7 @@ class CreditInvest(MySQLAgent):
     # analyze the pre- and post-timepoint pst data with identical functions
     def pst_analysis(self, time_config, year_region):
 
-        configs = read_config(path="./conn/connections.json")
-        job_configs = configs["CREDITREPORT"]['BIDB_conn_info']
+        job_configs = self.configs["CREDITREPORT"]['BIDB_conn_info']
         oracle_agent = OracleAgent(job_configs)
 
         query = f"""
@@ -119,8 +121,6 @@ class CreditInvest(MySQLAgent):
         # where debtor_accounting_no = '{company_account}'
         df = oracle_agent.read_table(query=query)
         df['agreement_end_date'] = pd.to_datetime(df['agreement_end_date'])
-
-
 
         current_year = datetime.now().year
         

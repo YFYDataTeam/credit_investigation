@@ -22,8 +22,8 @@ app.add_middleware(
 )
 
 
-conn_path = "./backend/conn/connections.json"
-credit_invest = CreditInvest(conn_path=conn_path)
+# conn_path = "./backend/conn/connections.json"
+# credit_invest = CreditInvest(conn_path=conn_path)
 
 class BasicInfo(BaseModel):
     company_account: str
@@ -36,8 +36,9 @@ class BasicInfo(BaseModel):
 
 @app.get("/basicinfo", response_model=BasicInfo)
 def basic_info_result():
-    #'27450696'
-    basic_info_dict = credit_invest.basic_info(company_id='27450696')
+    # '27450696'
+    # '83387850'
+    basic_info_dict = credit_invest.basic_info(company_id='83387850')
 
     return basic_info_dict
 
@@ -45,7 +46,7 @@ def basic_info_result():
 
 @app.get("/epa_report")
 def epa_invest_result():
-    credit_invest.basic_info(company_id='27450696')
+    # credit_invest.basic_info(company_id='83387850')
     epa_invest_result, plot_is_improve = credit_invest.epa_analysis()
 
     if plot_is_improve:
@@ -98,8 +99,11 @@ if __name__ == "__main__":
     host = configs.get('host', '127.0.0.1')  # Default to 127.0.0.1 if not specified
     port = configs.get('port', 8000)
 
+    conn_path = "./backend/conn/connections.json"
+    credit_invest = CreditInvest(conn_path=conn_path)
     # for debug
-    # basic_info_dict = credit_invest.basic_info(company_id='27450696')
+    # basic_info_dict = credit_invest.basic_info(company_id='83387850')
     # epa_invest_result, plot_is_improve = credit_invest.epa_analysis()
+    # credit_invest.pst_analysis('past',5)
 
     uvicorn.run(app, host=host, port=port)

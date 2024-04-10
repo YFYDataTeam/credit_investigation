@@ -10,6 +10,21 @@ endpoint = 'http://localhost:8000/'
 
 //
 
+document.getElementById('GetAccountFromInput').addEventListener('submit', async (event) => {
+  event.preventDefault;
+  const accountNumber = document.getElementById('accountNumber').value ;
+
+  const response = await fecth(`http://localhost:8000/get-account-data/${accountNumber}`) ;
+  const data = await response.json();
+
+            if (response.ok) {
+                document.getElementById('result').innerText = JSON.stringify(data, null, 2);
+            } else {
+                document.getElementById('result').innerText = 'Data not found';
+            } 
+})
+
+
 async function fetchBasicInfo(){
   try{
     const response = await fetch(endpoint + 'basicinfo');
