@@ -13,28 +13,36 @@ class CreditInvest(MySQLAgent):
         self.configs = read_config(path=conn_path)
         self.job_configs = self.configs["CREDITREPORT"]['VM1_mysql_conn_info']
         super().__init__(self.job_configs)
-        self.company_account = None
 
-    # TODO: get the company_id/company_name from frontend
-    def basic_info(self, company_id):
+    def datacheck(self, company_id, company_name):
 
-        query = """
-        select * from company
-        """
-        df_company = self.read_table(query=query)
+        if company_id:
+            query = f"""
+            select * from company
+            where Business_Accounting_No = '{company_id}'
+            """
+            df_company = self.read_table(query=query)
+            company_name = df_company.company_name.values[0]
+        elif company_name:
+            query = f"""
+            select * from company
+            where company_name = '{company_name}'
+            """
+            df_company = self.read_table(query=query)
+            company_name = df_company.business_accounting_no.values[0]
 
-        i = 0
-        # company = df_company.iloc[i]
-        company = df_company[df_company['business_accounting_no'] == company_id]
-        self.company_account = company.business_accounting_no.values[0]
-        company_name = company.company_name.values[0]
-        # internal_id = company.internal_id.values[0]
+        return company_id, company_name
+    
+    def set_company_info(self, company_id=None, company_name=None):
+        self.company_id, self.company_name = self.datacheck(company_id, company_name)
+
+    def basic_info(self):
 
         # get info from companyinfo01
         try:
             query = f"""
                 select * from companyinfo01
-                where Business_Accounting_No = '{self.company_account}'
+                where Business_Accounting_No = '{self.company_id}'
             """
             companyinfo01 = self.read_table(query=query)
         except Exception as e:
@@ -53,7 +61,7 @@ class CreditInvest(MySQLAgent):
         try:
             query = f"""
                 select * from directorlist
-                where Business_Accounting_No = '{self.company_account}'
+                where Business_Accounting_No = '{self.company_id}'
             """
             df_director = self.read_table(query=query)
         except Exception as e:
@@ -63,8 +71,8 @@ class CreditInvest(MySQLAgent):
         directors_str = ", ".join(df_director.loc[df_director['person_position_name'] == '董事', 'person_name'])
 
         basic_info_dict = {
-            "company_account": self.company_account,
-            "company_name": company_name,
+            "company_account": self.company_id,
+            "company_name": self.company_name,
             "company_status": company_status,
             "company_captial": company_captial,
             "chairman": chairman,
@@ -78,7 +86,7 @@ class CreditInvest(MySQLAgent):
 
         query = f"""
             select * from epa_ems_p_46
-            where Business_Accounting_No = {self.company_account}
+            where Business_Accounting_No = {self.company_id}
         """
         df_epa = self.read_table(query=query)
 
@@ -115,7 +123,7 @@ class CreditInvest(MySQLAgent):
 
         query = f"""
         select * from ODS.w_yfy_crd_pst_f
-        where debtor_accounting_no = '{self.company_account}'
+        where debtor_accounting_no = '{self.company_id}'
 
         """
         # where debtor_accounting_no = '{company_account}'

@@ -8,30 +8,27 @@
 endpoint = 'http://localhost:8000/'
 
 
-//
+document.getElementById('GetIDFromInput').addEventListener('submit', async (event) => {
+  event.preventDefault(); 
+  const company_id = document.getElementById('companyID').value;
 
-document.getElementById('GetAccountFromInput').addEventListener('submit', async (event) => {
-  event.preventDefault;
-  const accountNumber = document.getElementById('accountNumber').value ;
-
-  const response = await fecth(`http://localhost:8000/get-account-data/${accountNumber}`) ;
-  const data = await response.json();
-
-            if (response.ok) {
-                document.getElementById('result').innerText = JSON.stringify(data, null, 2);
-            } else {
-                document.getElementById('result').innerText = 'Data not found';
-            } 
+  fetchBasicInfo(company_id);
+  fetchEpaReport(company_id)
+  
 })
 
-
-async function fetchBasicInfo(){
+async function fetchBasicInfo(company_id){
   try{
-    const response = await fetch(endpoint + 'basicinfo');
-    const data = await response.json();
-    displayBasicInfo(data);
+    console.log('input', company_id);
+    const response = await fetch(endpoint + `basicinfo/${company_id}`);
+    if (response.ok) {
+      const data = await response.json();
+      displayBasicInfo(data);
+    } else {
+      throw new Error('Data not found');
+    }
   } catch (error) {
-    console.error('Error fetching Basic info data:', error);
+    console.error('Error:', error);
   }
 }
 
@@ -77,9 +74,9 @@ function displayBasicInfo(data) {
 window.addEventListener('load', fetchBasicInfo);
 
 // Function to fetch EPA report data from the provided endpoint
-async function fetchEpaReport() {
+async function fetchEpaReport(company_id) {
     try {
-      const response = await fetch(endpoint + 'epa_report'); // Fetch data from the provided endpoint
+      const response = await fetch(endpoint + `epa_report/${company_id}`); // Fetch data from the provided endpoint
       const data = await response.json();
       displayEpaReport(data);
     } catch (error) {

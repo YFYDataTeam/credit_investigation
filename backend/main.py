@@ -22,31 +22,33 @@ app.add_middleware(
 )
 
 
-# conn_path = "./backend/conn/connections.json"
-# credit_invest = CreditInvest(conn_path=conn_path)
+conn_path = "./backend/conn/connections.json"
+credit_invest = CreditInvest(conn_path=conn_path)
 
 class BasicInfo(BaseModel):
     company_account: str
     company_name: str
     company_status: str
     company_captial: int
-    chairman: str
+    chairman: str   
     directors: str
 
 
-@app.get("/basicinfo", response_model=BasicInfo)
-def basic_info_result():
+@app.get("/basicinfo/{company_id}", response_model=BasicInfo)
+async def basic_info_result(company_id : str):
     # '27450696'
     # '83387850'
-    basic_info_dict = credit_invest.basic_info(company_id='83387850')
+    credit_invest.set_company_info(company_id=company_id)
+    basic_info_dict = credit_invest.basic_info()
 
     return basic_info_dict
 
 # class EpaReport(BaseModel)
 
-@app.get("/epa_report")
-def epa_invest_result():
+@app.get("/epa_report/{company_id}")
+async def epa_invest_result(company_id : str):
     # credit_invest.basic_info(company_id='83387850')
+    credit_invest.set_company_info(company_id=company_id)
     epa_invest_result, plot_is_improve = credit_invest.epa_analysis()
 
     if plot_is_improve:
@@ -65,7 +67,7 @@ def epa_invest_result():
 # class PstReport(BaseModel)
 
 @app.get('/pst_report')
-def pst_invest_result(time_config: str = Query(..., enum=['past', 'future']),
+async def pst_invest_result(time_config: str = Query(..., enum=['past', 'future']),
                       year_region: int = Query(None)):
 
 
@@ -99,10 +101,12 @@ if __name__ == "__main__":
     host = configs.get('host', '127.0.0.1')  # Default to 127.0.0.1 if not specified
     port = configs.get('port', 8000)
 
-    conn_path = "./backend/conn/connections.json"
-    credit_invest = CreditInvest(conn_path=conn_path)
+    # conn_path = "./backend/conn/connections.json"
+    # credit_invest = CreditInvest(conn_path=conn_path)
     # for debug
-    # basic_info_dict = credit_invest.basic_info(company_id='83387850')
+    # company_id = '83387850'
+    # credit_invest.set_company_info(company_id=company_id)
+    # basic_info_dict = credit_invest.basic_info()
     # epa_invest_result, plot_is_improve = credit_invest.epa_analysis()
     # credit_invest.pst_analysis('past',5)
 
