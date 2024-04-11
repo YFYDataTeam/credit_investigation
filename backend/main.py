@@ -33,13 +33,13 @@ class BasicInfo(BaseModel):
     chairman: str   
     directors: str
 
-
+# TODO: this accept company_id or company_name as input
 @app.get("/basicinfo/{company_id}", response_model=BasicInfo)
 async def basic_info_result(company_id : str):
     # '27450696'
     # '83387850'
-    
-    credit_invest.set_company_info(company_id=company_id)
+
+    credit_invest.set_up(company_id=company_id)
     basic_info_dict = credit_invest.basic_info()
 
     return basic_info_dict

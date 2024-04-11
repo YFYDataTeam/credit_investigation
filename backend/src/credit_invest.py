@@ -13,8 +13,11 @@ class CreditInvest(MySQLAgent):
         self.configs = read_config(path=conn_path)
         self.job_configs = self.configs["CREDITREPORT"]['VM1_mysql_conn_info']
         super().__init__(self.job_configs)
+        self.company_id = None
+        self.company_name = None
 
-    def datacheck(self, company_id, company_name):
+
+    def set_up(self, company_id=None, company_name=None):
 
         if company_id:
             query = f"""
@@ -22,20 +25,19 @@ class CreditInvest(MySQLAgent):
             where Business_Accounting_No = '{company_id}'
             """
             df_company = self.read_table(query=query)
-            company_name = df_company.company_name.values[0]
+            self.company_name = df_company.company_name.values[0]
+            self.company_id = company_id
+
         elif company_name:
             query = f"""
             select * from company
             where company_name = '{company_name}'
             """
             df_company = self.read_table(query=query)
-            company_name = df_company.business_accounting_no.values[0]
+            self.company_id = df_company.business_accounting_no.values[0]
+            self.company_name = company_name
 
-        return company_id, company_name
     
-    def set_company_info(self, company_id=None, company_name=None):
-        self.company_id, self.company_name = self.datacheck(company_id, company_name)
-
     def basic_info(self):
 
         # get info from companyinfo01
