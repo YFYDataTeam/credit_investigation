@@ -38,6 +38,7 @@ class BasicInfo(BaseModel):
 async def basic_info_result(company_id : str):
     # '27450696'
     # '83387850'
+    
     credit_invest.set_company_info(company_id=company_id)
     basic_info_dict = credit_invest.basic_info()
 
@@ -45,10 +46,10 @@ async def basic_info_result(company_id : str):
 
 # class EpaReport(BaseModel)
 
-@app.get("/epa_report/{company_id}")
-async def epa_invest_result(company_id : str):
-    # credit_invest.basic_info(company_id='83387850')
-    credit_invest.set_company_info(company_id=company_id)
+@app.get("/epa_report")
+async def epa_invest_result():
+
+
     epa_invest_result, plot_is_improve = credit_invest.epa_analysis()
 
     if plot_is_improve:

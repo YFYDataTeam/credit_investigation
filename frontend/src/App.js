@@ -25,7 +25,7 @@ document.getElementById('GetIDFromInput').addEventListener('submit', async (even
 
     // Call your API functions
     await fetchBasicInfo(company_id);
-    await fetchEpaReport(company_id);
+    await fetchEpaReport();
 
     isSubmitting = false; // Reset the flag
   } else {
@@ -91,9 +91,9 @@ function displayBasicInfo(data) {
 window.addEventListener('load', fetchBasicInfo);
 
 // Function to fetch EPA report data from the provided endpoint
-async function fetchEpaReport(company_id) {
+async function fetchEpaReport() {
     try {
-      const response = await fetch(endpoint + `epa_report/${company_id}`); // Fetch data from the provided endpoint
+      const response = await fetch(endpoint + `epa_report`); // Fetch data from the provided endpoint
       const data = await response.json();
       displayEpaReport(data);
     } catch (error) {
