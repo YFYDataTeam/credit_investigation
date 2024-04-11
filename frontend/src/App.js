@@ -8,6 +8,7 @@
 endpoint = 'http://localhost:8000/'
 
 
+// Initial the flag
 let isSubmitting = false;
 
 document.getElementById('GetIDFromInput').addEventListener('submit', async (event) => {
