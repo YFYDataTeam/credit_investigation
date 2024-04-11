@@ -40,7 +40,11 @@ async function fetchBasicInfo(company_id){
     const response = await fetch(endpoint + `basicinfo/${company_id}`);
     if (response.ok) {
       const data = await response.json();
-      displayBasicInfo(data);
+      if (data.message && data.message == 'NoData'){
+        displayNoDataMessage();
+      } else{
+        displayBasicInfo(data);
+      }
     } else {
       throw new Error('Data not found');
     }
@@ -84,6 +88,11 @@ function displayBasicInfo(data) {
   `;
 
   BasicInfoElement.innerHTML = BasicInfoContent;
+}
+
+function displayNoDataMessage(){
+  const BasicInfoElement = document.getElementById('basicInfo');
+  BasicInfoElement.innerHTML = "<p>No basic information available for the given company ID.</p>";
 }
 
 

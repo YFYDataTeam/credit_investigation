@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response
+from typing import Union
 import base64
 # from setting.config import get_settings
 from src.utils import read_config
@@ -33,8 +34,11 @@ class BasicInfo(BaseModel):
     chairman: str   
     directors: str
 
+class Message(BaseModel):
+    message : str
+
 # TODO: this accept company_id or company_name as input
-@app.get("/basicinfo/{company_id}", response_model=BasicInfo)
+@app.get("/basicinfo/{company_id}", response_model=Union[BasicInfo, Message])
 async def basic_info_result(company_id : str):
     # '27450696'
     # '83387850'
@@ -42,9 +46,12 @@ async def basic_info_result(company_id : str):
     credit_invest.set_up(company_id=company_id)
     basic_info_dict = credit_invest.basic_info()
 
-    return basic_info_dict
+    if "message" in basic_info_dict and basic_info_dict["message"] == "NoData":
+        return {"message": "NoData"} 
+    else:
+        return basic_info_dict  
 
-# class EpaReport(BaseModel)
+
 
 @app.get("/epa_report")
 async def epa_invest_result():
@@ -105,9 +112,9 @@ if __name__ == "__main__":
     # conn_path = "./backend/conn/connections.json"
     # credit_invest = CreditInvest(conn_path=conn_path)
     # for debug
-    # company_id = '83387850'
-    # credit_invest.set_company_info(company_id=company_id)
-    # basic_info_dict = credit_invest.basic_info()
+    company_id = '833'
+    credit_invest.set_up(company_id=company_id)
+    basic_info_dict = credit_invest.basic_info()
     # epa_invest_result, plot_is_improve = credit_invest.epa_analysis()
     # credit_invest.pst_analysis('past',5)
 

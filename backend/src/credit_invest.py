@@ -25,8 +25,15 @@ class CreditInvest(MySQLAgent):
             where Business_Accounting_No = '{company_id}'
             """
             df_company = self.read_table(query=query)
-            self.company_name = df_company.company_name.values[0]
-            self.company_id = company_id
+
+            if df_company.empty:
+                # reset
+                self.company_id = None
+                self.company_name = None
+                return None
+            else:
+                self.company_name = df_company.company_name.values[0]
+                self.company_id = company_id
 
         elif company_name:
             query = f"""
@@ -34,8 +41,15 @@ class CreditInvest(MySQLAgent):
             where company_name = '{company_name}'
             """
             df_company = self.read_table(query=query)
-            self.company_id = df_company.business_accounting_no.values[0]
-            self.company_name = company_name
+
+            if df_company.empty:
+                # reset
+                self.company_id = None
+                self.company_name = None
+                return None
+            else:
+                self.company_id = df_company.business_accounting_no.values[0]
+                self.company_name = company_name
 
     
     def basic_info(self):
@@ -49,6 +63,9 @@ class CreditInvest(MySQLAgent):
             companyinfo01 = self.read_table(query=query)
         except Exception as e:
             print("An error occurred:", e)
+
+        if companyinfo01.empty:
+            return  {'message': 'NoData'}
 
         # status
         company_status = companyinfo01['company_status_desc'].values[0]
