@@ -42,7 +42,7 @@ const App = () => {
 
                         // Set FinalCompanyID once input is validated and complete to prevent premature API calls
                         setFinalCompanyId(company_id);
-
+                        
                         // Call API
                         // await fetchBasicInfo(company_id);
 

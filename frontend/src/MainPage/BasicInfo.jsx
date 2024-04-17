@@ -1,22 +1,24 @@
 import React, {useState, useEffect} from "react";
 import Container from "./Container";
 
+const end_point = `http://127.0.0.1:8000/`
 
 const BasicInfo = ({companyId}) => {
   
     const [basicInfo, setBasicInfo] = useState(null);
-
+    console.log("company_id:", companyId)
     useEffect(() => {
-        const fetch = async () => {
+        const fetchData = async () => {
             try {
                 console.log("input", companyId);
-                const response = await fetch(`${endpoint}basicinfo/${companyId}`);
+                const response = await fetch(`${end_point}basicinfo/${companyId}`);
+                console.log("response:", response)
 
                 if(!response.ok){
                     throw new Error("Data not found.");
                 }
 
-                const data = await response.josn();
+                const data = await response.json();
 
                 if (data.message === "NoData"){
                     throw Error("displayNoDataMessage");
@@ -31,8 +33,7 @@ const BasicInfo = ({companyId}) => {
         };
 
 
-        fetch();
-    // whenever companyId changes,
+        fetchData();
     // Dependency Array: [companyId] is the dependency array for this useEffect. 
     // This array tells React to keep track of the variables listed inside it (in this case, just companyId). 
     }, [companyId]);
