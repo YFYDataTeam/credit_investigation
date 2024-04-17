@@ -1,0 +1,26 @@
+/* Container.css */
+.container {
+    padding: 20px;
+    margin: 20px auto;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    border-radius: 8px;
+    background-color: #fff;
+    width: 90%; /* Adjust based on your layout needs */
+    max-width: 1200px; /* Ensures container doesn't get too wide on large screens */
+}
+
+.section {
+    margin-top: 10px;
+}
+
+.section-title {
+    color: #333;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.section-content {
+    color: #666;
+    font-size: 16px;
+}

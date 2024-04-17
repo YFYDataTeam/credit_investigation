@@ -1,0 +1,12 @@
+/* EPAPenaltyReport.css */
+.penalty-details p {
+    margin: 10px 0;
+    color: #333; /* Dark gray for text */
+    font-size: 16px; /* Medium font size */
+}
+
+.penalty-details img {
+    margin-top: 20px;
+    width: 100%; /* Ensure the image is responsive */
+    border-radius: 8px; /* Optional: rounded corners for the image */
+}

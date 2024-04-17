@@ -1,3 +1,5 @@
+import '../../assets/css/container.css';
+
 const Container = ({title, children}) => {
     return (
         <div class="container">

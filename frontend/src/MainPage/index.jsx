@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Container  from "./Container";
 import BasicInfo from "./BasicInfo";
+import EpaReport from "./EpaReport";
 
 const App = () => {
     const [companyId, setCompanyId] = useState("");
@@ -57,10 +58,9 @@ const App = () => {
         </Container>
 
         <BasicInfo companyId={finalCompanyId}></BasicInfo>
+        
+        <EpaReport companyId={finalCompanyId}></EpaReport>
 
-        <Container title="環保署汙染裁處記錄分析">
-            <div id="epaReport"></div>
-        </Container>
     </div>
     )
 };

@@ -1,7 +1,9 @@
 import React, {useState, useEffect} from "react";
 import Container from "./Container";
+import config from '../../public/configs.json';
+import '../../assets/css/basicinfo.css';
 
-const end_point = `http://127.0.0.1:8000/`
+const end_point = config.endpoint;
 
 const BasicInfo = ({companyId}) => {
   
@@ -12,7 +14,6 @@ const BasicInfo = ({companyId}) => {
             try {
                 console.log("input", companyId);
                 const response = await fetch(`${end_point}basicinfo/${companyId}`);
-                console.log("response:", response)
 
                 if(!response.ok){
                     throw new Error("Data not found.");
