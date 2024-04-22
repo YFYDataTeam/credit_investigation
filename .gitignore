@@ -11,6 +11,8 @@ __pycache__/
 
 files/
 opt/
+node_modules/
+.parcel-cache
 
 # Distribution / packaging
 .Python
