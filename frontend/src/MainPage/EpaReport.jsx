@@ -22,7 +22,7 @@ const EpaReport = ({companyId}) => {
                 const data = await response.json();
 
                 if (data.message === 'NoData'){
-                    throw Error("displayNoDataMessage");
+                    setEpareport(null);
                 } else {
                     setEpareport(data);
                 }
@@ -36,6 +36,7 @@ const EpaReport = ({companyId}) => {
 
     return (
         <Container title="環保署汙染裁處記錄分析">
+            {epareport ? (
             <div className="penalty-details">
                 <console className="log">companyId:{companyId}</console>
                 <p>裁處總次數: {epareport.penalty_times}</p>
@@ -47,6 +48,14 @@ const EpaReport = ({companyId}) => {
                     <p>No plot image available.</p>
                 )}
             </div>
+            ) : (
+                <div>
+                    <h3>查無資料</h3>
+                </div>
+            )
+                
+            }
+
 
         </Container>
     )

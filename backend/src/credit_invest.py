@@ -12,6 +12,7 @@ class CreditInvest(MySQLAgent):
     def __init__(self, conn_path):
         self.configs = read_config(path=conn_path)
         self.job_configs = self.configs["CREDITREPORT"]['VM1_mysql_conn_info']
+        self.no_data_msg = 'NoData'
         super().__init__(self.job_configs)
         self.company_id = None
         self.company_name = None
@@ -65,7 +66,7 @@ class CreditInvest(MySQLAgent):
             print("An error occurred:", e)
 
         if companyinfo01.empty:
-            return  {'message': 'NoData'}
+            return  {'message': self.no_data_msg}
 
         # status
         company_status = companyinfo01['company_status_desc'].values[0]
@@ -103,14 +104,14 @@ class CreditInvest(MySQLAgent):
 
     def epa_analysis(self):
 
+        if self.company_id == None:
+            return {"message": self.no_data_msg}, None
+
         query = f"""
             select * from epa_ems_p_46
             where Business_Accounting_No = {self.company_id}
         """
         df_epa = self.read_table(query=query)
-
-        if df_epa.empty:
-            return {"message": "No data found for the specified company account."}, None
 
         # record count
         row_count = df_epa.shape[0]
