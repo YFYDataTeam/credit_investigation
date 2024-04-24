@@ -22,13 +22,15 @@ const BasicInfo = ({companyId}) => {
                     }
     
                     const data = await response.json();
+                    console.log("data:", data);
                     if (data.message === "NoData"){
-                        // change to specific msg for let user know there is no company found
                         setBasicInfo(null);
-                        // setErrorMessage('沒有找到相關公司資料。請確認公司 ID 是否正確')
-                        // throw Error("沒有找到相關公司資料。請確認公司 ID 是否正確");
+                        setErrorMessage(''); // Reset the error message to ensure the useEffect will trigger
+                        setTimeout(() => setErrorMessage("沒有找到相關公司資料。請確認公司統編是否輸入正確"), 0);
+                        
                     } else {
                         setBasicInfo(data);
+                        setErrorMessage('');
                     }
                     
     
@@ -89,7 +91,7 @@ const BasicInfo = ({companyId}) => {
         ) : (
           <div>
             <h3>查無資料</h3>
-            <p>沒有找到相關公司資料。請確認公司 ID 是否正確或試試其他查詢。</p>
+            {/* <p>沒有找到相關公司資料。請確認公司 ID 是否正確或試試其他查詢。</p> */}
           </div>
         )}
       </Container>

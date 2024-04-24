@@ -5,12 +5,14 @@
     box-shadow: 0 2px 4px rgba(0,0,0,0.15);
     border-radius: 8px;
     background-color: #fff;
-    width: 90%; /* Adjust based on your layout needs */
-    max-width: 1200px; /* Ensures container doesn't get too wide on large screens */
-}
+    width: 100%; /* Adjust based on your layout needs */
+    max-width: 1000px; 
+    
+}   
 
 .section {
     margin-top: 10px;
+    margin: 20px auto;
 }
 
 .section-title {

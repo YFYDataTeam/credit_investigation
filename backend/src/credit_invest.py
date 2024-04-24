@@ -113,6 +113,9 @@ class CreditInvest(MySQLAgent):
         """
         df_epa = self.read_table(query=query)
 
+        if df_epa.empty:
+            return {"message": self.no_data_msg}, None
+        
         # record count
         row_count = df_epa.shape[0]
 
@@ -126,57 +129,61 @@ class CreditInvest(MySQLAgent):
 
         plot_is_improve = cat_value_count_bar_plot(df_epa, 'is_improve', 'skyblue', '環保署裁處後的改善情況', '改善情況類別', '次數')
 
-        EPA_dict = {
-            "invest_type": "環保署汙染紀錄",
+        epa_dict = {
             "penalty_times": row_count,
             "max_penalty_money": max_penalty_money,
             "latest_penalty_money": latest_penalty_money
         }
         
-        return EPA_dict, plot_is_improve
+        return epa_dict, plot_is_improve
     
     # analyze the pre- and post-timepoint pst data with identical functions
     def pst_analysis(self, time_config, year_region):
 
-        job_configs = self.configs["CREDITREPORT"]['BIDB_conn_info']
-        oracle_agent = OracleAgent(job_configs)
+        try:
+            job_configs = self.configs["CREDITREPORT"]['BIDB_conn_info']
+            oracle_agent = OracleAgent(job_configs)
 
-        query = f"""
-        select * from ODS.w_yfy_crd_pst_f
-        where debtor_accounting_no = '{self.company_id}'
-
-        """
-        # where debtor_accounting_no = '{company_account}'
-        df = oracle_agent.read_table(query=query)
-        df['agreement_end_date'] = pd.to_datetime(df['agreement_end_date'])
-
-        current_year = datetime.now().year
-        
-        if time_config == 'past':
-            if df['agreement_end_date'].max() < datetime.now():
-                df_sliced = df[df['agreement_end_date'] <= datetime.now()]
-                years_range = list(range(current_year - year_region, current_year))
-                # for past : max
-                nearest_end_date = df_sliced['agreement_end_date'].max()
-            elif df['agreement_end_date'].max() > datetime.now():
-                return print('過去沒有動產擔保紀錄')
+            query = f"""
+            select * from ODS.w_yfy_crd_pst_f
+            where debtor_accounting_no = '{self.company_id}'
+            """
             
-        elif time_config == 'future':
-            if df['agreement_end_date'].min() >= datetime.now():
-                df_sliced = df[df['agreement_end_date'] > datetime.now()]
-                years_range = list(range(current_year, current_year +  year_region))
-                # for future: min
-                nearest_end_date = df_sliced['agreement_end_date'].min()
+            df = oracle_agent.read_table(query=query)
+            df['agreement_end_date'] = pd.to_datetime(df['agreement_end_date'])
 
-            elif df['agreement_end_date'].min() < datetime.now():
-                return print('未來沒有動產擔保紀錄')
+            current_year = datetime.now().year
             
-        else:
-            return print('wrong time config for pst_analysis')
+            if time_config == 'past':
+                if df['agreement_end_date'].max() < datetime.now():
+                    df_sliced = df[df['agreement_end_date'] <= datetime.now()]
+                    years_range = list(range(current_year - year_region, current_year))
+                    # for past : max
+                    nearest_end_date = df_sliced['agreement_end_date'].max()
+                elif df['agreement_end_date'].max() > datetime.now():
+                    return {"message": self.no_data_msg}
+                
+            elif time_config == 'future':
+                if df['agreement_end_date'].min() >= datetime.now():
+                    df_sliced = df[df['agreement_end_date'] > datetime.now()]
+                    years_range = list(range(current_year, current_year +  year_region))
+                    # for future: min
+                    nearest_end_date = df_sliced['agreement_end_date'].min()
+
+                elif df['agreement_end_date'].min() < datetime.now():
+                    return {"message": self.no_data_msg}
+                
+            else:
+                return {"message": 'wrong time config for pst_analysis'}
+
+        except Exception as e:
+            error_message = str(e)
+            return {"message": "An error occurred while fetching data: " + error_message}, None, None
 
 
         # show in terms of different currency
-        total_agreement_currency = df_sliced.groupby(['debtor_title','currency'])['agreement_amount'].agg(total_amount='sum').astype('int64')
+        total_agreement_currency = df_sliced.groupby(['debtor_title','currency'])['agreement_amount'].agg(total_amount='sum').astype('int')
+        total_agreement_currency_dict = total_agreement_currency.reset_index().to_dict(orient='records')
 
 
         # portion of object_type
@@ -208,7 +215,18 @@ class CreditInvest(MySQLAgent):
         lineplot_img_buf.seek(0)
         plt.close('all')
 
-        return total_agreement_currency, nearest_end_date, pieplot_img_buf, lineplot_img_buf
+        if pd.notna(nearest_end_date):
+            nearest_end_date_str = nearest_end_date.isoformat()
+        else:
+            nearest_end_date_str = None
+
+        pst_dict = {
+            "time_config": time_config,
+            "total_agreement_currency": total_agreement_currency_dict,
+            "nearest_end_date": nearest_end_date_str,
+        }
+
+        return pst_dict, pieplot_img_buf, lineplot_img_buf
 
 
     # TODO: need stock_id and company_account mapping table
