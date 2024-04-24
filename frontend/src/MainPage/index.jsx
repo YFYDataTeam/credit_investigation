@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Container  from "./Container";
 import BasicInfo from "./BasicInfo";
 import EpaReport from "./EpaReport";
+import PstReport from "./PstReport";
 
 const App = () => {
     const [companyId, setCompanyId] = useState("");
@@ -60,6 +61,8 @@ const App = () => {
         <BasicInfo companyId={finalCompanyId}></BasicInfo>
         
         <EpaReport companyId={finalCompanyId}></EpaReport>
+
+        <PstReport companyId={finalCompanyId}></PstReport>
 
     </div>
     )

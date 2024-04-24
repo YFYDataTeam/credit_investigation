@@ -9,8 +9,6 @@ import base64
 
 router = APIRouter()
 
-
-
 conn_path = "./backend/conn/connections.json"
 credit_invest = CreditInvest(conn_path=conn_path)
 
