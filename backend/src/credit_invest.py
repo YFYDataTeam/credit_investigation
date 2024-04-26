@@ -1,7 +1,12 @@
 import io
 import pandas as pd
 from src.utils import read_config, MySQLAgent, OracleAgent
-from src.plot_tools import cat_value_count_bar_plot, num_value_count_bar_plot, portion_pie_plot
+from src.plot_tools import (
+    cat_value_count_bar_plot,
+    portion_pie_plot,
+    mops_bar_plot,
+    mops_line_plot
+)
 from datetime import datetime
 import matplotlib.pyplot as plt
 
@@ -231,6 +236,52 @@ class CreditInvest(MySQLAgent):
 
     # TODO: need stock_id and company_account mapping table
     def mops(self):
+        """
+        Demo:
+        2313 華通電腦股份有限公司
+        1104 環球水泥股份有限公司
+        1231 聯華食品工業股份有限公司
+        """
+
+        if self.company_id == None:
+            return {"message": self.no_data_msg}, None
+        
+        query = f"""
+            select * from mops_monthly_report
+            where company_id = 1104
+        """
+        df_mops = self.read_table(query=query)
+
+        if df_mops.empty:
+            return {"message": self.no_data_msg}, None
+        
+        df_mops['period'] = pd.to_datetime(df_mops['period_year'].astype(str) + '-' + df_mops['period_month'].astype(str))
+
+
+        # sales over month
+        plot_sales_over_month = mops_line_plot(df_mops, 'period', 'sales','Date', 'Sales', 'Monthly Sales Over Time') 
+
+
+        # sales MoM
+        x_axis = 'period'
+        y_axis = 'var_lastmm'
+        x_label = 'Date'
+        y_label = 'Sales MoM change'
+        title = 'Monthly Sales Change Over Time'
+        colors = ['green' if x > 0 else 'red' for x in df_mops['var_lastmm']]
+        plot_sales_mom = mops_bar_plot(df_mops, colors, x_axis, y_axis, x_label, y_label, title)
+
+        # sales YoY
+        x_axis = 'period'
+        y_axis = 'var_lastYY'
+        x_label = 'Date'
+        y_label = 'Sales YoY change'
+        title = 'yearly Sales Change Over Time'
+        colors = ['green' if x > 0 else 'red' for x in df_mops['var_lastYY']]
+        plot_sales_mom = mops_bar_plot(df_mops, colors, x_axis, y_axis, x_label, y_label, title)
+
+
+
 
         return
     

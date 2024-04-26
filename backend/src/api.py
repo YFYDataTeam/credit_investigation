@@ -73,3 +73,11 @@ async def pst_invest_result(time_config: str = Query(..., enum=['past', 'future'
         'pst_enddate_over_year': lineplot_img_base64
     }
     return JSONResponse(content=response_data)
+
+
+@router.get('/mops_report')
+async def mops_analysis():
+
+
+
+    return

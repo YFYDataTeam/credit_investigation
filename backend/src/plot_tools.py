@@ -87,3 +87,42 @@ def portion_pie_plot(df, target_column, title):
     plt.close('all')
 
     return img_buf
+
+
+def mops_line_plot(df, x_axis, y_axis, x_label, y_label, title):
+    plt.figure(figsize=(10, 5))
+    plt.plot(df[x_axis], df[y_axis], linestyle='-')
+    plt.title(title)
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
+    plt.grid(True)
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    # plt.show()
+
+    img_buf = io.BytesIO()
+    plt.savefig(img_buf, format='png')
+    img_buf.seek(0)
+    plt.close('all')
+
+    return img_buf
+
+def mops_bar_plot(df, colors, x_axis, y_axis, x_label, y_label, title):
+    
+    
+    plt.figure(figsize=(10, 5))
+    plt.bar(df[x_axis], df[y_axis], color=colors, width=20)
+    plt.title(title)
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
+    plt.axhline(0, color='black', linewidth=0.5)  # Add a line at y=0 for reference
+    plt.xticks(rotation=45)
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+    # plt.show()
+
+    img_buf = io.BytesIO()
+    plt.savefig(img_buf, format='png')
+    img_buf.seek(0)
+    plt.close('all')
+
+    return img_buf

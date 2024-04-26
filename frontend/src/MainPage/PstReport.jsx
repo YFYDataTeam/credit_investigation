@@ -49,6 +49,7 @@ function CurrencyAgreements() {
                     <table>
                         <thead>
                             <tr>
+                                #TODO : change the column name
                                 <th>Currency</th>
                                 <th>Total Amount</th>
                             </tr>
