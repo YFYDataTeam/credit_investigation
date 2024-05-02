@@ -7,44 +7,59 @@ const year_region = config.year_region;
 
 const getCurrencyCode = (currencyName) => {
     const currencyMap = {
-        '新台幣': 'TWD',  // New Taiwan Dollar
-        '日圓': 'JPY',    // Japanese Yen
-        '美金': 'USD'     // US Dollar
+        '新台幣': 'TWD',
+        '日圓': 'JPY',   
+        '美金': 'USD'     
     };
 
-    return currencyMap[currencyName] || currencyName;  // default to the original if not found
+    return currencyMap[currencyName] || currencyName; 
 };
 
-function CurrencyAgreements() {
-    const [agreements, setAgreements] = useState([]);
-    const [pieChart, setPieChart] = useState('');
-    const [lineChart, setLineChart] = useState('');
+function CurrencyAgreements({companyId}) {
+    const [agreements, setAgreements] = useState(null);
+    const [pieChart, setPieChart] = useState(null);
+    const [lineChart, setLineChart] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch(`${end_point}pst_report?time_config=past&year_region=${year_region}`)  // Modify query params as needed
-            .then(response => response.json())
-            .then(data => {
-                setAgreements(data.total_agreement_currency || []);
-                setPieChart(data.pst_type_distribution || '');
-                setLineChart(data.pst_enddate_over_year || '');
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-            })
-            .finally(() => {
-                setLoading(false);
-            });
-    }, []);
+        const fetchData = async () => {
+            try {
+                const response = await fetch(`${end_point}pst_report?time_config=past&year_region=${year_region}`);
+                if (!response.ok) {
+                    throw new Error('Error fetching data');
+                }
+    
+                const data = await response.json();
 
-    if (loading) {
-        return <div>Loading...</div>;
-    }
+                if (data.message === 'NoData'){
+                    setAgreements(null);
+                    setPieChart(null);
+                    setLineChart(null);
+                } else {
+                        
+                    setAgreements(data.total_agreement_currency);
+                    setPieChart(data.pst_type_distribution);
+                    setLineChart(data.pst_enddate_over_year);
+
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+    
+        fetchData();
+    }, [companyId]);
+
+    // if (loading) {
+    //     return <div>Loading...</div>;
+    // }
 
     return (
         <Container title="動產擔保分析">
-        <div>
-            {agreements.length > 0 ? (
+            {agreements ? (
                 <div>
                     <table>
                         <thead>
@@ -75,7 +90,6 @@ function CurrencyAgreements() {
             ) : (
                 <h3>查無資料</h3>
             )}
-        </div>
         </Container>
     );
 }

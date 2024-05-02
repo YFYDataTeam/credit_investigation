@@ -3,6 +3,7 @@ import Container  from "./Container";
 import BasicInfo from "./BasicInfo";
 import EpaReport from "./EpaReport";
 import PstReport from "./PstReport";
+import MopsReport from "./Mops";
 
 const App = () => {
     const [companyId, setCompanyId] = useState("");
@@ -63,7 +64,8 @@ const App = () => {
         <EpaReport companyId={finalCompanyId}></EpaReport>
 
         <PstReport companyId={finalCompanyId}></PstReport>
-
+        
+        <MopsReport companyId={finalCompanyId}></MopsReport>
     </div>
     )
 };

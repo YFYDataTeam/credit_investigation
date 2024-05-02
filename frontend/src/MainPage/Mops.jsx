@@ -18,7 +18,7 @@ const MopsReport = ({companyId}) => {
 
                 const data = await response.json();
 
-                if (DataTransfer.message === 'NoData'){
+                if (data.message === 'NoData'){
                     setMopsreport(null);
                 } else {
                     setMopsreport(data);
@@ -31,7 +31,20 @@ const MopsReport = ({companyId}) => {
         fetchData();
     }, [companyId])
 
-    return
+    return (
+        <Container title="財報分析">
+            {mopsreport ? (
+                <div>
+
+                </div>
+
+            ) : (
+                <div>
+                    <h3>查無資料 </h3>
+                </div>
+            )}
+        </Container>
+    )
 };
 
 

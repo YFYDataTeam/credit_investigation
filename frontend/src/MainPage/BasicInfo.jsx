@@ -53,7 +53,6 @@ const BasicInfo = ({companyId}) => {
             alert(errorMessage);    
         }
     },[errorMessage]);
-    
 
     return (
       <Container title="公司基本資訊">

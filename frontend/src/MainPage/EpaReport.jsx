@@ -9,6 +9,7 @@ const end_point = config.endpoint;
 const EpaReport = ({companyId}) => {
 
     const [epareport, setEpareport] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
