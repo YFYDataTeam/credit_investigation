@@ -1,6 +1,10 @@
 import io
 import pandas as pd
-from src.utils import read_config, MySQLAgent, OracleAgent
+from src.utils import (
+    read_config, 
+    MySQLAgent, 
+    OracleAgent,
+    create_qurter)
 from src.plot_tools import (
     cat_value_count_bar_plot,
     portion_pie_plot,
@@ -257,32 +261,68 @@ class CreditInvest(MySQLAgent):
         
         df_mops['period'] = pd.to_datetime(df_mops['period_year'].astype(str) + '-' + df_mops['period_month'].astype(str))
 
-
-        # sales over month
+        # Sales over month
         plot_sales_over_month = mops_line_plot(df_mops, 'period', 'sales','Date', 'Sales', 'Monthly Sales Over Time') 
 
-
-        # sales MoM
+        # Sales MoM
         x_axis = 'period'
         y_axis = 'var_lastmm'
         x_label = 'Date'
-        y_label = 'Sales MoM change'
+        y_label = 'Sales MoM'
         title = 'Monthly Sales Change Over Time'
         colors = ['green' if x > 0 else 'red' for x in df_mops['var_lastmm']]
         plot_sales_mom = mops_bar_plot(df_mops, colors, x_axis, y_axis, x_label, y_label, title)
 
-        # sales YoY
+        # Sales YoY
         x_axis = 'period'
         y_axis = 'var_lastYY'
         x_label = 'Date'
-        y_label = 'Sales YoY change'
+        y_label = 'Sales YoY'
         title = 'yearly Sales Change Over Time'
         colors = ['green' if x > 0 else 'red' for x in df_mops['var_lastYY']]
-        plot_sales_mom = mops_bar_plot(df_mops, colors, x_axis, y_axis, x_label, y_label, title)
+        plot_sales_yoy = mops_bar_plot(df_mops, colors, x_axis, y_axis, x_label, y_label, title)
 
+        # Monthly Y2M
+        df_pivot = df_mops.pivot_table(index='period_month', columns='period_year', values='y2m', aggfunc='mean')
 
+        # Plotting
+        plt.figure(figsize=(12, 6))
+        for column in df_pivot.columns:
+            color = 'red' if column == 2024 else 'grey'  # Conditional color assignment
+            label = f'Year {column}' if column == 2024 else None  # Only label year 2024
+            plt.plot(df_pivot.index, df_pivot[column], marker='o', label=label, color=color)
+            
+            # Annotating the year at the end of each line
+            end_point_y = df_pivot[column].iloc[-1]  # Get the last y-value of the series
+            end_point_x = df_pivot.index[-1]         # Get the last x-value (month)
+            plt.text(end_point_x + 0.1, end_point_y, str(column), color=color, verticalalignment='center')
 
+        plt.xlabel('Month')
+        plt.ylabel('Y2M')
+        plt.title('Monthly Y2M by Year')
+        plt.xticks(range(1, 13))  # Adjusting x-axis for months
+        plt.legend(title='Legend')
+        plt.grid(True)
+        # plt.show()
 
-        return
+        plot_sales_y2m = io.BytesIO()
+        plt.savefig(plot_sales_y2m, format='png')
+        plot_sales_y2m.seek(0)
+        plt.close('all')
+
+        # Sales QoQ
+        df_mops['quarter'] = df_mops['period_month'].apply(create_qurter)
+        df_mops['year_quarter'] = df_mops['period_year'].astype(str) + df_mops['quarter']
+        df_mops_QoQ = df_mops.groupby('year_quarter').agg(year_quarter_sales= ('sales','sum')).reset_index()
+        df_mops_QoQ['QoQ'] = (df_mops_QoQ['year_quarter_sales']/df_mops_QoQ['year_quarter_sales'].shift(1)).dropna()-1
+        x_axis = 'year_quarter'
+        y_axis = 'QoQ'
+        x_label = 'Year Quarter'
+        y_label = 'Sales QoQ change'
+        title = 'Sales QoQ'
+        colors = ['green' if x > 0 else 'red' for x in df_mops_QoQ['QoQ']]
+        plot_sales_qoq = mops_bar_plot(df_mops_QoQ, colors, x_axis, y_axis, x_label, y_label, title, width=1)
+
+        return plot_sales_over_month, plot_sales_yoy, plot_sales_y2m, plot_sales_qoq
     
-
+ 

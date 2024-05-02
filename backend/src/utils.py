@@ -75,3 +75,14 @@ class MySQLAgent:
 
         data.to_sql(name=table_name, con=self.engine,
                     if_exists=if_exists, index=index, dtype=data_type)
+
+
+def create_qurter(period_month):
+    if period_month in range(1,4,1):
+        return "Q1"
+    elif period_month in range (4,7,1):
+        return "Q2"
+    elif period_month in range(7,10,1):
+        return "Q3"
+    else:
+        return "Q4"

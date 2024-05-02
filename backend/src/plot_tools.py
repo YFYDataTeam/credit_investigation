@@ -107,11 +107,11 @@ def mops_line_plot(df, x_axis, y_axis, x_label, y_label, title):
 
     return img_buf
 
-def mops_bar_plot(df, colors, x_axis, y_axis, x_label, y_label, title):
+def mops_bar_plot(df, colors, x_axis, y_axis, x_label, y_label, title, width=20):
     
     
     plt.figure(figsize=(10, 5))
-    plt.bar(df[x_axis], df[y_axis], color=colors, width=20)
+    plt.bar(df[x_axis], df[y_axis], color=colors, width=width)
     plt.title(title)
     plt.xlabel(x_label)
     plt.ylabel(y_label)
