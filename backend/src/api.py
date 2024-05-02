@@ -78,6 +78,33 @@ async def pst_invest_result(time_config: str = Query(..., enum=['past', 'future'
 @router.get('/mops_report')
 async def mops_analysis():
 
+    plot_sales_over_month, plot_sales_yoy, plot_sales_y2m, plot_sales_qoq = credit_invest.mops()
 
+    if plot_sales_over_month:
+        plot_sales_over_month_base64 = base64.b64encode(plot_sales_over_month.getvalue()).decode('utf-8')
+    else:
+        plot_sales_over_month_base64 = None
 
-    return
+    if plot_sales_yoy:
+        plot_sales_yoy_base64 = base64.b64encode(plot_sales_yoy.getvalue()).decode('utf-8')
+    else:
+        plot_sales_yoy_base64 = None
+
+    if plot_sales_y2m:
+        plot_sales_y2m_base64 = base64.b64encode(plot_sales_y2m.getvalue()).decode('utf-8')
+    else:
+        plot_sales_y2m_base64 = None
+
+    if plot_sales_qoq:
+        plot_sales_qoq_base64 = base64.b64encode(plot_sales_qoq.getvalue()).decode('utf-8')
+    else:
+        plot_sales_qoq_base64 = None
+    
+    response_data = {
+        "plot_sales_over_month": plot_sales_over_month_base64,
+        "plot_sales_yoy": plot_sales_yoy_base64,
+        "plot_sales_y2m": plot_sales_y2m_base64,
+        "plot_sales_qoq": plot_sales_qoq_base64
+    }
+
+    return JSONResponse(response_data)

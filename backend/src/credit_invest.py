@@ -149,6 +149,9 @@ class CreditInvest(MySQLAgent):
     # analyze the pre- and post-timepoint pst data with identical functions
     def pst_analysis(self, time_config, year_region):
 
+        if self.company_id == None:
+            return {"message": self.no_data_msg}, None, None
+        
         try:
             job_configs = self.configs["CREDITREPORT"]['BIDB_conn_info']
             oracle_agent = OracleAgent(job_configs)
@@ -158,28 +161,34 @@ class CreditInvest(MySQLAgent):
             where debtor_accounting_no = '{self.company_id}'
             """
             
-            df = oracle_agent.read_table(query=query)
-            df['agreement_end_date'] = pd.to_datetime(df['agreement_end_date'])
+            df_pst = oracle_agent.read_table(query=query)
+
+            df_pst = df_pst[~df_pst['register_no'].isnull()]
+
+            if df_pst.empty:
+                return {"message": self.no_data_msg}, None, None
+            
+            df_pst['agreement_end_date'] = pd.to_datetime(df_pst['agreement_end_date'])
 
             current_year = datetime.now().year
             
             if time_config == 'past':
-                if df['agreement_end_date'].max() < datetime.now():
-                    df_sliced = df[df['agreement_end_date'] <= datetime.now()]
+                if df_pst['agreement_end_date'].max() < datetime.now():
+                    df_sliced = df_pst[df_pst['agreement_end_date'] <= datetime.now()]
                     years_range = list(range(current_year - year_region, current_year))
                     # for past : max
                     nearest_end_date = df_sliced['agreement_end_date'].max()
-                elif df['agreement_end_date'].max() > datetime.now():
+                elif df_pst['agreement_end_date'].max() > datetime.now():
                     return {"message": self.no_data_msg}
                 
             elif time_config == 'future':
-                if df['agreement_end_date'].min() >= datetime.now():
-                    df_sliced = df[df['agreement_end_date'] > datetime.now()]
+                if df_pst['agreement_end_date'].min() >= datetime.now():
+                    df_sliced = df_pst[df_pst['agreement_end_date'] > datetime.now()]
                     years_range = list(range(current_year, current_year +  year_region))
                     # for future: min
                     nearest_end_date = df_sliced['agreement_end_date'].min()
 
-                elif df['agreement_end_date'].min() < datetime.now():
+                elif df_pst['agreement_end_date'].min() < datetime.now():
                     return {"message": self.no_data_msg}
                 
             else:
@@ -243,7 +252,7 @@ class CreditInvest(MySQLAgent):
         """
         Demo:
         2313 華通電腦股份有限公司
-        1104 環球水泥股份有限公司
+        1104 環球水泥股份有限公司 07568009
         1231 聯華食品工業股份有限公司
         """
 
@@ -275,17 +284,17 @@ class CreditInvest(MySQLAgent):
 
         # Sales YoY
         x_axis = 'period'
-        y_axis = 'var_lastYY'
+        y_axis = 'var_lastyy'
         x_label = 'Date'
         y_label = 'Sales YoY'
         title = 'yearly Sales Change Over Time'
-        colors = ['green' if x > 0 else 'red' for x in df_mops['var_lastYY']]
+        colors = ['green' if x > 0 else 'red' for x in df_mops['var_lastyy']]
         plot_sales_yoy = mops_bar_plot(df_mops, colors, x_axis, y_axis, x_label, y_label, title)
 
         # Monthly Y2M
         df_pivot = df_mops.pivot_table(index='period_month', columns='period_year', values='y2m', aggfunc='mean')
 
-        # Plotting
+        # Monthly Y2M by year: multiple line in one chart
         plt.figure(figsize=(12, 6))
         for column in df_pivot.columns:
             color = 'red' if column == 2024 else 'grey'  # Conditional color assignment
