@@ -1,4 +1,4 @@
-import react, {useState, useEffect} from "react";
+import React, {useState, useEffect} from "react";
 import Container from "./Container";
 import config from '../../public/configs.json';
 
@@ -35,7 +35,10 @@ const MopsReport = ({companyId}) => {
         <Container title="財報分析">
             {mopsreport ? (
                 <div>
-
+                    <img src={`data:image/png;base64,${mopsreport.plot_sales_over_month}`} alt="Sales Over Month" />
+                    <img src={`data:image/png;base64,${mopsreport.plot_sales_yoy}`} alt="Year-over-Year Sales" />
+                    <img src={`data:image/png;base64,${mopsreport.plot_sales_y2m}`} alt="Year to Month Sales" />
+                    <img src={`data:image/png;base64,${mopsreport.plot_sales_qoq}`} alt="Quarter-over-Quarter Sales" />
                 </div>
 
             ) : (
