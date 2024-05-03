@@ -22,7 +22,7 @@ const BasicInfo = ({companyId}) => {
                     }
     
                     const data = await response.json();
-                    console.log("data:", data);
+                    // console.log("data:", data);
                     if (data.message === "NoData"){
                         setBasicInfo(null);
                         setErrorMessage(''); // Reset the error message to ensure the useEffect will trigger

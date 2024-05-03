@@ -4,6 +4,9 @@ import BasicInfo from "./BasicInfo";
 import EpaReport from "./EpaReport";
 import PstReport from "./PstReport";
 import MopsReport from "./Mops";
+import config from '../../public/configs.json';
+
+const end_point = config.end_point;
 
 const App = () => {
     const [companyId, setCompanyId] = useState("");
@@ -24,11 +27,10 @@ const App = () => {
             </div>
         </section>
 
-        <Container title = "輸入公司統編">
+        <Container title = "輸入公司統編或名稱">
             <input 
                 type="number" 
                 value={companyId}
-                // required={!companyName}
                 onChange={(e) => {
                     setCompanyId(e.target.value);
                 }}
@@ -46,8 +48,7 @@ const App = () => {
                         // Set FinalCompanyID once input is validated and complete to prevent premature API calls
                         setFinalCompanyId(company_id);
                         
-                        // Call API
-                        // await fetchBasicInfo(company_id);
+                        // Call set_up API to get
 
                     } catch (e) {
                         alert(e.message);
@@ -56,6 +57,40 @@ const App = () => {
                 }}
             > 輸入公司統編
             </button>
+            <space> </space>
+            <input 
+                type="string" 
+                value={companyName}
+                onChange={(e) => {
+                    setCompanyName(e.target.value);
+                }}
+            />
+            {/* <button
+                disabled={isLoading}
+                onClick={async (e) => {
+                    const company_name_input = companyName.trim();
+
+                    try {
+                        if (company_name_input === ""){
+                            throw Error("No company name entered.")
+                        }
+
+                        // Set FinalCompanyID once input is validated and complete to prevent premature API calls
+                        setFinalCompanyName(company_name_input);
+                        const encodedCompanyName = encodeURIComponent(company_name_input);
+                        const response = await fetch(`${end_point}/setup/${company_name_input}`);
+                        const result = await response;
+                        console.log("response outside", response)
+                        setFinalCompanyId(company_id);
+                        // Call set_up API to get
+
+                    } catch (e) {
+                        alert(e.message);
+                    }
+                    
+                }}
+            
+            </button> */}
 
         </Container>
 

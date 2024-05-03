@@ -15,7 +15,7 @@ const getCurrencyCode = (currencyName) => {
     return currencyMap[currencyName] || currencyName; 
 };
 
-function CurrencyAgreements({companyId}) {
+const CurrencyAgreements = ({companyId}) => {
     const [agreements, setAgreements] = useState(null);
     const [pieChart, setPieChart] = useState(null);
     const [lineChart, setLineChart] = useState(null);
@@ -30,7 +30,8 @@ function CurrencyAgreements({companyId}) {
                 }
     
                 const data = await response.json();
-
+                console.log('pst companyid', companyId);
+                console.log('pst data',data);
                 if (data.message === 'NoData'){
                     setAgreements(null);
                     setPieChart(null);

@@ -14,14 +14,14 @@ const EpaReport = ({companyId}) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch(`${end_point}epa_report`);
+                const response = await fetch(`${end_point}epa_report/${companyId}`);
 
                 if(!response.ok){
                     throw new Error("Data not found.");
                 }
 
                 const data = await response.json();
-
+                console.log('epa data',data);
                 if (data.message === 'NoData'){
                     setEpareport(null);
                 } else {
