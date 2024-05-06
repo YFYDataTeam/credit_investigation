@@ -12,10 +12,23 @@ router = APIRouter()
 conn_path = "./backend/conn/connections.json"
 credit_invest = CreditInvest(conn_path=conn_path)
 
+@router.get("/setup/{company_name}")
+async def setup(company_name : str):
+
+    company_id = credit_invest.set_up(company_id=None, company_name=company_name)
+    
+
+    if company_id is None:
+        return {"message": "NoData"}
+    else:
+        response_data = {"company_id": company_id}
+        return response_data
+
 @router.get("/basicinfo/{company_id}", response_model=Union[BasicInfo, Message])
 async def basic_info_result(company_id : str):
     # '27450696'
     # '83387850'
+    # 1104 環球水泥股份有限公司 07568009
 
     credit_invest.set_up(company_id=company_id)
     basic_info_dict = credit_invest.basic_info()
@@ -27,10 +40,10 @@ async def basic_info_result(company_id : str):
 
 
 
-@router.get("/epa_report")
-async def epa_invest_result():
+@router.get("/epa_report/{company_id}")
+async def epa_invest_result(company_id : str):
 
-
+    credit_invest.set_up(company_id=company_id)
     epa_result, plot_is_improve = credit_invest.epa_analysis()
 
     if plot_is_improve:
@@ -51,10 +64,9 @@ async def epa_invest_result():
 @router.get('/pst_report')
 async def pst_invest_result(time_config: str = Query(..., enum=['past', 'future']),
                             year_region: int = Query(None)):
-
+    
     # '83387850'
-    # time_config = 'past'
-    # year_region = 5
+
     pst_result, pieplot_img_buf, lineplot_img_buf = credit_invest.pst_analysis(time_config=time_config, year_region=year_region)
 
     if pieplot_img_buf:

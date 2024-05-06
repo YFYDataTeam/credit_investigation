@@ -60,6 +60,7 @@ class CreditInvest(MySQLAgent):
             else:
                 self.company_id = df_company.business_accounting_no.values[0]
                 self.company_name = company_name
+                return self.company_id
 
     
     def basic_info(self):
@@ -239,6 +240,7 @@ class CreditInvest(MySQLAgent):
             nearest_end_date_str = None
 
         pst_dict = {
+            "company_id": self.company_id,
             "time_config": time_config,
             "total_agreement_currency": total_agreement_currency_dict,
             "nearest_end_date": nearest_end_date_str,
