@@ -4,6 +4,7 @@ import BasicInfo from "./BasicInfo";
 import EpaReport from "./EpaReport";
 import PstReport from "./PstReport";
 import MopsReport from "./Mops";
+import FinancialReport from "./Financial";
 import config from '../../public/configs.json';
 
 const end_point = config.end_point;
@@ -101,6 +102,8 @@ const App = () => {
         <PstReport companyId={finalCompanyId}></PstReport>
         
         <MopsReport companyId={finalCompanyId}></MopsReport>
+
+        <FinancialReport companyId={finalCompanyId}></FinancialReport>
     </div>
     )
 };

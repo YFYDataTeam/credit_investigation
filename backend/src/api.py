@@ -12,17 +12,17 @@ router = APIRouter()
 conn_path = "./backend/conn/connections.json"
 credit_invest = CreditInvest(conn_path=conn_path)
 
-@router.get("/setup/{company_name}")
-async def setup(company_name : str):
+# @router.get("/setup/{company_name}")
+# async def setup(company_name : str):
 
-    company_id = credit_invest.set_up(company_id=None, company_name=company_name)
+#     company_id = credit_invest.set_up(company_id=None, company_name=company_name)
     
 
-    if company_id is None:
-        return {"message": "NoData"}
-    else:
-        response_data = {"company_id": company_id}
-        return response_data
+#     if company_id is None:
+#         return {"message": "NoData"}
+#     else:
+#         response_data = {"company_id": company_id}
+#         return response_data
 
 @router.get("/basicinfo/{company_id}", response_model=Union[BasicInfo, Message])
 async def basic_info_result(company_id : str):
@@ -120,3 +120,11 @@ async def mops_analysis():
     }
 
     return JSONResponse(response_data)
+
+
+@router.get('/financial_report')
+async def financial_report():
+
+    result = credit_invest.financial_report()
+
+    return JSONResponse(result)

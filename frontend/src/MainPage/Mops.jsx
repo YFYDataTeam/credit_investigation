@@ -10,14 +10,15 @@ const MopsReport = ({companyId}) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response= await fetch(`${end_point}mops_report`)
-
+                const response = await fetch(`${end_point}mops_report`);
+                
                 if(!response.ok){
                     throw new Error("Data not found.");
                 }
 
-                const data = await response.json();
-
+                // const data = await response.json();
+                
+                console.log('mops data:', data)
                 if (data.message === 'NoData'){
                     setMopsreport(null);
                 } else {
@@ -32,7 +33,7 @@ const MopsReport = ({companyId}) => {
     }, [companyId])
 
     return (
-        <Container title="財報分析">
+        <Container title="財報分析part1">
             {mopsreport ? (
                 <div>
                     <img src={`data:image/png;base64,${mopsreport.plot_sales_over_month}`} alt="Sales Over Month" />

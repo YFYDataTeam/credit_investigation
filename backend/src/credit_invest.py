@@ -336,4 +336,40 @@ class CreditInvest(MySQLAgent):
 
         return plot_sales_over_month, plot_sales_yoy, plot_sales_y2m, plot_sales_qoq
     
- 
+    def financial_report(self):
+
+        if self.company_id == None:
+            return {"message": self.no_data_msg}
+
+        #TODO: build the company_id mapping table
+        # default is 1104
+        query = """
+            select * from mops_season_report
+            WHERE company_id = '1104'
+        """
+        df_mops_season_raw = self.read_table(query=query)
+
+        partitions = ['company_id', 'period_year' ,'season', 'acct_name']
+
+        def clean_mops_season_duplicants(df, partitions):
+
+            df['row_seq'] = df.groupby(partitions).cumcount() + 1
+
+            df_output = df[df['row_seq'] == 2].drop(['row_seq'], axis=1) 
+
+            return df_output
+
+        df_mops_season = clean_mops_season_duplicants(df_mops_season_raw, partitions=partitions)
+
+        columns_for_drop = ['report_name', 'company_id', 'company_name', 'creation_date', 'seq']
+        cashflow = df_mops_season[df_mops_season['report_name'] == 'CashFlowStatement'].drop(columns_for_drop, axis=1)
+        balance = df_mops_season[df_mops_season['report_name'] == 'BalanceSheet'].drop(columns_for_drop, axis=1)
+        profitlost = df_mops_season[df_mops_season['report_name'] == 'ProfitAndLose'].drop(columns_for_drop, axis=1)
+
+        result = {
+            'cashflow': cashflow.to_dict(orient='records'),
+            'balance': balance.to_dict(orient='records'),
+            'profitlost': profitlost.to_dict(orient='records')
+        }
+
+        return result
