@@ -26,3 +26,34 @@
     color: #666;
     font-size: 16px;
 }
+
+.dataframe {
+  margin: 20px 0;
+  width: 100%;
+  max-width: 1200px; /* Adjust this width as needed */
+  border-collapse: collapse;
+}
+
+.dataframe th, .dataframe td {
+  border: 1px solid rgb(141, 141, 141);
+  padding: 8px;
+  text-align: center;
+  vertical-align: middle; /* Center content vertically */
+}
+
+.dataframe th {
+  background-color: #f2f2f2;
+  white-space: nowrap; /* Prevent text wrapping in headers */ 
+}
+
+.dataframe th:nth-child(1),
+.dataframe th:nth-child(2) {
+  width: 6px; /* Adjust width as needed for 財務年 and 季度 */
+}
+
+.dataframe th:nth-child(4),
+.dataframe th:nth-child(5),
+.dataframe th:nth-child(6),
+.dataframe th:nth-child(7) {
+  width: 100px; /* Adjust width as needed for 數值 and 比例 columns */
+}
