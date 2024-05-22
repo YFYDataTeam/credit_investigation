@@ -98,8 +98,8 @@ import jieba.posseg as pseg
 sentence_delimiters=frozenset(u'。！？……')
 allow_speech_tags = ['an', 'i', 'j', 'l', 'n', 'nr', 'nrfg', 'ns', 'nt', 'nz', 't', 'v', 'vd', 'vn', 'eng']
 
-jieba.set_dictionary("dict/dict.big.txt")
-jieba.load_userdict("dict/mydic2.txt")
+jieba.set_dictionary("backend/dict/dict.big.txt")
+jieba.load_userdict("backend/dict/mydic2.txt")
 
 PY2 = sys.version_info[0] == 2
 if not PY2:

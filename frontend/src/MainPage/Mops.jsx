@@ -16,7 +16,7 @@ const MopsReport = ({companyId}) => {
                     throw new Error("Data not found.");
                 }
 
-                // const data = await response.json();
+                const data = await response.json();
                 
                 console.log('mops data:', data)
                 if (data.message === 'NoData'){

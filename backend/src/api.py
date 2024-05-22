@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
+import jwt
 from fastapi.responses import JSONResponse
 from .models import BasicInfo, Message
 from src.utils import read_config
@@ -9,8 +11,28 @@ import base64
 
 router = APIRouter()
 
+SECRET_KEY = "your_secret_key"
+ALGORITHM = "HS256"
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
 conn_path = "./backend/conn/connections.json"
 credit_invest = CreditInvest(conn_path=conn_path)
+
+
+def verify_token(token: str):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return payload
+    except jwt.PyJWTError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+def get_current_user(token: str = Depends(oauth2_scheme)):
+    return verify_token(token)
+
 
 # @router.get("/setup/{company_name}")
 # async def setup(company_name : str):
@@ -25,6 +47,7 @@ credit_invest = CreditInvest(conn_path=conn_path)
 #         return response_data
 
 @router.get("/basicinfo/{company_id}", response_model=Union[BasicInfo, Message])
+#async def basic_info_result(company_id: str, user: dict = Depends(get_current_user)):
 async def basic_info_result(company_id : str):
     # '27450696'
     # '83387850'

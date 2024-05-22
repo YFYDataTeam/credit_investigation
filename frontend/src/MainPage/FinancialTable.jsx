@@ -17,7 +17,7 @@ const FinancialTable = ({ title, data }) => {
           </tr>
         </thead>
         <tbody>
-          {data.map((row, index) => {
+          {data && Array.isArray(data) && data.map((row, index) => {
             if (row.this_year_amt === 0 && !row.acct_name.includes("股數")) {
               return (
                 <tr key={index}>
@@ -26,7 +26,7 @@ const FinancialTable = ({ title, data }) => {
                   <td colSpan="5">{row.acct_name}</td>
                 </tr>
               );
-            } else {
+            } else if (!row.acct_name.includes("股數")) {
               return (
                 <tr key={index}>
                   <td>{row.period_year}</td>
@@ -39,6 +39,7 @@ const FinancialTable = ({ title, data }) => {
                 </tr>
               );
             }
+            return null; // Add this to avoid returning undefined for rows that don't meet the criteria
           })}
         </tbody>
       </table>
