@@ -15,7 +15,7 @@ SECRET_KEY = "your_secret_key"
 ALGORITHM = "HS256"
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-conn_path = "./backend/conn/connections.json"
+conn_path = ".env/connections.json"
 credit_invest = CreditInvest(conn_path=conn_path)
 
 

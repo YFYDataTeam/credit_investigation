@@ -19,7 +19,14 @@ app.add_middleware(
 
 if __name__ == "__main__":
 
-    configs = read_config('./frontend/public/configs.json')
+
+    configs = {
+    "endpoint": "http://localhost:8000/",
+    "host": "0.0.0.0",
+    "port": 8000,
+    "year_region": 5
+    }
+
     host = configs.get('host', '127.0.0.1')  # Default to 127.0.0.1 if not specified
     port = configs.get('port', 8000)
 

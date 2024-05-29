@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { BrowserRouter as Router, Route, Switch, Redirect } from "react-router-dom";
+// import { BrowserRouter as Router, Route, Switch, Redirect } from "react-router-dom";
 import Container  from "./Container";
 import BasicInfo from "./BasicInfo";
 import EpaReport from "./EpaReport";
@@ -19,40 +19,40 @@ const App = () => {
     const [token, setToken] = useState("");
     const [isValidUser, setIsValidUser] = useState(true);
 
-    useEffect(() => {
-        // Fetch the token when the component mounts
-        const storedToken = localStorage.getItem('token');
-        if (storedToken) {
-            setToken(storedToken);
-        }
-    }, []);
+    // useEffect(() => {
+    //     // Fetch the token when the component mounts
+    //     const storedToken = localStorage.getItem('token');
+    //     if (storedToken) {
+    //         setToken(storedToken);
+    //     }
+    // }, []);
 
-    useEffect(() => {
-        // Check if the token is already in cookies
-        const cookieToken = Cookies.get('token');
-        if (cookieToken) {
-            localStorage.setItem('token', cookieToken);
-            setToken(cookieToken);
-        } else {
-            setIsValidUser(false);
-        }
-    }, []);
+    // useEffect(() => {
+    //     // Check if the token is already in cookies
+    //     const cookieToken = Cookies.get('token');
+    //     if (cookieToken) {
+    //         localStorage.setItem('token', cookieToken);
+    //         setToken(cookieToken);
+    //     } else {
+    //         setIsValidUser(false);
+    //     }
+    // }, []);
 
-    const fetchWithToken = async (url) => {
-        const response = await fetch(url, {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-        if (response.status === 401) {
-            throw new Error('Unauthorized');
-        }
-        return response.json();
-    };
+    // const fetchWithToken = async (url) => {
+    //     const response = await fetch(url, {
+    //         headers: {
+    //             'Authorization': `Bearer ${token}`
+    //         }
+    //     });
+    //     if (response.status === 401) {
+    //         throw new Error('Unauthorized');
+    //     }
+    //     return response.json();
+    // };
 
-    if (!isValidUser) {
-        return <Redirect to="/invalid-user" />;
-    }
+    // if (!isValidUser) {
+    //     return <Redirect to="/invalid-user" />;
+    // }
 
 
     return (

@@ -5,8 +5,6 @@ from sqlalchemy import create_engine
 import warnings
 import os
 
-
-
 def read_config(path):
     try:
         with open(path, 'r') as file:
@@ -18,14 +16,15 @@ def read_config(path):
     except json.JSONDecodeError:
         print(f"Error decoding JSON from the file {path}.")
 
+
 class OracleAgent:
     def __init__(self, config) -> None:
         self.config = config
         self.db_connector()
-
+    
     def db_connector(self):
 
-        oracle_client_dir = './backend/files/'
+        oracle_client_dir = './files/'
 
         oracle_client_path = os.path.join(oracle_client_dir, os.listdir(oracle_client_dir)[0])
 
@@ -98,8 +97,8 @@ import jieba.posseg as pseg
 sentence_delimiters=frozenset(u'。！？……')
 allow_speech_tags = ['an', 'i', 'j', 'l', 'n', 'nr', 'nrfg', 'ns', 'nt', 'nz', 't', 'v', 'vd', 'vn', 'eng']
 
-jieba.set_dictionary("backend/dict/dict.big.txt")
-jieba.load_userdict("backend/dict/mydic2.txt")
+jieba.set_dictionary("./dict/dict.big.txt")
+jieba.load_userdict("./dict/mydic2.txt")
 
 PY2 = sys.version_info[0] == 2
 if not PY2:
