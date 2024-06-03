@@ -49,7 +49,7 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
 @router.get("/basicinfo/{company_id}", response_model=Union[BasicInfo, Message])
 #async def basic_info_result(company_id: str, user: dict = Depends(get_current_user)):
 async def basic_info_result(company_id : str):
-    # '27450696'
+    # ''
     # '83387850'
     # 1104 環球水泥股份有限公司 07568009
 

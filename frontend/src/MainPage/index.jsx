@@ -7,6 +7,7 @@ import PstReport from "./PstReport";
 import MopsReport from "./Mops";
 import FinancialReport from "./Financial";
 import config from '../../public/configs.json';
+import '../../assets/css/title_section.css';
 
 const end_point = config.end_point;
 
@@ -58,17 +59,17 @@ const App = () => {
     return (
     <div>
         <section class="welcome-hero">
-            <div class="container">
                 <div class="header-text">
-                <h1>徵信報告</h1>
-                <p class="subheading">
-                    透過大型語言模型(LLM)根據公司新聞、公開資訊及財務紀錄進行信用評分
-                </p>
+                    <h1>信評報告</h1>
+                    <p class="subheading">
+                        透過大型語言模型(LLM)根據公司新聞、公開資訊及財務紀錄進行信用評分
+                    </p>
                 </div>
-            </div>
+
         </section>
 
         <Container title = "輸入公司統編或名稱">
+            <div className="input-container">
             <input 
                 type="number" 
                 value={companyId}
@@ -96,16 +97,10 @@ const App = () => {
                     }
                     
                 }}
-            > 輸入公司統編
+            > 查詢
             </button>
             <space> </space>
-            <input 
-                type="string" 
-                value={companyName}
-                onChange={(e) => {
-                    setCompanyName(e.target.value);
-                }}
-            />
+
             {/* <button
                 disabled={isLoading}
                 onClick={async (e) => {
@@ -132,7 +127,7 @@ const App = () => {
                 }}
             
             </button> */}
-
+            </div>
         </Container>
 
         <BasicInfo companyId={finalCompanyId}></BasicInfo>
