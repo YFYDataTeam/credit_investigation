@@ -14,6 +14,7 @@ const BasicInfo = ({companyId}) => {
         const fetchData = async () => {
             if (companyId != ''){
                 try {
+                    console.log("endpoint", end_point);
                     console.log("input", companyId);
                     const response = await fetch(`${end_point}basicinfo/${companyId}`);
     

@@ -132,8 +132,6 @@ const App = () => {
 
         <BasicInfo companyId={finalCompanyId}></BasicInfo>
         
-
-        
         <MopsReport companyId={finalCompanyId}></MopsReport>
 
         <FinancialReport companyId={finalCompanyId}></FinancialReport>
