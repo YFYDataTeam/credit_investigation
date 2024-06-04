@@ -5,6 +5,7 @@ from fastapi.responses import JSONResponse
 from .models import BasicInfo, Message
 from src.utils import read_config
 from src.credit_invest import CreditInvest
+from src.financial_repots import FinancialAnalysis
 from typing import Union
 import base64
 
@@ -18,42 +19,30 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 conn_path = ".env/connections.json"
 credit_invest = CreditInvest(conn_path=conn_path)
 
+# def verify_token(token: str):
+#     try:
+#         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+#         return payload
+#     except jwt.PyJWTError:
+#         raise HTTPException(
+#             status_code=status.HTTP_401_UNAUTHORIZED,
+#             detail="Could not validate credentials",
+#             headers={"WWW-Authenticate": "Bearer"},
+#         )
 
-def verify_token(token: str):
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        return payload
-    except jwt.PyJWTError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Could not validate credentials",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+# def get_current_user(token: str = Depends(oauth2_scheme)):
+#     return verify_token(token)
 
-def get_current_user(token: str = Depends(oauth2_scheme)):
-    return verify_token(token)
-
-
-# @router.get("/setup/{company_name}")
-# async def setup(company_name : str):
-
-#     company_id = credit_invest.set_up(company_id=None, company_name=company_name)
-    
-
-#     if company_id is None:
-#         return {"message": "NoData"}
-#     else:
-#         response_data = {"company_id": company_id}
-#         return response_data
 
 @router.get("/basicinfo/{company_id}", response_model=Union[BasicInfo, Message])
 #async def basic_info_result(company_id: str, user: dict = Depends(get_current_user)):
 async def basic_info_result(company_id : str):
-    # ''
+
     # '83387850'
     # 1104 環球水泥股份有限公司 07568009
 
     credit_invest.set_up(company_id=company_id)
+
     basic_info_dict = credit_invest.basic_info()
 
     if "message" in basic_info_dict and basic_info_dict["message"] == "NoData":
@@ -63,10 +52,9 @@ async def basic_info_result(company_id : str):
 
 
 
-@router.get("/epa_report/{company_id}")
-async def epa_invest_result(company_id : str):
+@router.get("/epa_report")
+async def epa_invest_result():
 
-    credit_invest.set_up(company_id=company_id)
     epa_result, plot_is_improve = credit_invest.epa_analysis()
 
     if plot_is_improve:
@@ -108,6 +96,14 @@ async def pst_invest_result(time_config: str = Query(..., enum=['past', 'future'
         'pst_enddate_over_year': lineplot_img_base64
     }
     return JSONResponse(content=response_data)
+
+
+@router.get('/revenue_analysis')
+async def revenue_analysis():
+    financial_analysis = FinancialAnalysis(conn_path=conn_path, company_id=credit_invest.company_id)
+    revenue_result = financial_analysis.revenue_analysis()
+
+    return JSONResponse(revenue_result)
 
 
 @router.get('/mops_report')

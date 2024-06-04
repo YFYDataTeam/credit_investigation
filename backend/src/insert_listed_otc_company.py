@@ -1,21 +1,11 @@
 import pandas as pd
-from backend.src.utils import MySQLAgent
+from backend.src.utils import MySQLAgent, read_config
 import json
 from sqlalchemy.types import String
 
-def read_config(path):
-    try:
-        with open(path, 'r') as file:
-            configs = json.load(file)
-        return configs
-    except FileNotFoundError:
-        print(f"The file {path} was not found.")
-    except json.JSONDecodeError:
-        print(f"Error decoding JSON from the file {path}.")
-
 def main():
     # Load configurations
-    configs = read_config(path="./backend/conn/connections.json")
+    configs = read_config(path="./backend/.env/connections.json")
     job_configs = configs["CREDITREPORT"]['VM1_mysql_conn_info']
     sql_agent = MySQLAgent(job_configs)
 

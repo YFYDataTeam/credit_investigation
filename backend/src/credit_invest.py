@@ -116,36 +116,42 @@ class CreditInvest(MySQLAgent):
 
         if self.company_id == None:
             return {"message": self.no_data_msg}, None
-
-        query = f"""
-            select * from epa_ems_p_46
-            where Business_Accounting_No = {self.company_id}
-        """
-        df_epa = self.read_table(query=query)
-
-        if df_epa.empty:
-            return {"message": self.no_data_msg}, None
         
-        # record count
-        row_count = df_epa.shape[0]
+        try:
 
-        # highest record
-        max_penalty_money = df_epa['penalty_money'].max()
+            query = f"""
+                select * from epa_ems_p_46
+                where Business_Accounting_No = {self.company_id}
+            """
+            df_epa = self.read_table(query=query)
 
-        # latest record
-        df_epa['penalty_date'] = pd.to_datetime(df_epa['penalty_date'])
-        latest_penalty_money = df_epa.loc[df_epa['penalty_date'] == df_epa['penalty_date'].max(), 'penalty_money'].values[0]
+            if df_epa.empty:
+                return {"message": self.no_data_msg}, None
+            
+            # record count
+            row_count = df_epa.shape[0]
+
+            # highest record
+            max_penalty_money = df_epa['penalty_money'].max()
+
+            # latest record
+            df_epa['penalty_date'] = pd.to_datetime(df_epa['penalty_date'])
+            latest_penalty_money = df_epa.loc[df_epa['penalty_date'] == df_epa['penalty_date'].max(), 'penalty_money'].values[0]
 
 
-        plot_is_improve = cat_value_count_bar_plot(df_epa, 'is_improve', 'skyblue', '環保署裁處後的改善情況', '改善情況類別', '次數')
+            plot_is_improve = cat_value_count_bar_plot(df_epa, 'is_improve', 'skyblue', '環保署裁處後的改善情況', '改善情況類別', '次數')
 
-        epa_dict = {
-            "penalty_times": row_count,
-            "max_penalty_money": max_penalty_money,
-            "latest_penalty_money": latest_penalty_money
-        }
+            epa_dict = {
+                "penalty_times": row_count,
+                "max_penalty_money": max_penalty_money,
+                "latest_penalty_money": latest_penalty_money
+            }
+            
+            return epa_dict, plot_is_improve
         
-        return epa_dict, plot_is_improve
+        except Exception as e:
+            error_message = str(e)
+            return {"message": "An error occurred while fetching data: " + error_message}, None
     
     # analyze the pre- and post-timepoint pst data with identical functions
     def pst_analysis(self, time_config, year_region):
