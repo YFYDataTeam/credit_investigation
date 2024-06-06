@@ -16,7 +16,7 @@ const FinancialReport = ({end_point, companyId}) => {
         }
 
         const data = await response.json();
-        console.log('Fetched Data:', data);
+        // console.log('Fetched Data:', data);
         setFinancialReport({
           cashflow: data.cashflow,
           balance: data.balance,
