@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import Container from "./Container";
 import FinancialTable from "./FinancialTable"; // Import the FinancialTable component
-import config from '../../public/configs.json';
 
-const end_point = config.endpoint;
 
-const FinancialReport = ({ companyId }) => {
+
+const FinancialReport = ({end_point, companyId}) => {
   const [financialReport, setFinancialReport] = useState(null);
 
   useEffect(() => {

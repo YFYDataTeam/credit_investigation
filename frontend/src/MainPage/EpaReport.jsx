@@ -1,12 +1,9 @@
 import React, {useState, useEffect} from "react";
 import Container from "./Container";
-import config from '../../public/configs.json';
 import '../../assets/css/epareport.css';
 
-const end_point = config.endpoint;
 
-
-const EpaReport = ({companyId}) => {
+const EpaReport = ({end_point, companyId}) => {
 
     const [epareport, setEpareport] = useState(null);
     const [loading, setLoading] = useState(true);

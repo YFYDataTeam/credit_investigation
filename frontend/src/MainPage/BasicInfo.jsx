@@ -1,21 +1,18 @@
 import React, {useState, useEffect} from "react";
 import Container from "./Container";
-import config from '../../public/configs.json';
 import '../../assets/css/basicinfo.css';
 
-const end_point = config.endpoint;
 
-const BasicInfo = ({companyId}) => {
-  
+const BasicInfo = ({end_point, companyId}) => {
+
     const [basicInfo, setBasicInfo] = useState(null);
     const [errorMessage, setErrorMessage] = useState('');
-    console.log("company_id:", companyId)
+
+    console.log("company_id:", companyId);
     useEffect(() => {
         const fetchData = async () => {
             if (companyId != ''){
                 try {
-                    console.log("endpoint", end_point);
-                    console.log("input", companyId);
                     const response = await fetch(`${end_point}basicinfo/${companyId}`);
     
                     if(!response.ok){
@@ -39,7 +36,7 @@ const BasicInfo = ({companyId}) => {
                     console.error("Error:", error)
                 }
             } else {
-                console.log('No company found.')
+                console.log('No company found.');
             }
             
         };

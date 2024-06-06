@@ -6,10 +6,9 @@ import EpaReport from "./EpaReport";
 import PstReport from "./PstReport";
 import MopsReport from "./Mops";
 import FinancialReport from "./Financial";
-import config from '../../public/configs.json';
 import '../../assets/css/title_section.css';
 
-const end_point = config.end_point;
+let end_point = process.env.END_POINT;
 
 const App = () => {
     const [companyId, setCompanyId] = useState("");
@@ -130,15 +129,15 @@ const App = () => {
             </div>
         </Container>
 
-        <BasicInfo companyId={finalCompanyId}></BasicInfo>
+        <BasicInfo end_point={end_point} companyId={finalCompanyId}></BasicInfo>
         
-        <MopsReport companyId={finalCompanyId}></MopsReport>
+        <MopsReport end_point={end_point} companyId={finalCompanyId}></MopsReport>
 
-        <FinancialReport companyId={finalCompanyId}></FinancialReport>
+        <FinancialReport end_point={end_point} companyId={finalCompanyId}></FinancialReport>
 
-        <EpaReport companyId={finalCompanyId}></EpaReport>
+        <EpaReport end_point={end_point} companyId={finalCompanyId}></EpaReport>
 
-        <PstReport companyId={finalCompanyId}></PstReport>
+        <PstReport end_point={end_point} companyId={finalCompanyId}></PstReport>
     </div>
     )
 };

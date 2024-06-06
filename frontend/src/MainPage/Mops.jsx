@@ -1,10 +1,9 @@
 import React, {useState, useEffect} from "react";
 import Container from "./Container";
-import config from '../../public/configs.json';
 
-const end_point = config.endpoint;
 
-const MopsReport = ({companyId}) => {
+
+const MopsReport = ({end_point, companyId}) => {
     const [mopsreport, setMopsreport] = useState(null);
 
     useEffect(() => {

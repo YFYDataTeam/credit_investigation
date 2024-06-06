@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Container from "./Container";
-import config from '../../public/configs.json';
 
-const end_point = config.endpoint;
-const year_region = config.year_region;
+const year_region = process.env.YEAR_REGION;
 
 const getCurrencyCode = (currencyName) => {
     const currencyMap = {
@@ -15,7 +13,7 @@ const getCurrencyCode = (currencyName) => {
     return currencyMap[currencyName] || currencyName; 
 };
 
-const CurrencyAgreements = ({companyId}) => {
+const CurrencyAgreements = ({end_point, companyId}) => {
     const [agreements, setAgreements] = useState(null);
     const [pieChart, setPieChart] = useState(null);
     const [lineChart, setLineChart] = useState(null);
