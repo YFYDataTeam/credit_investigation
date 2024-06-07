@@ -61,10 +61,14 @@ class FinancialAnalysis(MySQLAgent):
 
         # col_for_drop = ['period', 'comment']
         # df_mops = df_mops.drop(col_for_drop, axis=1)
+        # result = {
+        #     'revenue_analysis':df_mops.to_dict(orient='records'),
+        #     'sales_qoq': df_mops_QoQ.dropna().to_dict(orient='records'),
+        #     'monthly_y2m': df_monthly_y2m.dropna().to_dict(orient='records')
+        # }
+
         result = {
-            'revenue_analysis':df_mops.to_dict(orient='records'),
-            'sales_qoq': df_mops_QoQ.dropna().to_dict(orient='records'),
-            'monthly_y2m': df_monthly_y2m.dropna().to_dict(orient='records')
+            'sales_qoq': df_mops_QoQ.dropna().to_dict(orient='records')
         }
 
         return result

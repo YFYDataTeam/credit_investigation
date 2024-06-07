@@ -112,3 +112,24 @@ button:hover:not(:disabled) {
   background-color: #0056b3;
   transform: translateY(-3px);
 }
+
+
+
+
+.chart-container {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  width: 300%;
+  height: 200;
+  padding-bottom: 0%; /* 16:9 aspect ratio */
+  position: relative;
+}
+
+.chart-container canvas {
+  position: absolute;
+  top: 50;
+  left: -200;
+  width: 100% !important;
+  height: 100% !important;
+}

@@ -6,6 +6,7 @@ import EpaReport from "./EpaReport";
 import PstReport from "./PstReport";
 import MopsReport from "./Mops";
 import FinancialReport from "./Financial";
+import RevenueAnalysis from "./RevenueAnalysis";
 import '../../assets/css/title_section.css';
 
 let end_point = process.env.END_POINT;
@@ -57,10 +58,10 @@ const App = () => {
 
     return (
     <div>
-        <section class="welcome-hero">
-                <div class="header-text">
+        <section className="welcome-hero">
+                <div className="header-text">
                     <h1>信評報告</h1>
-                    <p class="subheading">
+                    <p className="subheading">
                         透過大型語言模型(LLM)根據公司新聞、公開資訊及財務紀錄進行信用評分
                     </p>
                 </div>
@@ -98,7 +99,6 @@ const App = () => {
                 }}
             > 查詢
             </button>
-            <space> </space>
 
             {/* <button
                 disabled={isLoading}
@@ -130,12 +130,14 @@ const App = () => {
         </Container>
 
         <BasicInfo end_point={end_point} companyId={finalCompanyId}></BasicInfo>
+
+        <RevenueAnalysis end_point={end_point} companyId={finalCompanyId}></RevenueAnalysis>
         
         <MopsReport end_point={end_point} companyId={finalCompanyId}></MopsReport>
 
         <FinancialReport end_point={end_point} companyId={finalCompanyId}></FinancialReport>
 
-        <EpaReport end_point={end_point} companyId={finalCompanyId}></EpaReport>
+        {/* <EpaReport end_point={end_point} companyId={finalCompanyId}></EpaReport> */}
 
         <PstReport end_point={end_point} companyId={finalCompanyId}></PstReport>
     </div>
