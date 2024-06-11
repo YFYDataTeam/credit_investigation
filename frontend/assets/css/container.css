@@ -117,28 +117,17 @@ button:hover:not(:disabled) {
 
 
 .chart-container {
+  width: 100%;
+  position: relative;
+  margin-bottom: 20px; /* Add some space between the charts */
+}
+
+.chart-container, .sub_container {
   display: flex;
-  justify-content: center; 
+  justify-content: center;
   align-items: center;
-  width: 360%;
-  height: 260;
-  padding-bottom: 0%;
-  position: relative;
-}
-
-.chart-container canvas {
-  position: absolute;
-  top: 50;
-  left: -260;
-  width: 100% !important;
-  height: 100% !important;
+  width: 900px;
+  height: 300px; /* Adjust the height as needed */
 }
 
 
-.chart-title {
-  position: relative;
-  right: 600px; 
-  bottom: 35%; 
-  font-size: 22px; 
-  color: #777474; 
-}

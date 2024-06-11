@@ -51,11 +51,16 @@ class FinancialAnalysis(MySQLAgent):
         
         df_mops['period'] = df_mops['period_year'].astype(str) + '-' + df_mops['period_month'].astype(str)
 
+        # Monthly Sales
+        df_monthly_sales = df_mops[['period','sales']]
         # Sales QoQ
         df_mops['quarter'] = df_mops['period_month'].apply(create_qurter)
         df_mops['year_quarter'] = df_mops['period_year'].astype(str) + df_mops['quarter']
         df_mops_QoQ = df_mops.groupby('year_quarter').agg(year_quarter_sales= ('sales','sum')).reset_index()
         df_mops_QoQ['QoQ'] = (df_mops_QoQ['year_quarter_sales']/df_mops_QoQ['year_quarter_sales'].shift(1))-1
+        # Sales YoY
+        df_mops_YoY = df_mops.groupby('period_year').agg(year_sales= ('sales','sum')).reset_index()
+        df_mops_YoY['YoY'] = (df_mops_YoY['year_sales']/df_mops_YoY['year_sales'].shift(1))-1
         # Monthly Y2M
         df_monthly_y2m = df_mops.pivot_table(index='period_month', columns='period_year', values='y2m', aggfunc='mean')
 
@@ -68,7 +73,9 @@ class FinancialAnalysis(MySQLAgent):
         # }
 
         result = {
-            'sales_qoq': df_mops_QoQ.dropna().to_dict(orient='records')
+            'monthly_sales': df_monthly_sales.to_dict(orient='records'),
+            'quarterly_sales': df_mops_QoQ.dropna().to_dict(orient='records'),
+            'yearly_sales':  df_mops_YoY.dropna().to_dict(orient='records')
         }
 
         return result
