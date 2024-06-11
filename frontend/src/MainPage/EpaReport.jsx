@@ -32,6 +32,13 @@ const EpaReport = ({end_point, companyId}) => {
         fetchData();
     }, [companyId]); 
 
+    if(!epareport){
+        return (
+              <Container title="環保署汙染裁處記錄分析">
+              </Container>
+          );
+    }
+
     return (
         <Container title="環保署汙染裁處記錄分析">
             {epareport ? (

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Container from "./Container";
-import FinancialTable from "./FinancialTable"; // Import the FinancialTable component
+import FinancialTable from "./FinancialTable"; 
+import '../../assets/css/financialtable.css';
 
 
 
@@ -32,14 +33,21 @@ const FinancialReport = ({end_point, companyId}) => {
     fetchData();
   }, [companyId]);
 
+  if(!companyId){
+    return (
+        <Container title="財報報表">
+        </Container>
+    );
+  }
+
   return (
-    <Container title="財報分析part2">
+    <Container title="財報報表">
       {
         financialReport ? (
           <div>
-            <FinancialTable title='資產負債表' data={financialReport.balance} />
-            <FinancialTable title='損益表' data={financialReport.profitloss} />
-            <FinancialTable title='現金流量表' data={financialReport.cashflow} />
+            <FinancialTable title={<span className="small-title">資產負債表</span>}  data={financialReport.balance} />
+            <FinancialTable title={<span className="small-title">損益表</span>} data={financialReport.profitloss} />
+            <FinancialTable title={<span className="small-title">現金流量表</span>} data={financialReport.cashflow} />
           </div>
         ) : (
           <div><h3>查無資料</h3></div>

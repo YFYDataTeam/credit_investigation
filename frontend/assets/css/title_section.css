@@ -1,5 +1,5 @@
 .welcome-hero {
-    background: linear-gradient(135deg, #4a90e2, #50e3c2);
+    background: linear-gradient(135deg, #c41230, #ffc6d0);
     color: #fff; /* Default color for the section */
     padding: 60px 20px;
     text-align: center;
@@ -32,4 +32,15 @@
     margin-bottom: 0;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
     color: #000; /* Override color to black */
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
 }
+
+.small-title {
+    font-size: 18px; /* Adjust the font size as needed */
+    font-weight: bold; /* Optional: keep bold styling */
+    color: #333; /* Optional: define a color */
+    text-align: center; /* Optional: center the text */
+    font-family: 'Arial, sans-serif'; /* Specify the font family here */
+}
+  

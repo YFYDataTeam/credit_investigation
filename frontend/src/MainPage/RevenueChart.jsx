@@ -12,14 +12,68 @@ ChartJS.register(
     Legend,
     PointElement
 );
-const QuarterlySalesChart = ({ labels, quarterSales, qoqData }) => {
+
+const MonthlySalesChart = ({ labels, salesData }) => {
+    const chartData = {
+        labels: labels,
+        datasets: [
+            {
+                data: salesData,
+                backgroundColor: 'rgba(54, 162, 235, 0.2)', // Light blue fill
+                borderColor: 'rgba(54, 162, 235, 1)', // Blue line
+                borderWidth: 1,
+                fill: true,
+                tension: 0.4 // Smooth lines
+            }
+        ]
+    };
+
+    const options = {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            x: {
+                grid: {
+                    display: false // Hide grid lines on x-axis
+                }
+            },
+            y: {
+                type: 'linear',
+                display: true,
+                position: 'left',
+                grid: {
+                    display: false // Hide grid lines on y-axis
+                }
+            }
+        },
+        plugins: {
+            title:{
+                display:true,
+                align: 'center',
+                text: "Monthly Sales",
+                font:{size:18}
+            },
+            legend: {
+                display: false,  // Hide the legend
+            }
+        }
+    };
+
+    return (
+        <div className="sub_container">
+            <Line data={chartData} options={options} />
+        </div>
+    );
+};
+
+const QuarterlySalesChart = ({ labels, quarterlySales, qoqData }) => {
     const chartData = {
         labels: labels,
         datasets: [
             {
                 type: 'bar',
                 label: 'Quarterly Sales',
-                data: quarterSales,
+                data: quarterlySales,
                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
                 borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 1,
@@ -77,8 +131,8 @@ const QuarterlySalesChart = ({ labels, quarterSales, qoqData }) => {
             title: {
                 display: true,
                 align: 'center',
-                text: "Sales and QoQ Analysis",
-                font: { size: 25, weight: 'bold' }
+                text: "Quarterly Sales Report",
+                font: {size: 18}
             },
             legend: {
                 display: true,  // Show the legend to distinguish between the datasets
@@ -93,17 +147,30 @@ const QuarterlySalesChart = ({ labels, quarterSales, qoqData }) => {
     );
 };
 
-const MonthlySalesChart = ({ labels, salesData }) => {
+
+const YearlySalesChart = ({ labels, annualSales, yoyData }) => {
     const chartData = {
         labels: labels,
         datasets: [
             {
-                data: salesData,
-                backgroundColor: 'rgba(54, 162, 235, 0.2)', // Light blue fill
-                borderColor: 'rgba(54, 162, 235, 1)', // Blue line
+                type: 'bar',
+                label: 'Yearly Sales',
+                data: annualSales,
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
                 borderWidth: 1,
-                fill: true,
-                tension: 0.4 // Smooth lines
+                yAxisID: 'y1'
+            },
+            {
+                type: 'line',
+                label: 'YoY',
+                data: yoyData,
+                borderColor: 'rgba(255, 206, 86, 1)',
+                backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                borderWidth: 2,
+                fill: false,
+                tension: 0.5,
+                yAxisID: 'y2'
             }
         ]
     };
@@ -117,33 +184,52 @@ const MonthlySalesChart = ({ labels, salesData }) => {
                     display: false // Hide grid lines on x-axis
                 }
             },
-            y: {
+            y1: {
                 type: 'linear',
                 display: true,
                 position: 'left',
                 grid: {
                     display: false // Hide grid lines on y-axis
+                },
+                title: {
+                    display: true,
+                    text: 'Annual Sales'
+                }
+            },
+            y2: {
+                type: 'linear',
+                display: true,
+                position: 'right',
+                grid: {
+                    display: false // Hide grid lines on y-axis
+                },
+                title: {
+                    display: true,
+                    text: 'YoY'
                 }
             }
         },
         plugins: {
-            title:{
-                display:true,
+            title: {
+                display: true,
                 align: 'center',
-                text: "Monthly Sales",
-                font:{size:25,weight:'bold'}
+                text: "Annual Sales and YoY",
+                font: {
+                    size: 18,
+                    fontColor: 'red'
+                },
             },
             legend: {
-                display: false,  // Hide the legend
+                display: true,  // Show the legend to distinguish between the datasets
             }
         }
     };
 
     return (
         <div className="sub_container">
-            <Line data={chartData} options={options} />
+            <Chart data={chartData} options={options} />
         </div>
     );
 };
 
-export {QuarterlySalesChart, MonthlySalesChart};
+export {MonthlySalesChart, QuarterlySalesChart,  YearlySalesChart};

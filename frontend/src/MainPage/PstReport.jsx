@@ -56,6 +56,13 @@ const CurrencyAgreements = ({end_point, companyId}) => {
     //     return <div>Loading...</div>;
     // }
 
+    if(!agreements){
+        return (
+              <Container title="動產擔保分析">
+              </Container>
+          );
+    }
+
     return (
         <Container title="動產擔保分析">
             {agreements ? (

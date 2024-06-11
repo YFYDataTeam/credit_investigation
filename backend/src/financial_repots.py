@@ -59,8 +59,8 @@ class FinancialAnalysis(MySQLAgent):
         df_mops_QoQ = df_mops.groupby('year_quarter').agg(year_quarter_sales= ('sales','sum')).reset_index()
         df_mops_QoQ['QoQ'] = (df_mops_QoQ['year_quarter_sales']/df_mops_QoQ['year_quarter_sales'].shift(1))-1
         # Sales YoY
-        df_mops_YoY = df_mops.groupby('period_year').agg(year_sales= ('sales','sum')).reset_index()
-        df_mops_YoY['YoY'] = (df_mops_YoY['year_sales']/df_mops_YoY['year_sales'].shift(1))-1
+        df_mops_YoY = df_mops.groupby('period_year').agg(annual_sales= ('sales','sum')).reset_index()
+        df_mops_YoY['YoY'] = (df_mops_YoY['annual_sales']/df_mops_YoY['annual_sales'].shift(1))-1
         # Monthly Y2M
         df_monthly_y2m = df_mops.pivot_table(index='period_month', columns='period_year', values='y2m', aggfunc='mean')
 
@@ -75,7 +75,7 @@ class FinancialAnalysis(MySQLAgent):
         result = {
             'monthly_sales': df_monthly_sales.to_dict(orient='records'),
             'quarterly_sales': df_mops_QoQ.dropna().to_dict(orient='records'),
-            'yearly_sales':  df_mops_YoY.dropna().to_dict(orient='records')
+            'annual_sales':  df_mops_YoY.dropna().to_dict(orient='records')
         }
 
         return result
@@ -85,7 +85,8 @@ class FinancialAnalysis(MySQLAgent):
         if self.company_id == None:
             return {"message": self.no_data_msg}
 
-        # default is 1104
+        #TODO: add a function to check if the MOPS data existed,
+        #TODO: write in DB if the data does not existed
         query = f"""
             select * from mops_season_report
             WHERE company_id = {self.stock_num}

@@ -36,7 +36,8 @@ const BasicInfo = ({end_point, companyId}) => {
                     console.error("Error:", error)
                 }
             } else {
-                console.log('No company found.');
+                await fetch(`${end_point}reset_company_id`);
+                // console.log('No company found.');
             }
             
         };
@@ -51,6 +52,13 @@ const BasicInfo = ({end_point, companyId}) => {
             alert(errorMessage);    
         }
     },[errorMessage]);
+
+  if(!basicInfo){
+    return (
+          <Container title="公司基本資訊">
+          </Container>
+      );
+  }
 
     return (
       <Container title="公司基本資訊">

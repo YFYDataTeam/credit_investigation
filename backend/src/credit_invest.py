@@ -61,6 +61,11 @@ class CreditInvest(MySQLAgent):
                 self.company_id = df_company.business_accounting_no.values[0]
                 self.company_name = company_name
                 return self.company_id
+            
+        else:
+            self.company_id = None
+            self.company_name = None
+            
 
     
     def basic_info(self):

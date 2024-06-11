@@ -50,6 +50,9 @@ async def basic_info_result(company_id : str):
     else:
         return basic_info_dict  
 
+@router.get("/reset_company_id")
+async def reset_company_id():
+    credit_invest.set_up(company_id=None)
 
 
 @router.get("/epa_report")
@@ -98,9 +101,9 @@ async def pst_invest_result(time_config: str = Query(..., enum=['past', 'future'
     return JSONResponse(content=response_data)
 
 
-@router.get('/revenue_analysis')
-async def revenue_analysis():
-    financial_analysis = FinancialAnalysis(conn_path=conn_path, company_id=credit_invest.company_id)
+@router.get('/revenue_analysis/{company_id}')
+async def revenue_analysis(company_id: str):
+    financial_analysis = FinancialAnalysis(conn_path=conn_path, company_id=company_id)
     revenue_result = financial_analysis.revenue_analysis()
 
     return JSONResponse(revenue_result)

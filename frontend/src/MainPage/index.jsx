@@ -5,7 +5,7 @@ import BasicInfo from "./BasicInfo";
 import EpaReport from "./EpaReport";
 import PstReport from "./PstReport";
 import MopsReport from "./Mops";
-import FinancialReport from "./Financial";
+import FinancialReport from "./FinancialReports";
 import RevenueAnalysis from "./RevenueAnalysis";
 import '../../assets/css/title_section.css';
 
@@ -60,9 +60,10 @@ const App = () => {
     <div>
         <section className="welcome-hero">
                 <div className="header-text">
-                    <h1>信評報告</h1>
+                    <h1>徵信報告</h1>
                     <p className="subheading">
-                        透過大型語言模型(LLM)根據公司新聞、公開資訊及財務紀錄進行信用評分
+                        {/* 透過大型語言模型(LLM)根據公司新聞、公開資訊及財務紀錄進行信用評分 */}
+                        整合公司基本資訊、財部報表、公示資料等資料，快速評估公司運營情況
                     </p>
                 </div>
 
@@ -133,7 +134,7 @@ const App = () => {
 
         <RevenueAnalysis end_point={end_point} companyId={finalCompanyId}></RevenueAnalysis>
         
-        <MopsReport end_point={end_point} companyId={finalCompanyId}></MopsReport>
+        {/* <MopsReport end_point={end_point} companyId={finalCompanyId}></MopsReport> */}
 
         <FinancialReport end_point={end_point} companyId={finalCompanyId}></FinancialReport>
 
