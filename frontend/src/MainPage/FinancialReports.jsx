@@ -3,31 +3,46 @@ import Container from "./Container";
 import FinancialTable from "./FinancialTable"; 
 import '../../assets/css/financialtable.css';
 
-
+const formatFinancialData = (data) => {
+  return data.map(item => ({
+    ...item,
+    this_year_amt: item.this_year_amt.toLocaleString(),
+    last_year_amt: item.last_year_amt.toLocaleString()
+  }));
+};
 
 const FinancialReport = ({end_point, companyId}) => {
   const [financialReport, setFinancialReport] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response = await fetch(`${end_point}financial_report`);
-        if (!response.ok) {
-          throw new Error("Data not found.");
-        }
+      if(companyId !== ''){
+        try {
+            const response = await fetch(`${end_point}financial_report/${companyId}`);
+            if (!response.ok) {
+              throw new Error("Data not found.");
+            }
+    
+            const data = await response.json();
 
-        const data = await response.json();
-        // console.log('Fetched Data:', data);
-        setFinancialReport({
-          cashflow: data.cashflow,
-          balance: data.balance,
-          profitloss: data.profitlost
-        });
+            const formattedCashflow = formatFinancialData(data.cashflow);
+            const formattedBalance = formatFinancialData(data.balance);
+            const formattedProfitloss = formatFinancialData(data.profitloss);
 
-      } catch (error) {
-        console.error("Error fetching data", error);
-        setFinancialReport(null);
+            setFinancialReport({
+              cashflow: formattedCashflow,
+              balance: formattedBalance,
+              profitloss: formattedProfitloss
+    
+    
+            });
+    
+          } catch (error) {
+            console.error("Error fetching data", error);
+            setFinancialReport(null);
+          }
       }
+      
     };
 
     fetchData();
@@ -39,7 +54,7 @@ const FinancialReport = ({end_point, companyId}) => {
         </Container>
     );
   }
-
+  
   return (
     <Container title="財報報表">
       {
@@ -55,6 +70,6 @@ const FinancialReport = ({end_point, companyId}) => {
       }
     </Container>
   );
-};
+};  
 
 export default FinancialReport;

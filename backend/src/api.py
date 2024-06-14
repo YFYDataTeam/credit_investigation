@@ -109,44 +109,9 @@ async def revenue_analysis(company_id: str):
     return JSONResponse(revenue_result)
 
 
-@router.get('/mops_report')
-async def mops_analysis():
-
-    plot_sales_over_month, plot_sales_yoy, plot_sales_y2m, plot_sales_qoq = credit_invest.mops()
-
-    if plot_sales_over_month:
-        plot_sales_over_month_base64 = base64.b64encode(plot_sales_over_month.getvalue()).decode('utf-8')
-    else:
-        plot_sales_over_month_base64 = None
-
-    if plot_sales_yoy:
-        plot_sales_yoy_base64 = base64.b64encode(plot_sales_yoy.getvalue()).decode('utf-8')
-    else:
-        plot_sales_yoy_base64 = None
-
-    if plot_sales_y2m:
-        plot_sales_y2m_base64 = base64.b64encode(plot_sales_y2m.getvalue()).decode('utf-8')
-    else:
-        plot_sales_y2m_base64 = None
-
-    if plot_sales_qoq:
-        plot_sales_qoq_base64 = base64.b64encode(plot_sales_qoq.getvalue()).decode('utf-8')
-    else:
-        plot_sales_qoq_base64 = None
-    
-    response_data = {
-        "plot_sales_over_month": plot_sales_over_month_base64,
-        "plot_sales_yoy": plot_sales_yoy_base64,
-        "plot_sales_y2m": plot_sales_y2m_base64,
-        "plot_sales_qoq": plot_sales_qoq_base64
-    }
-
-    return JSONResponse(response_data)
-
-
-@router.get('/financial_report')
-async def financial_report():
-
-    result = credit_invest.financial_report()
+@router.get('/financial_report/{company_id}')
+async def financial_report(company_id: str):
+    financial_analysis = FinancialAnalysis(conn_path=conn_path, company_id=company_id)
+    result = financial_analysis.financial_report()
 
     return JSONResponse(result)

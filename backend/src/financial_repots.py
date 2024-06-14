@@ -109,22 +109,16 @@ class FinancialAnalysis(MySQLAgent):
         columns_for_drop = ['report_name', 'company_id', 'company_name', 'creation_date', 'seq']
         cashflow = df_mops_season[df_mops_season['report_name'] == 'CashFlowStatement'].drop(columns_for_drop, axis=1)
         balance = df_mops_season[df_mops_season['report_name'] == 'BalanceSheet'].drop(columns_for_drop, axis=1)
-        profitlost = df_mops_season[df_mops_season['report_name'] == 'ProfitAndLose'].drop(columns_for_drop, axis=1)
+        profitloss = df_mops_season[df_mops_season['report_name'] == 'ProfitAndLose'].drop(columns_for_drop, axis=1)
 
-        cashflow_result = {
-            'cashflow': cashflow.to_dict(orient='records')
-        }
-
-        balance_result = {
-            'balance': balance.to_dict(orient='records')
-        }
-
-        profitlost_result = {
-            'profitlost': profitlost.to_dict(orient='records')
+        result = {
+            'cashflow': cashflow.to_dict(orient='records'),
+            'balance': balance.to_dict(orient='records'),
+            'profitloss': profitloss.to_dict(orient='records')
         }
 
 
-        return cashflow_result, balance_result, profitlost_result
+        return result
     
 
     
