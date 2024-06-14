@@ -85,7 +85,8 @@ class FinancialAnalysis(MySQLAgent):
 
         if self.company_id == None:
             return {"message": self.no_data_msg}
-
+        
+        #TODO: switch to CrawlerDB
         #TODO: add a function to check if the MOPS data existed,
         #TODO: write in DB if the data does not existed
         query = f"""

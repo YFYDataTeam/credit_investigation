@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse
 from .models import BasicInfo, Message
 from src.utils import read_config
 from src.credit_invest import CreditInvest
-from src.financial_repots import FinancialAnalysis
+from src.financial_analysis import FinancialAnalysis
 from typing import Union
 import base64
 
