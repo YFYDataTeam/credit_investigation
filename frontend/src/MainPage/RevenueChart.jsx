@@ -1,5 +1,5 @@
 import React from 'react';
-import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, PointElement } from 'chart.js';
+import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, PointElement, Filler } from 'chart.js';
 import { Chart, Line, Bar } from 'react-chartjs-2';
 
 ChartJS.register(
@@ -10,7 +10,8 @@ ChartJS.register(
     Title,
     Tooltip,
     Legend,
-    PointElement
+    PointElement,
+    Filler
 );
 
 const MonthlySalesChart = ({ labels, salesData }) => {
@@ -232,4 +233,99 @@ const YearlySalesChart = ({ labels, annualSales, yoyData }) => {
     );
 };
 
-export {MonthlySalesChart, QuarterlySalesChart,  YearlySalesChart};
+
+const MonthlyY2M = ({y2mData}) => {
+
+    function processY2Mdata(data) {
+        const currentYear = new Date().getFullYear();
+        const datasets = {};
+    
+        data.forEach(item => {
+            const year = item.period_year;
+            const month = item.period_month;
+
+            if (!datasets[year]) {
+                datasets[year] = {
+                    label: year.toString(),
+                    data: Array(12).fill(null),
+                    borderColor: year === currentYear ? 'rgba(255, 99, 132, 1)' : 'rgba(200, 200, 200, 1)',
+                    backgroundColor: year === currentYear ? 'rgba(255, 99, 132, 0.2)' : 'rgba(200, 200, 200, 0.2)',
+                    // fill: false,
+                    tension: 0.1
+                };
+            };
+            datasets[year].data[month - 1] = item.sales; // Populate the sales data for the correct month
+        });
+
+        // Other years in descending order
+        function compareNumbers(b, a) {
+            return a - b;
+          }
+        // Convert datasets object to an array and sort it so the current year is first
+        const sortedDatasets = Object.values(datasets).sort((a, b) => {
+            if (a.label === currentYear.toString()) return -1; // Current year first
+            if (b.label === currentYear.toString()) return -1; // double check Current year first
+            return compareNumbers(a.label, b.label);  
+        });
+        
+        return sortedDatasets;
+}
+    
+    const labels = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
+    const datasets = processY2Mdata(y2mData);
+
+   
+
+    const config = {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: datasets
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              grid: {
+                display: false  // Hide grid lines on x-axis
+              },
+              title: {
+                display: true,
+                text: 'Month'
+              }
+            },
+            y: {
+              beginAtZero: true,
+              grid: {
+                display: false  // Hide grid lines on y-axis
+              },
+              title: {
+                display: true,
+                text: 'Sales'
+              }
+            }
+          },
+          plugins: {
+            title: {
+              display: true,
+              text: "Year to Month Sales",
+              font: {
+                size: 18
+              }
+            },
+            legend: {
+              display: true  // Show the legend to distinguish between the datasets
+            }
+          }
+        }
+      };
+      console.log('config.data:', config.data);
+      return (
+        <div className="sub_container">
+            <Line data={config.data} options={config.options} />
+        </div>
+    );
+};
+
+export {MonthlySalesChart, QuarterlySalesChart,  YearlySalesChart, MonthlyY2M};

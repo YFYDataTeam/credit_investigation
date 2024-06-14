@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from "react";
 import Container from "./Container";
-import {MonthlySalesChart, QuarterlySalesChart,  YearlySalesChart} from "./RevenueChart";
+import {MonthlySalesChart, QuarterlySalesChart,  YearlySalesChart, MonthlyY2M} from "./RevenueChart";
 
 const RevenueAnalysis = ({end_point, companyId}) => {
     const [revenueAnalysis, setRevenueAnalysis] = useState(null);
@@ -18,7 +18,8 @@ const RevenueAnalysis = ({end_point, companyId}) => {
                     setRevenueAnalysis({
                         monthly_sales: data.monthly_sales,
                         quarterly_sales: data.quarterly_sales,
-                        annual_sales: data.annual_sales
+                        annual_sales: data.annual_sales,
+                        monthly_y2m: data.monthly_y2m
                     });
     
                 } catch (error) {
@@ -53,6 +54,8 @@ const RevenueAnalysis = ({end_point, companyId}) => {
     const annual_sales_data = revenueAnalysis.annual_sales.map(item => item.annual_sales)
     const sales_yoy_data = revenueAnalysis.annual_sales.map(item => item.YoY);
 
+    const y2m_data =  revenueAnalysis.monthly_y2m;
+    // console.log("y2m_data:", y2m_data);
     return (
         <Container title="營運績效">
             <YearlySalesChart 
@@ -64,6 +67,7 @@ const RevenueAnalysis = ({end_point, companyId}) => {
                 quarterlySales={quarterly_sales_data} 
                 qoqData={sales_qoq_data} />
             <MonthlySalesChart labels={labels_monthly_sales} salesData={monthly_sales_data} />
+            <MonthlyY2M y2mData={y2m_data} />
 
         </Container>
     );

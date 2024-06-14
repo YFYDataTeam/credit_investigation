@@ -165,6 +165,7 @@ class CreditInvest(MySQLAgent):
             return {"message": self.no_data_msg}, None, None
         
         try:
+            #TODO: switch to CrawlerDB
             job_configs = self.configs["CREDITREPORT"]['BIDB_conn_info']
             oracle_agent = OracleAgent(job_configs)
 

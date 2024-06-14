@@ -62,7 +62,7 @@ class FinancialAnalysis(MySQLAgent):
         df_mops_YoY = df_mops.groupby('period_year').agg(annual_sales= ('sales','sum')).reset_index()
         df_mops_YoY['YoY'] = (df_mops_YoY['annual_sales']/df_mops_YoY['annual_sales'].shift(1))-1
         # Monthly Y2M
-        df_monthly_y2m = df_mops.pivot_table(index='period_month', columns='period_year', values='y2m', aggfunc='mean')
+        df_monthly_y2m = df_mops[['period_year', 'period_month', 'sales']].sort_values(['period_year'], ascending=False)
 
         # col_for_drop = ['period', 'comment']
         # df_mops = df_mops.drop(col_for_drop, axis=1)
@@ -75,7 +75,8 @@ class FinancialAnalysis(MySQLAgent):
         result = {
             'monthly_sales': df_monthly_sales.to_dict(orient='records'),
             'quarterly_sales': df_mops_QoQ.dropna().to_dict(orient='records'),
-            'annual_sales':  df_mops_YoY.dropna().to_dict(orient='records')
+            'annual_sales':  df_mops_YoY.dropna().to_dict(orient='records'),
+            'monthly_y2m': df_monthly_y2m.to_dict(orient='records')
         }
 
         return result
