@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from src.api import router
 from src.utils import read_config
+from src.credit_invest import CreditInvest
 
 app = FastAPI()
 app.include_router(router)
@@ -29,14 +30,15 @@ if __name__ == "__main__":
     host = configs.get('host', '127.0.0.1')  # Default to 127.0.0.1 if not specified
     port = configs.get('port', 8000)
 
-    # conn_path = "./backend/conn/connections.json"
+    # conn_path = "backend/.env/connections.json"
     # credit_invest = CreditInvest(conn_path=conn_path)
 
     # for debug
-    # company_id = '83387850'
+    # company_id = '86156446'
     # credit_invest.set_up(company_id=company_id)
     # basic_info_dict = credit_invest.basic_info()
-    # # epa_invest_result, plot_is_improve = credit_invest.epa_analysis()
+    # epa_invest_result, plot_is_improve = credit_invest.epa_analysis()
     # pst_result, pieplot_img_buf, lineplot_img_buf = credit_invest.pst_analysis('past',5)
+
 
     uvicorn.run(app, host=host, port=port)

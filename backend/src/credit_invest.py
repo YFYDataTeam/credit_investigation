@@ -5,12 +5,6 @@ from src.utils import (
     MySQLAgent, 
     OracleAgent,
     create_qurter)
-from src.plot_tools import (
-    cat_value_count_bar_plot,
-    portion_pie_plot,
-    mops_bar_plot,
-    mops_line_plot
-)
 from datetime import datetime
 import matplotlib.pyplot as plt
 
@@ -102,7 +96,10 @@ class CreditInvest(MySQLAgent):
         except Exception as e:
             print("An error occurred:", e)
 
-        chairman = df_director.loc[df_director['person_position_name'] == '董事長', 'person_name'].values[0]
+        try:
+            chairman = df_director.loc[df_director['person_position_name'] == '董事長', 'person_name'].values[0]
+        except:
+            chairman = None
         directors_str = ", ".join(df_director.loc[df_director['person_position_name'] == '董事', 'person_name'])
 
         basic_info_dict = {
@@ -166,15 +163,15 @@ class CreditInvest(MySQLAgent):
         
         try:
             #TODO: switch to CrawlerDB
-            job_configs = self.configs["CREDITREPORT"]['BIDB_conn_info']
-            oracle_agent = OracleAgent(job_configs)
+            job_configs = self.configs["CREDITREPORT"]['Crawler_mysql_conn_info']
+            sql_agent = MySQLAgent(job_configs)
 
             query = f"""
-            select * from ODS.w_yfy_crd_pst_f
+            select * from w_yfy_crd_pst_f
             where debtor_accounting_no = '{self.company_id}'
             """
             
-            df_pst = oracle_agent.read_table(query=query)
+            df_pst = sql_agent.read_table(query=query)
 
             df_pst = df_pst[~df_pst['register_no'].isnull()]
 
@@ -184,25 +181,35 @@ class CreditInvest(MySQLAgent):
             df_pst['agreement_end_date'] = pd.to_datetime(df_pst['agreement_end_date'])
 
             current_year = datetime.now().year
+
+            def sliced_data(df):
+                df['agreement_end_year'] = df['agreement_end_date'].dt.year
+                years_range = list(range(current_year - year_region, current_year))
+                df_sliced = df[df['agreement_end_year'].isin(years_range)]
+                return df_sliced
             
             if time_config == 'past':
-                if df_pst['agreement_end_date'].max() < datetime.now():
-                    df_sliced = df_pst[df_pst['agreement_end_date'] <= datetime.now()]
-                    years_range = list(range(current_year - year_region, current_year))
+                df_sliced = sliced_data(df_pst)
+                if df_sliced['agreement_end_date'].max() < datetime.now():
+                    if df_sliced.empty:
+                        return {"message": self.no_data_msg}
+
                     # for past : max
                     nearest_end_date = df_sliced['agreement_end_date'].max()
-                elif df_pst['agreement_end_date'].max() > datetime.now():
-                    return {"message": self.no_data_msg}
+                elif df_sliced['agreement_end_date'].max() > datetime.now():
+                    return {"message": self.no_data_msg}, None, None
                 
             elif time_config == 'future':
+                df_sliced = sliced_data(df_pst)
                 if df_pst['agreement_end_date'].min() >= datetime.now():
-                    df_sliced = df_pst[df_pst['agreement_end_date'] > datetime.now()]
-                    years_range = list(range(current_year, current_year +  year_region))
+                    
+                    if df_sliced.empty:
+                        return {"message": self.no_data_msg}
                     # for future: min
                     nearest_end_date = df_sliced['agreement_end_date'].min()
 
                 elif df_pst['agreement_end_date'].min() < datetime.now():
-                    return {"message": self.no_data_msg}
+                    return {"message": self.no_data_msg}, None, None
                 
             else:
                 return {"message": 'wrong time config for pst_analysis'}
@@ -212,176 +219,42 @@ class CreditInvest(MySQLAgent):
             return {"message": "An error occurred while fetching data: " + error_message}, None, None
 
 
-        # show in terms of different currency
-        total_agreement_currency = df_sliced.groupby(['debtor_title','currency'])['agreement_amount'].agg(total_amount='sum').astype('int')
-        total_agreement_currency_dict = total_agreement_currency.reset_index().to_dict(orient='records')
-
+        # clean the string in the agreement_amount column
+        def convert_to_int(value):
+            clean_value = value.replace('(新台幣)', '').replace(',','').strip()
+            return clean_value
+        
+        df_sliced['agreement_amount'] = df_sliced['agreement_amount'].apply(convert_to_int)
+        
+        df_sliced_clean = df_sliced[df_sliced['agreement_amount']!=""].copy()
+        df_sliced_clean['agreement_amount'] = df_sliced_clean['agreement_amount'].astype(int)
+        df_sliced_clean['agreement_end_year'] = df_sliced_clean['agreement_end_year'].astype(int)
 
         # portion of object_type
-        pieplot_img_buf = portion_pie_plot(df_sliced, 'object_type', '抵押品類別分布')
+        overall_object_type_counts = {type: df_sliced['object_type'].count() for type in set(df_sliced['object_type'])}
             
+        # agreement_amount by year
+        annual_agreement_aggregates = df_sliced_clean.groupby('agreement_end_year')['agreement_amount'].agg(
+            total_agreement_amount='sum',
+            average_agreement_amount='mean',
+            agreement_count='count').reset_index()
 
-        # count times by agreement_end_date in terms of year
-        data_year = [date.year for date in df_sliced['agreement_end_date']]
-        counts = {year: 0 for year in years_range}
-        for year in data_year:
-            if year in counts:
-                counts[year] += 1
-        years = list(counts.keys())
-        values = list(counts.values())
-        plt.figure(figsize=(10, 6))
-        plt.plot(years, values, marker='o', linestyle='-', color='blue')
-        if time_config == 'past':
-            plt.title(f'過去{year_region}年逐年動產擔保到期次數')
-        elif time_config == 'future':
-            plt.title(f'未來{year_region}年逐年動產擔保到期次數')
-        plt.xlabel('年')
-        plt.ylabel('次數')
-        plt.xticks(years)
-        plt.grid(True)
-        # plt.show()
-        
-        lineplot_img_buf = io.BytesIO()
-        plt.savefig(lineplot_img_buf, format='png')
-        lineplot_img_buf.seek(0)
-        plt.close('all')
+        # Round the average_agreement_amount to 2 decimal places
+        annual_agreement_aggregates['average_agreement_amount'] = annual_agreement_aggregates['average_agreement_amount'].round()
+        annual_object_type_counts = df_sliced_clean.groupby('agreement_end_year')['object_type'].agg(object_counts='size').reset_index()
 
         if pd.notna(nearest_end_date):
-            nearest_end_date_str = nearest_end_date.isoformat()
+            nearest_end_date_str = nearest_end_date.strftime('%Y-%m-%d')
         else:
             nearest_end_date_str = None
 
         pst_dict = {
             "company_id": self.company_id,
             "time_config": time_config,
-            "total_agreement_currency": total_agreement_currency_dict,
             "nearest_end_date": nearest_end_date_str,
+            "annual_agreement_aggregates": annual_agreement_aggregates.to_dict(orient='records'),
+            "overall_type_counts": overall_object_type_counts,
+            "annual_type_counts": annual_object_type_counts.to_dict(orient='records')
         }
 
-        return pst_dict, pieplot_img_buf, lineplot_img_buf
-
-
-    # TODO: need stock_id and company_account mapping table
-    def mops(self):
-        """
-        Demo:
-        2313 華通電腦股份有限公司
-        1104 環球水泥股份有限公司 07568009
-        1231 聯華食品工業股份有限公司
-        """
-
-        if self.company_id == None:
-            return {"message": self.no_data_msg}, None
-        
-        query = f"""
-            select * from mops_monthly_report
-            where company_id = 1104
-        """
-        df_mops = self.read_table(query=query)
-
-        if df_mops.empty:
-            return {"message": self.no_data_msg}, None
-        
-        df_mops['period'] = pd.to_datetime(df_mops['period_year'].astype(str) + '-' + df_mops['period_month'].astype(str))
-
-        # Sales over month
-        plot_sales_over_month = mops_line_plot(df_mops, 'period', 'sales','Date', 'Sales', 'Monthly Sales Over Time') 
-
-        # Sales MoM
-        x_axis = 'period'
-        y_axis = 'var_lastmm'
-        x_label = 'Date'
-        y_label = 'Sales MoM'
-        title = 'Monthly Sales Change Over Time'
-        colors = ['green' if x > 0 else 'red' for x in df_mops['var_lastmm']]
-        plot_sales_mom = mops_bar_plot(df_mops, colors, x_axis, y_axis, x_label, y_label, title)
-
-        # Sales YoY
-        x_axis = 'period'
-        y_axis = 'var_lastyy'
-        x_label = 'Date'
-        y_label = 'Sales YoY'
-        title = 'yearly Sales Change Over Time'
-        colors = ['green' if x > 0 else 'red' for x in df_mops['var_lastyy']]
-        plot_sales_yoy = mops_bar_plot(df_mops, colors, x_axis, y_axis, x_label, y_label, title)
-
-        # Monthly Y2M
-        df_pivot = df_mops.pivot_table(index='period_month', columns='period_year', values='y2m', aggfunc='mean')
-
-        # Monthly Y2M by year: multiple line in one chart
-        plt.figure(figsize=(12, 6))
-        for column in df_pivot.columns:
-            color = 'red' if column == 2024 else 'grey'  # Conditional color assignment
-            label = f'Year {column}' if column == 2024 else None  # Only label year 2024
-            plt.plot(df_pivot.index, df_pivot[column], marker='o', label=label, color=color)
-            
-            # Annotating the year at the end of each line
-            end_point_y = df_pivot[column].iloc[-1]  # Get the last y-value of the series
-            end_point_x = df_pivot.index[-1]         # Get the last x-value (month)
-            plt.text(end_point_x + 0.1, end_point_y, str(column), color=color, verticalalignment='center')
-
-        plt.xlabel('Month')
-        plt.ylabel('Y2M')
-        plt.title('Monthly Y2M by Year')
-        plt.xticks(range(1, 13))  # Adjusting x-axis for months
-        plt.legend(title='Legend')
-        plt.grid(True)
-        # plt.show()
-
-        plot_sales_y2m = io.BytesIO()
-        plt.savefig(plot_sales_y2m, format='png')
-        plot_sales_y2m.seek(0)
-        plt.close('all')
-
-        # Sales QoQ
-        df_mops['quarter'] = df_mops['period_month'].apply(create_qurter)
-        df_mops['year_quarter'] = df_mops['period_year'].astype(str) + df_mops['quarter']
-        df_mops_QoQ = df_mops.groupby('year_quarter').agg(year_quarter_sales= ('sales','sum')).reset_index()
-        df_mops_QoQ['QoQ'] = (df_mops_QoQ['year_quarter_sales']/df_mops_QoQ['year_quarter_sales'].shift(1)).dropna()-1
-        x_axis = 'year_quarter'
-        y_axis = 'QoQ'
-        x_label = 'Year Quarter'
-        y_label = 'Sales QoQ change'
-        title = 'Sales QoQ'
-        colors = ['green' if x > 0 else 'red' for x in df_mops_QoQ['QoQ']]
-        plot_sales_qoq = mops_bar_plot(df_mops_QoQ, colors, x_axis, y_axis, x_label, y_label, title, width=1)
-
-        return plot_sales_over_month, plot_sales_yoy, plot_sales_y2m, plot_sales_qoq
-    
-    def financial_report(self):
-
-        if self.company_id == None:
-            return {"message": self.no_data_msg}
-
-        #TODO: build the company_id mapping table
-        # default is 1104
-        query = """
-            select * from mops_season_report
-            WHERE company_id = '1104'
-        """
-        df_mops_season_raw = self.read_table(query=query)
-
-        partitions = ['company_id', 'period_year' ,'season', 'acct_name']
-
-        def clean_mops_season_duplicants(df, partitions):
-
-            df['row_seq'] = df.groupby(partitions).cumcount() + 1
-
-            df_output = df[df['row_seq'] == 2].drop(['row_seq'], axis=1) 
-
-            return df_output
-
-        df_mops_season = clean_mops_season_duplicants(df_mops_season_raw, partitions=partitions)
-
-        columns_for_drop = ['report_name', 'company_id', 'company_name', 'creation_date', 'seq']
-        cashflow = df_mops_season[df_mops_season['report_name'] == 'CashFlowStatement'].drop(columns_for_drop, axis=1)
-        balance = df_mops_season[df_mops_season['report_name'] == 'BalanceSheet'].drop(columns_for_drop, axis=1)
-        profitlost = df_mops_season[df_mops_season['report_name'] == 'ProfitAndLose'].drop(columns_for_drop, axis=1)
-
-        result = {
-            'cashflow': cashflow.to_dict(orient='records'),
-            'balance': balance.to_dict(orient='records'),
-            'profitlost': profitlost.to_dict(orient='records')
-        }
-
-        return result
+        return pst_dict

@@ -36,7 +36,7 @@ const RevenueAnalysis = ({end_point, companyId}) => {
 
     }, [companyId]);
 
-    if(!revenueAnalysis){
+    if(!companyId){
         return (
             <Container title="營運績效">
             </Container>

@@ -14,9 +14,12 @@ const getCurrencyCode = (currencyName) => {
 };
 
 const CurrencyAgreements = ({end_point, companyId}) => {
+    const [timeConfig, setTimeConfig] = useState(null);
+    const [nearestEndDate, setNearestEndDate] = useState(null);
     const [agreements, setAgreements] = useState(null);
-    const [pieChart, setPieChart] = useState(null);
-    const [lineChart, setLineChart] = useState(null);
+    const [overallTypeCounts, setOverallTypeCounts] = useState(null);
+    const [annualTypeCounts, setAnnualTypeCounts] = useState(null);
+
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -28,17 +31,19 @@ const CurrencyAgreements = ({end_point, companyId}) => {
                 }
     
                 const data = await response.json();
-                console.log('pst companyid', companyId);
                 console.log('pst data',data);
                 if (data.message === 'NoData'){
                     setAgreements(null);
                     setPieChart(null);
                     setLineChart(null);
                 } else {
-                        
-                    setAgreements(data.total_agreement_currency);
-                    setPieChart(data.pst_type_distribution);
-                    setLineChart(data.pst_enddate_over_year);
+                    
+                    setTimeConfig(data.time_config);
+                    setNearestEndDate(data.nearest_end_date);
+                    setAgreements(data.annual_agreement_aggregates);
+                    setOverallTypeCounts(data.overall_type_counts);
+                    setAnnualTypeCounts(data.annual_type_counts);
+                
 
                 }
 
@@ -56,7 +61,12 @@ const CurrencyAgreements = ({end_point, companyId}) => {
     //     return <div>Loading...</div>;
     // }
 
-    if(!agreements){
+    const label_agreement = agreements.annual_agreement_aggregates.map(item => item.agreement_end_year);
+    const annual_total_agreement_amount = agreements.annual_agreement_aggregates.map(item => item.total_agreement_amount);
+    const annual_agreement_count = agreements.annual_agreement_aggregates.map(item => item.agreement_count);
+
+
+    if(!companyId){
         return (
               <Container title="動產擔保分析">
               </Container>

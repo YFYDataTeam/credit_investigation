@@ -1,6 +1,8 @@
 from fastapi import APIRouter, Query, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 import jwt
+import pandas as pd
+import numpy as np
 from fastapi.responses import JSONResponse
 from .models import BasicInfo, Message
 from src.utils import read_config
@@ -81,24 +83,24 @@ async def pst_invest_result(time_config: str = Query(..., enum=['past', 'future'
     
     # '83387850'
 
-    pst_result, pieplot_img_buf, lineplot_img_buf = credit_invest.pst_analysis(time_config=time_config, year_region=year_region)
+    pst_result = credit_invest.pst_analysis(time_config=time_config, year_region=year_region)
 
-    if pieplot_img_buf:
-        pieplot_img_base64 = base64.b64encode(pieplot_img_buf.getvalue()).decode('utf-8')
-    else:
-        pieplot_img_base64 = None
+    def convert_dict(d):
+        """Convert all int64 values to int"""
+        if isinstance(d, dict):
+            return {k: convert_dict(v) for k, v in d.items()}
+        elif isinstance(d, list):
+            return [convert_dict(i) for i in d]
+        elif isinstance(d, pd.Timestamp):
+            return d.strftime('%Y-%m-%d')
+        elif isinstance(d, np.int64):
+            return int(d)
+        elif isinstance(d, np.float64):
+            return float(d)
+        else:
+            return d
 
-    if lineplot_img_buf:
-        lineplot_img_base64 = base64.b64encode(lineplot_img_buf.getvalue()).decode('utf-8')
-    else:
-        lineplot_img_base64 = None
-
-    response_data = {
-        **pst_result,
-        'pst_type_distribution': pieplot_img_base64,
-        'pst_enddate_over_year': lineplot_img_base64
-    }
-    return JSONResponse(content=response_data)
+    return JSONResponse(content=convert_dict(pst_result))
 
 
 @router.get('/revenue_analysis/{company_id}')
