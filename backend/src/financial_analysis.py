@@ -95,6 +95,11 @@ class FinancialAnalysis(MySQLAgent):
         """
         df_mops_season_raw = self.read_table(query=query)
 
+
+        if df_mops_season_raw.empty:
+            return {"message": self.no_data_msg}
+    
+
         partitions = ['company_id', 'period_year' ,'season', 'acct_name']
 
         def clean_mops_season_duplicants(df, partitions):
@@ -113,8 +118,8 @@ class FinancialAnalysis(MySQLAgent):
         profitloss = df_mops_season[df_mops_season['report_name'] == 'ProfitAndLose'].drop(columns_for_drop, axis=1)
 
         result = {
-            'cashflow': cashflow.to_dict(orient='records'),
             'balance': balance.to_dict(orient='records'),
+            'cashflow': cashflow.to_dict(orient='records'),
             'profitloss': profitloss.to_dict(orient='records')
         }
 

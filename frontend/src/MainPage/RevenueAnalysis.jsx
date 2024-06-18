@@ -4,10 +4,11 @@ import {MonthlySalesChart, QuarterlySalesChart,  YearlySalesChart, MonthlyY2M} f
 
 const RevenueAnalysis = ({end_point, companyId}) => {
     const [revenueAnalysis, setRevenueAnalysis] = useState(null);
- 
+
     useEffect(() => {
         const fetchData = async () => {
-            if (companyId != ''){
+            console.log("companyid in reveneue analysis:", companyId)
+            if (companyId !== ''){
                 try {
                     const response = await fetch(`${end_point}revenue_analysis/${companyId}`);
                     if (!response.ok) {
@@ -15,6 +16,7 @@ const RevenueAnalysis = ({end_point, companyId}) => {
                       }
         
                     const data = await response.json();
+                    console.log("revenue data:", data);
                     setRevenueAnalysis({
                         monthly_sales: data.monthly_sales,
                         quarterly_sales: data.quarterly_sales,
@@ -43,6 +45,15 @@ const RevenueAnalysis = ({end_point, companyId}) => {
         );
     }
 
+    if (!revenueAnalysis) {
+        return (
+            <Container title="營運績效">
+                <p>Loading...</p>
+            </Container>
+        );
+    }
+    
+    console.log('reveneu analysis:', revenueAnalysis)
     const labels_monthly_sales = revenueAnalysis.monthly_sales.map(item => item.period);
     const monthly_sales_data = revenueAnalysis.monthly_sales.map(item => item.sales);
 

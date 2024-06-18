@@ -1,26 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import Container from "./Container";
-
-const year_region = process.env.YEAR_REGION;
+import { AnnualAgreementPlot } from './PstChart';
 
 const getCurrencyCode = (currencyName) => {
     const currencyMap = {
         '新台幣': 'TWD',
-        '日圓': 'JPY',   
-        '美金': 'USD'     
+        '日圓': 'JPY',
+        '美金': 'USD'
     };
 
-    return currencyMap[currencyName] || currencyName; 
+    return currencyMap[currencyName] || currencyName;
 };
 
-const CurrencyAgreements = ({end_point, companyId}) => {
-    const [timeConfig, setTimeConfig] = useState(null);
-    const [nearestEndDate, setNearestEndDate] = useState(null);
-    const [agreements, setAgreements] = useState(null);
-    const [overallTypeCounts, setOverallTypeCounts] = useState(null);
-    const [annualTypeCounts, setAnnualTypeCounts] = useState(null);
-
+const PstAnalysis = ({ end_point, companyId }) => {
+    const [pstAnalysis, setPstAnalysis] = useState(null);
     const [loading, setLoading] = useState(true);
+
+    const year_region = process.env.YEAR_REGION || 5;
+    console.log('pst company_id:', companyId);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -29,85 +26,63 @@ const CurrencyAgreements = ({end_point, companyId}) => {
                 if (!response.ok) {
                     throw new Error('Error fetching data');
                 }
-    
+
                 const data = await response.json();
-                console.log('pst data',data);
-                if (data.message === 'NoData'){
+                console.log('pst data', data);
+                if (data.message === 'NoData') {
                     setAgreements(null);
-                    setPieChart(null);
-                    setLineChart(null);
                 } else {
-                    
-                    setTimeConfig(data.time_config);
-                    setNearestEndDate(data.nearest_end_date);
-                    setAgreements(data.annual_agreement_aggregates);
-                    setOverallTypeCounts(data.overall_type_counts);
-                    setAnnualTypeCounts(data.annual_type_counts);
-                
-
+                    setPstAnalysis({
+                        timeConfig: data.time_config,
+                        nearestEndDate: data.nearest_end_date,
+                        annualAgreement: data.annual_agreement_aggregates,
+                        overallTypeCounts: data.overall_type_counts,
+                        annualTypeCounts: data.annual_type_counts
+                    });
                 }
-
             } catch (error) {
                 console.error('Error:', error);
             } finally {
                 setLoading(false);
             }
         };
-    
+
+
         fetchData();
-    }, [companyId]);
 
-    // if (loading) {
-    //     return <div>Loading...</div>;
-    // }
+    }, [companyId, end_point, year_region]);
 
-    const label_agreement = agreements.annual_agreement_aggregates.map(item => item.agreement_end_year);
-    const annual_total_agreement_amount = agreements.annual_agreement_aggregates.map(item => item.total_agreement_amount);
-    const annual_agreement_count = agreements.annual_agreement_aggregates.map(item => item.agreement_count);
-
-
-    if(!companyId){
-        return (
-              <Container title="動產擔保分析">
-              </Container>
-          );
+    if (loading) {
+        return <div>Loading...</div>;
     }
 
+    if (!companyId) {
+        return (
+            <Container title="動產擔保分析"></Container>
+        );
+    }
+
+    // if (!pstAnalysis) {
+    //     return (
+    //         <Container title="動產擔保分析">
+    //             <p>Loading...</p>
+    //         </Container>
+    //     );
+    // }
+    
+
+    const label_agreement = pstAnalysis?.annualAgreement?.map(item => item.agreement_end_year) || [];
+    const annual_total_agreement_amount = pstAnalysis?.annualAgreement?.map(item => item.total_agreement_amount) || [];
+    const annual_agreement_count = pstAnalysis?.annualAgreement?.map(item => item.agreement_count) || [];
     return (
         <Container title="動產擔保分析">
-            {agreements ? (
-                <div>
-                    <table>
-                        <thead>
-                            <tr>
-                                #TODO : change the column name
-                                <th>Currency</th>
-                                <th>Total Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {agreements.map((agreement, index) => (
-                                <tr key={index}>
-                                    <td>{getCurrencyCode(agreement.currency)}</td>
-                                    <td>{agreement.total_amount.toLocaleString()}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                    <div>
-                        <h2>抵押品類別分布</h2>
-                        <img src={`data:image/png;base64,${pieChart}`} alt="Pie Chart of Type Distribution" />
-                    </div>
-                    <div>
-                        <h2>年度動產擔保到期次數</h2>
-                        <img src={`data:image/png;base64,${lineChart}`} alt="Line Chart of Agreement Expiry by Year" />
-                    </div>
-                </div>
-            ) : (
-                <h3>查無資料</h3>
-            )}
+                    <AnnualAgreementPlot
+                        labels={label_agreement}
+                        annual_total_agreement_amount={annual_total_agreement_amount}
+                        annual_agreement_count={annual_agreement_count} />
+            
         </Container>
     );
-}
+};
 
-export default CurrencyAgreements;
+export default PstAnalysis;

@@ -24,11 +24,13 @@ const FinancialReport = ({end_point, companyId}) => {
             }
     
             const data = await response.json();
+            if (data.message === "NoData"){
+              setFinancialReport(null);
 
+          } else {
             const formattedCashflow = formatFinancialData(data.cashflow);
             const formattedBalance = formatFinancialData(data.balance);
             const formattedProfitloss = formatFinancialData(data.profitloss);
-
             setFinancialReport({
               cashflow: formattedCashflow,
               balance: formattedBalance,
@@ -36,6 +38,7 @@ const FinancialReport = ({end_point, companyId}) => {
     
     
             });
+          }
     
           } catch (error) {
             console.error("Error fetching data", error);
@@ -47,14 +50,20 @@ const FinancialReport = ({end_point, companyId}) => {
 
     fetchData();
   }, [companyId]);
-
+  // console.log('balance:', financialReport.balance);
   if(!companyId){
     return (
         <Container title="財報報表">
         </Container>
     );
   }
-  
+  if (!financialReport) {
+    return (
+        <Container title="財報報表">
+            <p>Loading...</p>
+        </Container>
+    );
+}
   return (
     <Container title="財報報表">
       {

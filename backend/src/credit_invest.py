@@ -224,7 +224,7 @@ class CreditInvest(MySQLAgent):
             clean_value = value.replace('(新台幣)', '').replace(',','').strip()
             return clean_value
         
-        df_sliced['agreement_amount'] = df_sliced['agreement_amount'].apply(convert_to_int)
+        df_sliced['agreement_amount'] = df_sliced['agreement_amount'].apply(convert_to_int).copy()
         
         df_sliced_clean = df_sliced[df_sliced['agreement_amount']!=""].copy()
         df_sliced_clean['agreement_amount'] = df_sliced_clean['agreement_amount'].astype(int)

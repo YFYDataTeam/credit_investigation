@@ -8,7 +8,7 @@ const BasicInfo = ({end_point, companyId}) => {
     const [basicInfo, setBasicInfo] = useState(null);
     const [errorMessage, setErrorMessage] = useState('');
 
-    console.log("company_id:", companyId);
+    console.log("company_id in basic info:", companyId);
     useEffect(() => {
         const fetchData = async () => {
             if (companyId != ''){
