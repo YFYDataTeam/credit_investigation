@@ -14,21 +14,20 @@ const getCurrencyCode = (currencyName) => {
 
 const PstAnalysis = ({ end_point, companyId }) => {
     const [pstAnalysis, setPstAnalysis] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(null);
 
     const year_region = process.env.YEAR_REGION || 5;
-    console.log('pst company_id:', companyId);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
+                setLoading(true);
                 const response = await fetch(`${end_point}pst_report?time_config=past&year_region=${year_region}`);
                 if (!response.ok) {
                     throw new Error('Error fetching data');
                 }
 
                 const data = await response.json();
-                console.log('pst data', data);
                 if (data.message === 'NoData') {
                     setAgreements(null);
                 } else {
@@ -71,9 +70,9 @@ const PstAnalysis = ({ end_point, companyId }) => {
     // }
     
 
-    const label_agreement = pstAnalysis?.annualAgreement?.map(item => item.agreement_end_year) || [];
-    const annual_total_agreement_amount = pstAnalysis?.annualAgreement?.map(item => item.total_agreement_amount) || [];
-    const annual_agreement_count = pstAnalysis?.annualAgreement?.map(item => item.agreement_count) || [];
+    const label_agreement = pstAnalysis.annualAgreement.map(item => item.agreement_end_year) || [];
+    const annual_total_agreement_amount = pstAnalysis.annualAgreement.map(item => item.total_agreement_amount) || [];
+    const annual_agreement_count = pstAnalysis.annualAgreement.map(item => item.agreement_count) || [];
     return (
         <Container title="動產擔保分析">
                     <AnnualAgreementPlot

@@ -162,7 +162,6 @@ class CreditInvest(MySQLAgent):
             return {"message": self.no_data_msg}, None, None
         
         try:
-            #TODO: switch to CrawlerDB
             job_configs = self.configs["CREDITREPORT"]['Crawler_mysql_conn_info']
             sql_agent = MySQLAgent(job_configs)
 
@@ -258,3 +257,25 @@ class CreditInvest(MySQLAgent):
         }
 
         return pst_dict
+
+    def cdd_result(self):
+
+        if self.company_id == None:
+            return {"message": self.no_data_msg}, None, None
+    
+        job_configs = self.configs["CREDITREPORT"]['VM1_news_mysql_conn_info']
+        sql_agent = MySQLAgent(job_configs)
+        query = f"""
+                select company_name, week_date, light_status AS cred_invest_result from cdd_result
+                where company_name = '{self.company_name}'
+            """
+        df_cdd = sql_agent.read_table(query=query)
+
+        if df_cdd.empty:
+            return {"message": self.no_data_msg}, None
+            
+        model_result_cdd = {
+            "cdd_weekly_category": df_cdd.to_dict(orient="records")
+        }
+
+        return model_result_cdd

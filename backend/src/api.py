@@ -85,20 +85,7 @@ async def pst_invest_result(time_config: str = Query(..., enum=['past', 'future'
 
     pst_result = credit_invest.pst_analysis(time_config=time_config, year_region=year_region)
 
-    def convert_dict(d):
-        """Convert all int64 values to int"""
-        if isinstance(d, dict):
-            return {k: convert_dict(v) for k, v in d.items()}
-        elif isinstance(d, list):
-            return [convert_dict(i) for i in d]
-        elif isinstance(d, pd.Timestamp):
-            return d.strftime('%Y-%m-%d')
-        elif isinstance(d, np.int64):
-            return int(d)
-        elif isinstance(d, np.float64):
-            return float(d)
-        else:
-            return d
+
 
     return JSONResponse(content=convert_dict(pst_result))
 
@@ -117,3 +104,26 @@ async def financial_report(company_id: str):
     result = financial_analysis.financial_report()
 
     return JSONResponse(result)
+
+
+@router.get('/cdd_result')
+async def cdd_result():
+    model_result_cdd = credit_invest.cdd_result()
+
+    return JSONResponse(convert_dict(model_result_cdd))
+
+
+def convert_dict(d):
+    """Convert all int64 values to int"""
+    if isinstance(d, dict):
+        return {k: convert_dict(v) for k, v in d.items()}
+    elif isinstance(d, list):
+        return [convert_dict(i) for i in d]
+    elif isinstance(d, pd.Timestamp):
+        return d.strftime('%Y-%m-%d')
+    elif isinstance(d, np.int64):
+        return int(d)
+    elif isinstance(d, np.float64):
+        return float(d)
+    else:
+        return d

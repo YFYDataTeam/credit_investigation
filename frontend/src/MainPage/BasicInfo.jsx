@@ -4,11 +4,9 @@ import '../../assets/css/basicinfo.css';
 
 
 const BasicInfo = ({end_point, companyId}) => {
-
     const [basicInfo, setBasicInfo] = useState(null);
     const [errorMessage, setErrorMessage] = useState('');
-
-    console.log("company_id in basic info:", companyId);
+    console.log('basic company_id:', companyId);
     useEffect(() => {
         const fetchData = async () => {
             if (companyId != ''){

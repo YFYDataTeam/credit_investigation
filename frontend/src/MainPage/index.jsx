@@ -7,6 +7,7 @@ import PstReport from "./PstReport";
 import MopsReport from "./Mops";
 import FinancialReport from "./FinancialReports";
 import RevenueAnalysis from "./RevenueAnalysis";
+import CddResult from "./CddResult";
 import '../../assets/css/title_section.css';
 
 let end_point = process.env.END_POINT;
@@ -132,9 +133,9 @@ const App = () => {
 
         <BasicInfo end_point={end_point} companyId={finalCompanyId}></BasicInfo>
 
-        <RevenueAnalysis end_point={end_point} companyId={finalCompanyId}></RevenueAnalysis>
+        <CddResult end_point={end_point} companyId={finalCompanyId}></CddResult>
         
-        {/* <MopsReport end_point={end_point} companyId={finalCompanyId}></MopsReport> */}
+        <RevenueAnalysis end_point={end_point} companyId={finalCompanyId}></RevenueAnalysis>
 
         <FinancialReport end_point={end_point} companyId={finalCompanyId}></FinancialReport>
 

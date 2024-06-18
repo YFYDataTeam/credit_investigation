@@ -16,7 +16,7 @@ ChartJS.register(
 
 
 const AnnualAgreementPlot = ({labels, annual_total_agreement_amount, annual_agreement_count}) => {
-    console.log("label_agreement",labels);
+
     const chartData = {
         labels : labels,
         datasets: [
@@ -31,7 +31,7 @@ const AnnualAgreementPlot = ({labels, annual_total_agreement_amount, annual_agre
             },
             {
                 type: 'line',
-                label: '每年擔保案件數',
+                label: '擔保案件數',
                 data: annual_agreement_count,
                 borderColor: 'rgba(255, 206, 86, 1)',
                 backgroundColor: 'rgba(255, 206, 86, 0.2)',
@@ -49,7 +49,7 @@ const AnnualAgreementPlot = ({labels, annual_total_agreement_amount, annual_agre
         scales: {
             x: {
                 grid: {
-                    display: false // Hide grid lines on x-axis
+                    display: false
                 }
             },
             y1: {
@@ -57,11 +57,11 @@ const AnnualAgreementPlot = ({labels, annual_total_agreement_amount, annual_agre
                 display: true,
                 position: 'left',
                 grid: {
-                    display: false // Hide grid lines on y-axis
+                    display: false 
                 },
                 title: {
                     display: true,
-                    text: '每年擔保總金額'
+                    text: '總金額'
                 }
             },
             y2: {
@@ -69,11 +69,11 @@ const AnnualAgreementPlot = ({labels, annual_total_agreement_amount, annual_agre
                 display: true,
                 position: 'right',
                 grid: {
-                    display: false // Hide grid lines on y-axis
+                    display: false
                 },
                 title: {
                     display: true,
-                    text: '每年擔保案件數'
+                    text: '擔保案件數'
                 }
             }
         },
@@ -81,14 +81,14 @@ const AnnualAgreementPlot = ({labels, annual_total_agreement_amount, annual_agre
             title: {
                 display: true,
                 align: 'center',
-                text: "每年擔保金額與次數",
+                text: "過去5年每年擔保金額與次數",
                 font: {
                     size: 18,
                     fontColor: 'red'
                 },
             },
             legend: {
-                display: true,  // Show the legend to distinguish between the datasets
+                display: true,  
             }
         }
     };
