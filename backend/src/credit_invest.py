@@ -141,7 +141,7 @@ class CreditInvest(MySQLAgent):
             latest_penalty_money = df_epa.loc[df_epa['penalty_date'] == df_epa['penalty_date'].max(), 'penalty_money'].values[0]
 
 
-            plot_is_improve = cat_value_count_bar_plot(df_epa, 'is_improve', 'skyblue', '環保署裁處後的改善情況', '改善情況類別', '次數')
+            # plot_is_improve = cat_value_count_bar_plot(df_epa, 'is_improve', 'skyblue', '環保署裁處後的改善情況', '改善情況類別', '次數')
 
             epa_dict = {
                 "penalty_times": row_count,
@@ -149,7 +149,7 @@ class CreditInvest(MySQLAgent):
                 "latest_penalty_money": latest_penalty_money
             }
             
-            return epa_dict, plot_is_improve
+            return epa_dict
         
         except Exception as e:
             error_message = str(e)
