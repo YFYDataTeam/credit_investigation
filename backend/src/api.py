@@ -7,7 +7,7 @@ from fastapi.responses import JSONResponse
 from .models import BasicInfo, Message
 from src.utils import read_config
 from src.credit_invest import CreditInvest
-from src.ar_invest import ARAnalysis
+# from src.ar_invest import ARAnalysis
 from src.financial_analysis import FinancialAnalysis
 from typing import Union
 import base64
@@ -21,7 +21,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 conn_path = ".env/connections.json"
 credit_invest = CreditInvest(conn_path=conn_path)
-ar_analysis = ARAnalysis(conn_path=conn_path)
+# ar_analysis = ARAnalysis(conn_path=conn_path)
 
 # def verify_token(token: str):
 #     try:

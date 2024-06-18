@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 // import { BrowserRouter as Router, Route, Switch, Redirect } from "react-router-dom";
 import Container  from "./Container";
 import BasicInfo from "./BasicInfo";
@@ -20,6 +20,32 @@ const App = () => {
     const [finalCompanyName, setFinalCompanyName] = useState("");
     const [token, setToken] = useState("");
     const [isValidUser, setIsValidUser] = useState(true);
+
+    const basicInfoRef = useRef(null); 
+
+    const handleButtonClick = () => {
+        if (basicInfoRef.current) {
+            basicInfoRef.current.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+                inline: "nearest"
+            });
+        }
+    };
+
+    const handleSearchClick = async () => {
+        const company_id = companyId.trim();
+        try {
+            if (company_id === "") {
+                throw new Error("No company ID entered.");
+            }
+            setFinalCompanyId(company_id);
+            handleButtonClick(); // Scroll after setting the company ID
+        } catch (e) {
+            alert(e.message);
+        }
+    };
+
 
     // useEffect(() => {
     //     // Fetch the token when the component mounts
@@ -70,7 +96,7 @@ const App = () => {
 
         </section>
 
-        <Container title = "輸入公司統編或名稱">
+        <Container title = "輸入公司統編">
             <div className="input-container">
             <input 
                 type="number" 
@@ -81,24 +107,7 @@ const App = () => {
             />
             <button
                 disabled={isLoading}
-                onClick={async (e) => {
-                    const company_id = companyId.trim();
-
-                    try {
-                        if (company_id === ""){
-                            throw Error("No company ID entered.")
-                        }
-
-                        // Set FinalCompanyID once input is validated and complete to prevent premature API calls
-                        setFinalCompanyId(company_id);
-                        
-                        // Call set_up API to get
-
-                    } catch (e) {
-                        alert(e.message);
-                    }
-                    
-                }}
+                onClick={handleSearchClick}
             > 查詢
             </button>
 
@@ -131,17 +140,23 @@ const App = () => {
             </div>
         </Container>
 
-        <BasicInfo end_point={end_point} companyId={finalCompanyId}></BasicInfo>
+        {/* {finalCompanyId && <BasicInfo end_point={end_point} companyId={finalCompanyId}></BasicInfo>} */}
 
-        <CddResult end_point={end_point} companyId={finalCompanyId}></CddResult>
+        {finalCompanyId && (
+                <div ref={basicInfoRef}>
+                    <BasicInfo end_point={end_point} companyId={finalCompanyId} />
+                </div>
+            )}
+
+        {finalCompanyId && <CddResult end_point={end_point} companyId={finalCompanyId}></CddResult>}
         
-        <RevenueAnalysis end_point={end_point} companyId={finalCompanyId}></RevenueAnalysis>
+        {finalCompanyId && <RevenueAnalysis end_point={end_point} companyId={finalCompanyId}></RevenueAnalysis>}
 
-        <FinancialReport end_point={end_point} companyId={finalCompanyId}></FinancialReport>
+        {finalCompanyId && <FinancialReport end_point={end_point} companyId={finalCompanyId}></FinancialReport>}
 
-        {/* <EpaReport end_point={end_point} companyId={finalCompanyId}></EpaReport> */}
+        {/* {finalCompanyId && <EpaReport end_point={end_point} companyId={finalCompanyId}></EpaReport>} */}
 
-        <PstReport end_point={end_point} companyId={finalCompanyId}></PstReport>
+        {/* {finalCompanyId && <PstReport end_point={end_point} companyId={finalCompanyId}></PstReport>} */}
     </div>
     )
 };

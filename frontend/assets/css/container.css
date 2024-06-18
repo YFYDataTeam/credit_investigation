@@ -1,22 +1,23 @@
 .container {
   padding: 20px;
   margin: 20px auto;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
   border-radius: 12px;
-  background: linear-gradient(135deg, #f0f0f0, #ffffff);
-  width: 100%; /* Adjust based on your layout needs */
-  max-width: 1000px;
+  /* background: linear-gradient(135deg, #f0f0f0, #ffffff); */
+  background-color: transparent;
+  width: 100%; 
+  max-width: 1900px;
   display: flex;
   flex-direction: column;
-  align-items: center; /* Center horizontally */
-  justify-content: center; /* Center vertically */
+  align-items: center;
+  justify-content: center;
   transition: transform 0.3s, box-shadow 0.3s;
 }
 
-.container:hover {
+/* .container:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-}
+} */
 
 .section {
   margin: 20px auto;
@@ -36,19 +37,19 @@
   line-height: 1.6;
 }
 
-/* New styles for input box and button */
+
 .input-container {
   display: flex;
-  align-items: center; /* Align items vertically */
-  justify-content: center; /* Center items horizontally */
+  align-items: center; 
+  justify-content: center;
   margin: 20px 0;
-  width: 100%; /* Make sure the container takes full width */
+  width: 100%; 
 }
 
 input[type="number"] {
-  width: 50%; /* Adjust the width as needed */ 
+  width: 50%; 
   padding: 10px;
-  margin-right: 10px; /* Add some space between the input and button */
+  margin-right: 10px;
   border: 2px solid #ccc;
   border-radius: 4px;
   font-size: 16px;
@@ -79,7 +80,7 @@ button:hover:not(:disabled) {
 }
 
 
-/* Additional enhancements */
+
 .section-content p {
   margin-bottom: 15px;
 }
@@ -119,7 +120,7 @@ button:hover:not(:disabled) {
 .chart-container {
   width: 100%;
   position: relative;
-  margin-bottom: 20px; /* Add some space between the charts */
+  margin-bottom: 20px; 
 }
 
 .chart-container, .sub_container {
@@ -127,5 +128,5 @@ button:hover:not(:disabled) {
   justify-content: center;
   align-items: center;
   width: 900px;
-  height: 300px; /* Adjust the height as needed */
+  height: 300px; 
 }
