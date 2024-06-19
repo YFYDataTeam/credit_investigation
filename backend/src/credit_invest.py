@@ -3,21 +3,15 @@ import pandas as pd
 from src.utils import (
     read_config, 
     MySQLAgent, 
-    OracleAgent,
     create_qurter)
 from datetime import datetime
-import google.generativeai as genai
-import google.ai.generativelanguage as glm
-from langchain_google_genai import (
-    ChatGoogleGenerativeAI,
-    HarmBlockThreshold,
-    HarmCategory,
-)
 
 class CreditInvest(MySQLAgent):
-    def __init__(self, conn_configs):
+    def __init__(self, job_config):
+        self.job_config = job_config
+        self.conn_config = self.job_config['VM1_mysql_conn_info']
         self.no_data_msg = 'NoData'
-        super().__init__(conn_configs)
+        super().__init__(self.conn_config)
         self.company_id = None
         self.company_name = None
 
@@ -264,7 +258,8 @@ class CreditInvest(MySQLAgent):
         if self.company_id == None:
             return {"message": self.no_data_msg}, None, None
     
-        conn_configs = self.configs["CREDITREPORT"]['VM1_news_mysql_conn_info']
+        conn_configs = self.job_config['VM1_news_mysql_conn_info']
+        print('cdd conn_configs:',conn_configs)
         sql_agent = MySQLAgent(conn_configs)
         query = f"""
                 select company_name, week_date, light_status AS cred_invest_result from cdd_result

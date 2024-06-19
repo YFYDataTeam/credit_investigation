@@ -10,7 +10,7 @@ import RevenueAnalysis from "./RevenueAnalysis";
 import CddResult from "./CddResult";
 import '../../assets/css/title_section.css';
 
-let end_point = process.env.END_POINT;
+let endPoint = process.env.END_POINT;
 
 const App = () => {
     const [companyId, setCompanyId] = useState("");
@@ -24,13 +24,12 @@ const App = () => {
     const basicInfoRef = useRef(null); 
 
     const handleButtonClick = () => {
-        if (basicInfoRef.current) {
             basicInfoRef.current.scrollIntoView({
                 behavior: "smooth",
                 block: "start",
                 inline: "nearest"
             });
-        }
+
     };
 
     const handleSearchClick = async () => {
@@ -140,23 +139,23 @@ const App = () => {
             </div>
         </Container>
 
-        {/* {finalCompanyId && <BasicInfo end_point={end_point} companyId={finalCompanyId}></BasicInfo>} */}
+        {/* {finalCompanyId && <BasicInfo end_point={endPoint} companyId={finalCompanyId}></BasicInfo>} */}
 
         {finalCompanyId && (
                 <div ref={basicInfoRef}>
-                    <BasicInfo end_point={end_point} companyId={finalCompanyId} />
+                    <BasicInfo endPoint={endPoint} companyId={finalCompanyId} />
                 </div>
             )}
 
-        {finalCompanyId && <CddResult end_point={end_point} companyId={finalCompanyId}></CddResult>}
+        {finalCompanyId && <CddResult endPoint={endPoint} companyId={finalCompanyId}></CddResult>}
         
-        {finalCompanyId && <RevenueAnalysis end_point={end_point} companyId={finalCompanyId}></RevenueAnalysis>}
+        {finalCompanyId && <RevenueAnalysis endPoint={endPoint} companyId={finalCompanyId}></RevenueAnalysis>}
 
-        {finalCompanyId && <FinancialReport end_point={end_point} companyId={finalCompanyId}></FinancialReport>}
+        {/* {finalCompanyId && <FinancialReport endPoint={endPoint} companyId={finalCompanyId}></FinancialReport>} */}
 
-        {/* {finalCompanyId && <EpaReport end_point={end_point} companyId={finalCompanyId}></EpaReport>} */}
+        {/* {finalCompanyId && <EpaReport endPoint={endPoint} companyId={finalCompanyId}></EpaReport>} */}
 
-        {/* {finalCompanyId && <PstReport end_point={end_point} companyId={finalCompanyId}></PstReport>} */}
+        {/* {finalCompanyId && <PstReport endPoint={endPoint} companyId={finalCompanyId}></PstReport>} */}
     </div>
     )
 };

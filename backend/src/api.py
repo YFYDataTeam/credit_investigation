@@ -22,8 +22,8 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 conn_path = ".env/connections.json"
 configs = read_config(path=conn_path)
-conn_configs = configs["CREDITREPORT"]['VM1_mysql_conn_info']
-credit_invest = CreditInvest(conn_configs=conn_configs)
+job_config = configs["CREDITREPORT"]
+credit_invest = CreditInvest(job_config=job_config)
 
 # ar_analysis = ARAnalysis(conn_path=conn_path)
 

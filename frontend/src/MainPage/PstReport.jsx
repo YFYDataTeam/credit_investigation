@@ -12,7 +12,7 @@ const getCurrencyCode = (currencyName) => {
     return currencyMap[currencyName] || currencyName;
 };
 
-const PstAnalysis = ({ end_point, companyId }) => {
+const PstAnalysis = ({ endPoint, companyId }) => {
     const [pstAnalysis, setPstAnalysis] = useState(null);
     const [loading, setLoading] = useState(null);
 
@@ -20,36 +20,41 @@ const PstAnalysis = ({ end_point, companyId }) => {
 
     useEffect(() => {
         const fetchData = async () => {
-            try {
-                setLoading(true);
-                const response = await fetch(`${end_point}pst_report?time_config=past&year_region=${year_region}`);
-                if (!response.ok) {
-                    throw new Error('Error fetching data');
+            if (companyId !== '') {
+                try {
+                    setLoading(true);
+                    const response = await fetch(`${endPoint}pst_report?time_config=past&year_region=${year_region}`);
+                    if (!response.ok) {
+                        throw new Error('Error fetching data');
+                    }
+    
+                    const data = await response.json();
+                    if (data.message === 'NoData') {
+                        setAgreements(null);
+                    } else {
+                        setPstAnalysis({
+                            timeConfig: data.time_config,
+                            nearestEndDate: data.nearest_end_date,
+                            annualAgreement: data.annual_agreement_aggregates,
+                            overallTypeCounts: data.overall_type_counts,
+                            annualTypeCounts: data.annual_type_counts
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                } finally {
+                    setLoading(false);
                 }
-
-                const data = await response.json();
-                if (data.message === 'NoData') {
-                    setAgreements(null);
-                } else {
-                    setPstAnalysis({
-                        timeConfig: data.time_config,
-                        nearestEndDate: data.nearest_end_date,
-                        annualAgreement: data.annual_agreement_aggregates,
-                        overallTypeCounts: data.overall_type_counts,
-                        annualTypeCounts: data.annual_type_counts
-                    });
-                }
-            } catch (error) {
-                console.error('Error:', error);
-            } finally {
-                setLoading(false);
+            } else {
+                await fetch(`${endPoint}reset_company_id`);
             }
+
         };
 
 
         fetchData();
 
-    }, [companyId, end_point, year_region]);
+    }, [companyId, endPoint, year_region]);
 
     if (loading) {
         return <div>Loading...</div>;

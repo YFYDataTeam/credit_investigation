@@ -11,14 +11,14 @@ const formatFinancialData = (data) => {
   }));
 };
 
-const FinancialReport = ({end_point, companyId}) => {
+const FinancialReport = ({endPoint, companyId}) => {
   const [financialReport, setFinancialReport] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       if(companyId !== ''){
         try {
-            const response = await fetch(`${end_point}financial_report/${companyId}`);
+            const response = await fetch(`${endPoint}financial_report/${companyId}`);
             if (!response.ok) {
               throw new Error("Data not found.");
             }
@@ -44,7 +44,9 @@ const FinancialReport = ({end_point, companyId}) => {
             console.error("Error fetching data", error);
             setFinancialReport(null);
           }
-      }
+      } else {
+        await fetch(`${endPoint}reset_company_id`);
+    }
       
     };
 

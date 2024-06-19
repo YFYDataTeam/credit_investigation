@@ -3,7 +3,7 @@ import Container from "./Container";
 import '../../assets/css/basicinfo.css';
 
 
-const BasicInfo = ({end_point, companyId}) => {
+const BasicInfo = ({endPoint, companyId}) => {
     const [basicInfo, setBasicInfo] = useState(null);
     const [errorMessage, setErrorMessage] = useState('');
     console.log('basic company_id:', companyId);
@@ -11,7 +11,7 @@ const BasicInfo = ({end_point, companyId}) => {
         const fetchData = async () => {
             if (companyId != ''){
                 try {
-                    const response = await fetch(`${end_point}basicinfo/${companyId}`);
+                    const response = await fetch(`${endPoint}basicinfo/${companyId}`);
     
                     if(!response.ok){
                         throw new Error("Data not found.");
@@ -34,7 +34,7 @@ const BasicInfo = ({end_point, companyId}) => {
                     console.error("Error:", error)
                 }
             } else {
-                await fetch(`${end_point}reset_company_id`);
+                await fetch(`${endPoint}reset_company_id`);
                 // console.log('No company found.');
             }
             
@@ -50,10 +50,18 @@ const BasicInfo = ({end_point, companyId}) => {
             alert(errorMessage);    
         }
     },[errorMessage]);
+  
+  if(!companyId){
+      return (
+          <Container title="營運績效">
+          </Container>
+      );
+  }
 
   if(!basicInfo){
     return (
           <Container title="公司基本資訊">
+            <p>Loading...</p>
           </Container>
       );
   }
