@@ -25,7 +25,7 @@ const CddResult = ({endPoint, companyId}) => {
             if (companyId !== '') {
                 try {
                     setLoading(true);
-                    const response = await fetch(`${endPoint}cdd_result`);
+                    const response = await fetch(`${endPoint}cdd_result/${companyId}`);
                     
                     if (!response.ok) {
                         throw new Error('Error fetching data');
@@ -36,7 +36,7 @@ const CddResult = ({endPoint, companyId}) => {
                     if (data.message === 'NoData') {
                         setCddAnalysis(null);
                     } else {
-                        setCddAnalysis({cdd_result:data.cdd_weekly_category});
+                        setCddAnalysis({cdd_result:data.cdd_weekly_clustering});
                     }
     
                 } catch (error) {
