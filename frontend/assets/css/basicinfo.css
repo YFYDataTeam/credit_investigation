@@ -1,0 +1,66 @@
+/* Container styles */
+/* .container {
+    background: linear-gradient(135deg, #e4e4e4, #ffffff);
+    background-color: black;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: 'Arial', sans-serif;
+    transition: transform 0.3s, box-shadow 0.3s;
+} */
+
+/* .container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+} */
+
+/* Style for individual rows of information */
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+/* Style for each column within a row */
+.info-column {
+    flex: 1;
+    padding: 10px 15px;
+    text-align: center;
+    /* background-color: #fff; */
+    border-radius: 8px;
+    /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.info-column:hover {
+    background-color: #f9f9f9;
+    transform: translateY(-3px);
+}
+
+/* Styling headers in each column */
+.info-column h3 {
+    color: #333;
+    font-size: 20px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: bold;
+}
+
+/* Paragraph text styling */
+.info-column p {
+    color: #666;
+    font-size: 16px;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Enhancements for better readability and aesthetics */
+.info-column:not(:last-child) {
+    margin-right: 10px;
+}
+
+.info-column h3,
+.info-column p {
+    margin: 0 0 10px;
+}
