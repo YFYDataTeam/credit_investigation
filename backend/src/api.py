@@ -7,6 +7,7 @@ from fastapi.responses import JSONResponse
 from .models import BasicInfo, Message
 from src.utils import read_config
 from src.credit_invest import CreditInvest
+from src.llm_agent import LlmAgent
 # from src.ar_invest import ARAnalysis
 from src.financial_analysis import FinancialAnalysis
 from typing import Union
@@ -20,7 +21,10 @@ ALGORITHM = "HS256"
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 conn_path = ".env/connections.json"
-credit_invest = CreditInvest(conn_path=conn_path)
+configs = read_config(path=conn_path)
+conn_configs = configs["CREDITREPORT"]['VM1_mysql_conn_info']
+credit_invest = CreditInvest(conn_configs=conn_configs)
+
 # ar_analysis = ARAnalysis(conn_path=conn_path)
 
 # def verify_token(token: str):
@@ -113,6 +117,14 @@ async def cdd_result():
     model_result_cdd = credit_invest.cdd_result()
 
     return JSONResponse(convert_dict(model_result_cdd))
+
+@router.get('/judgement_summary/{company_id}')
+async def judgement_summary(company_id: str):
+    conn_configs = configs["CREDITREPORT"]['Crawler_mysql_conn_info']
+    llm_agent = LlmAgent(conn_configs=conn_configs, company_id=company_id)
+    summary = llm_agent.judgement_summary()
+
+    return JSONResponse(summary)
 
 
 def convert_dict(d):

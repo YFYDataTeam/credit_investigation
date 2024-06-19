@@ -6,17 +6,20 @@ from src.utils import (
     OracleAgent,
     create_qurter)
 from datetime import datetime
-import matplotlib.pyplot as plt
-
-plt.rcParams['font.sans-serif'] = ['Microsoft JhengHei'] 
-plt.rcParams['axes.unicode_minus'] = False
+import google.generativeai as genai
+import google.ai.generativelanguage as glm
+from langchain_google_genai import (
+    ChatGoogleGenerativeAI,
+    HarmBlockThreshold,
+    HarmCategory,
+)
 
 class CreditInvest(MySQLAgent):
-    def __init__(self, conn_path):
-        self.configs = read_config(path=conn_path)
-        self.job_configs = self.configs["CREDITREPORT"]['VM1_mysql_conn_info']
+    def __init__(self, conn_configs):
+        # self.configs = read_config(path=conn_path)
+        # self.conn_configs = self.configs["CREDITREPORT"]['VM1_mysql_conn_info']
         self.no_data_msg = 'NoData'
-        super().__init__(self.job_configs)
+        super().__init__(conn_configs)
         self.company_id = None
         self.company_name = None
 
@@ -162,8 +165,8 @@ class CreditInvest(MySQLAgent):
             return {"message": self.no_data_msg}, None, None
         
         try:
-            job_configs = self.configs["CREDITREPORT"]['Crawler_mysql_conn_info']
-            sql_agent = MySQLAgent(job_configs)
+            conn_configs = self.configs["CREDITREPORT"]['Crawler_mysql_conn_info']
+            sql_agent = MySQLAgent(conn_configs)
 
             query = f"""
             select * from w_yfy_crd_pst_f
@@ -263,8 +266,8 @@ class CreditInvest(MySQLAgent):
         if self.company_id == None:
             return {"message": self.no_data_msg}, None, None
     
-        job_configs = self.configs["CREDITREPORT"]['VM1_news_mysql_conn_info']
-        sql_agent = MySQLAgent(job_configs)
+        conn_configs = self.configs["CREDITREPORT"]['VM1_news_mysql_conn_info']
+        sql_agent = MySQLAgent(conn_configs)
         query = f"""
                 select company_name, week_date, light_status AS cred_invest_result from cdd_result
                 where company_name = '{self.company_name}'
