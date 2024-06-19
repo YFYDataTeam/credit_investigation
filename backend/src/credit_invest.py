@@ -252,25 +252,25 @@ class CreditInvest(MySQLAgent):
 
         return pst_dict
 
-    def cdd_result(self):
+    # def cdd_result(self):
 
-        if self.company_id == None:
-            return {"message": self.no_data_msg}, None, None
+    #     if self.company_id == None:
+    #         return {"message": self.no_data_msg}, None, None
     
-        conn_configs = self.job_config['VM1_news_mysql_conn_info']
-        print('cdd conn_configs:',conn_configs)
-        sql_agent = MySQLAgent(conn_configs)
-        query = f"""
-                select company_name, week_date, light_status AS cred_invest_result from cdd_result
-                where company_name = '{self.company_name}'
-            """
-        df_cdd = sql_agent.read_table(query=query)
+    #     conn_configs = self.job_config['VM1_news_mysql_conn_info']
+    #     print('cdd conn_configs:',conn_configs)
+    #     sql_agent = MySQLAgent(conn_configs)
+    #     query = f"""
+    #             select company_name, week_date, light_status AS cred_invest_result from cdd_result
+    #             where company_name = '{self.company_name}'
+    #         """
+    #     df_cdd = sql_agent.read_table(query=query)
 
-        if df_cdd.empty:
-            return {"message": self.no_data_msg}, None
+    #     if df_cdd.empty:
+    #         return {"message": self.no_data_msg}, None
             
-        model_result_cdd = {
-            "cdd_weekly_category": df_cdd.to_dict(orient="records")
-        }
+    #     model_result_cdd = {
+    #         "cdd_weekly_category": df_cdd.to_dict(orient="records")
+    #     }
 
-        return model_result_cdd
+    #     return model_result_cdd

@@ -19,9 +19,6 @@ genai.configure(api_key=api_key)
 class LlmAgent(CreditInvest):
     def __init__(self, conn_configs, company_id):
         super().__init__(conn_configs)  
-        # self.conn_info = read_config(path=conn_path)
-        # self.configs = self.conn_info["CREDITREPORT"]['Crawler_mysql_conn_info']
-        # self.db_connector()
         self.no_data_msg = 'NoData'
         self.set_up(company_id=company_id)
 
@@ -57,50 +54,48 @@ class LlmAgent(CreditInvest):
         
     
     def judgement_summary(self):
-        try:
-            query = f"""
-            SELECT judgement_date, judgement_no, subjectkey, judgement_text01
-            FROM judgement_result
-            WHERE business_accounting_no = '{self.company_id}'
-            AND judgement_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 5 YEAR);
-            """
-            print("HERE:", self.connection_string)
-            df_judgement = self.read_table(query=query)
 
-            
+        query = f"""
+        SELECT judgement_date, judgement_no, subjectkey, judgement_text01
+        FROM judgement_result
+        WHERE business_accounting_no = '{self.company_id}'
+        AND judgement_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 5 YEAR);
+        """
+        df_judgement = self.read_table(query=query)
 
-            judgement_summary_result = {}
-            for _, row in df_judgement.iterrows():
-                cleaned_data = self._clean_data(row.judgement_text01)
+        if df_judgement.empty:
+            return {"message": self.no_data_msg}
 
-                llm = ChatGoogleGenerativeAI(
-                    model="gemini-pro",
-                    convert_system_message_to_human=True,
-                    safety_settings={
-                        HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
-                        HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
-                        HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
-                    },
-                )
+        judgement_summary_result = {}
+        for _, row in df_judgement.iterrows():
+            cleaned_data = self._clean_data(row.judgement_text01)
 
-
-                messages = [
-                    SystemMessage(content="你是一個專業的摘要統整AI助手，針對我提出的問題使用繁體中文回覆。"),
-                    HumanMessage(content=f"""
-                    #### INSTRUCTION: 仔細閱讀 REF 的內容，提供我以下內容:
-                                1. REF 的摘要
-                                2. COMPANY 公司在其中扮演的腳色
-                                3. COMPANY 公司在其中受到的影響
-                                若沒有找到滿足我需求的內容則說沒有，不要亂作答不然外婆會難過。
-                    #### REF: {cleaned_data}
-                    #### COMPANY: {self.company_name}
-                """)
-                ]
-
-                llm_response = llm(messages)
-                judgement_summary_result[row.judgement_no] = llm_response.content
+            llm = ChatGoogleGenerativeAI(
+                model="gemini-pro",
+                convert_system_message_to_human=True,
+                safety_settings={
+                    HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+                    HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+                    HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+                },
+            )
 
 
-            return judgement_summary_result
-        except:
-            print(self.configs)
+            messages = [
+                SystemMessage(content="你是一個專業的摘要統整AI助手，針對我提出的問題使用繁體中文回覆。"),
+                HumanMessage(content=f"""
+                #### INSTRUCTION: 仔細閱讀 REF 的內容，提供我以下內容:
+                            1. REF 的摘要
+                            2. COMPANY 公司在其中扮演的腳色
+                            3. COMPANY 公司在其中受到的影響
+                            若沒有找到滿足我需求的內容則說沒有，不要亂作答不然外婆會難過。
+                #### REF: {cleaned_data}
+                #### COMPANY: {self.company_name}
+            """)
+            ]
+
+            llm_response = llm(messages)
+            judgement_summary_result[row.judgement_no] = llm_response.content
+
+
+        return judgement_summary_result

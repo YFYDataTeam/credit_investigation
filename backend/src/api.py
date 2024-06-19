@@ -7,6 +7,7 @@ from fastapi.responses import JSONResponse
 from .models import BasicInfo, Message
 from src.utils import read_config
 from src.credit_invest import CreditInvest
+from src.cdd_clustering import CddClustering
 from src.llm_agent import LlmAgent
 # from src.ar_invest import ARAnalysis
 from src.financial_analysis import FinancialAnalysis
@@ -112,11 +113,13 @@ async def financial_report(financial_analysis: FinancialAnalysis = Depends(get_f
 
 
 
-@router.get('/cdd_result')
-async def cdd_result():
-    model_result_cdd = credit_invest.cdd_result()
+@router.get('/cdd_result/{company_id}')
+async def cdd_clustering(company_id: str):
+    conn_configs = configs["CREDITREPORT"]['VM1_news_mysql_conn_info']
+    cdd_cluster = CddClustering(conn_configs=conn_configs, company_id=company_id)
+    weekly_clustering_result = cdd_cluster.weekly_clustering()
 
-    return JSONResponse(convert_dict(model_result_cdd))
+    return JSONResponse(convert_dict(weekly_clustering_result))
 
 @router.get('/judgement_summary/{company_id}')
 async def judgement_summary(company_id: str):
