@@ -7,11 +7,10 @@ from src.utils import (
 from datetime import datetime
 
 class CreditInvest(MySQLAgent):
-    def __init__(self, job_config):
-        self.job_config = job_config
-        self.conn_config = self.job_config['VM1_mysql_conn_info']
+    def __init__(self, conn_configs):
+        # self.configs = read_config(path=conn_path)
         self.no_data_msg = 'NoData'
-        super().__init__(self.conn_config)
+        super().__init__(conn_configs)
         self.company_id = None
         self.company_name = None
 

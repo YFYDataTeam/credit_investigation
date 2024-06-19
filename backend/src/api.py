@@ -22,8 +22,8 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 conn_path = ".env/connections.json"
 configs = read_config(path=conn_path)
-job_config = configs["CREDITREPORT"]
-credit_invest = CreditInvest(job_config=job_config)
+conn_configs = configs["CREDITREPORT"]['VM1_mysql_conn_info']
+credit_invest = CreditInvest(conn_configs=conn_configs)
 
 # ar_analysis = ARAnalysis(conn_path=conn_path)
 
@@ -95,18 +95,20 @@ async def pst_invest_result(time_config: str = Query(..., enum=['past', 'future'
 
     return JSONResponse(content=convert_dict(pst_result))
 
-def get_financial_analysis(company_id: str):
-    return FinancialAnalysis(conn_path=conn_path, company_id=company_id)
 
 @router.get('/revenue_analysis/{company_id}')
-async def revenue_analysis(financial_analysis: FinancialAnalysis = Depends(get_financial_analysis)):
+async def revenue_analysis(company_id: str):
+    financial_analysis = FinancialAnalysis(conn_path=conn_path, company_id=company_id)
     revenue_result = financial_analysis.revenue_analysis()
+
     return JSONResponse(revenue_result)
 
 
 @router.get('/financial_report/{company_id}')
-async def financial_report(financial_analysis: FinancialAnalysis = Depends(get_financial_analysis)):
+async def financial_report(company_id: str):
+    financial_analysis = FinancialAnalysis(conn_path=conn_path, company_id=company_id)
     result = financial_analysis.financial_report()
+
     return JSONResponse(result)
 
 
