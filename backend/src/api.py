@@ -117,9 +117,9 @@ async def financial_report(financial_analysis: FinancialAnalysis = Depends(get_f
 async def cdd_clustering(company_id: str):
     conn_configs = configs["CREDITREPORT"]['VM1_news_mysql_conn_info']
     cdd_cluster = CddClustering(conn_configs=conn_configs, company_id=company_id)
-    weekly_clustering_result = cdd_cluster.weekly_clustering()
+    cdd_weekly_clustering = cdd_cluster.weekly_clustering()
 
-    return JSONResponse(convert_dict(weekly_clustering_result))
+    return JSONResponse(convert_dict(cdd_weekly_clustering))
 
 @router.get('/judgement_summary/{company_id}')
 async def judgement_summary(company_id: str):

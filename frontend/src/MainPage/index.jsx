@@ -8,6 +8,7 @@ import MopsReport from "./Mops";
 import FinancialReport from "./FinancialReports";
 import RevenueAnalysis from "./RevenueAnalysis";
 import CddResult from "./CddResult";
+import JudgementSummary from "./JudgementSummary";
 import '../../assets/css/title_section.css';
 
 let endPoint = process.env.END_POINT;
@@ -23,15 +24,6 @@ const App = () => {
 
     const basicInfoRef = useRef(null); 
 
-    const handleButtonClick = () => {
-            basicInfoRef.current.scrollIntoView({
-                behavior: "smooth",
-                block: "start",
-                inline: "nearest"
-            });
-
-    };
-
     const handleSearchClick = async () => {
         const company_id = companyId.trim();
         try {
@@ -39,7 +31,6 @@ const App = () => {
                 throw new Error("No company ID entered.");
             }
             setFinalCompanyId(company_id);
-            handleButtonClick(); // Scroll after setting the company ID
         } catch (e) {
             alert(e.message);
         }
@@ -151,7 +142,9 @@ const App = () => {
         
         {finalCompanyId && <RevenueAnalysis endPoint={endPoint} companyId={finalCompanyId}></RevenueAnalysis>}
 
-        {/* {finalCompanyId && <FinancialReport endPoint={endPoint} companyId={finalCompanyId}></FinancialReport>} */}
+        {finalCompanyId && <FinancialReport endPoint={endPoint} companyId={finalCompanyId}></FinancialReport>}
+
+        {finalCompanyId && <JudgementSummary endPoint={endPoint} companyId={finalCompanyId}></JudgementSummary>}
 
         {/* {finalCompanyId && <EpaReport endPoint={endPoint} companyId={finalCompanyId}></EpaReport>} */}
 

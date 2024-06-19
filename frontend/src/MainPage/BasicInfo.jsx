@@ -6,12 +6,13 @@ import '../../assets/css/basicinfo.css';
 const BasicInfo = ({endPoint, companyId}) => {
     const [basicInfo, setBasicInfo] = useState(null);
     const [errorMessage, setErrorMessage] = useState('');
-
+    const [loading, setIsLoading] = useState(false);
     console.log('basic company_id:', companyId);
     useEffect(() => {
         const fetchData = async () => {
             if (companyId != ''){
                 try {
+                    setIsLoading(true);
                     const response = await fetch(`${endPoint}basicinfo/${companyId}`);
     
                     if(!response.ok){
@@ -19,6 +20,7 @@ const BasicInfo = ({endPoint, companyId}) => {
                     }
     
                     const data = await response.json();
+                    setIsLoading(false);
                     // console.log("data:", data);
                     if (data.message === "NoData"){
                         setBasicInfo(null);
@@ -33,6 +35,8 @@ const BasicInfo = ({endPoint, companyId}) => {
     
                 } catch (error) {
                     console.error("Error:", error)
+                } finally {
+                  setIsLoading(false);
                 }
             } else {
                 await fetch(`${endPoint}reset_company_id`);

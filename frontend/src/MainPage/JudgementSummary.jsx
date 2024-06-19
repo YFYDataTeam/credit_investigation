@@ -49,7 +49,22 @@ const JudgementSummary = ({endPoint, companyId}) => {
 
     return (
         <Container title='法院判決摘要'>
-
+              <table>
+                <thead>
+                    <tr>
+                        <th>判決書名稱</th>
+                        <th>判決書摘要</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {Object.entries(judgementSummary).map(([key, value]) => (
+                        <tr key={key}>
+                            <td>{key}</td>
+                            <td>{value}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
 
         </Container>
     )
