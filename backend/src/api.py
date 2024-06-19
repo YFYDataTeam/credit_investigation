@@ -95,20 +95,18 @@ async def pst_invest_result(time_config: str = Query(..., enum=['past', 'future'
 
     return JSONResponse(content=convert_dict(pst_result))
 
+def get_financial_analysis(company_id: str):
+    return FinancialAnalysis(conn_path=conn_path, company_id=company_id)
 
 @router.get('/revenue_analysis/{company_id}')
-async def revenue_analysis(company_id: str):
-    financial_analysis = FinancialAnalysis(conn_path=conn_path, company_id=company_id)
+async def revenue_analysis(financial_analysis: FinancialAnalysis = Depends(get_financial_analysis)):
     revenue_result = financial_analysis.revenue_analysis()
-
     return JSONResponse(revenue_result)
 
 
 @router.get('/financial_report/{company_id}')
-async def financial_report(company_id: str):
-    financial_analysis = FinancialAnalysis(conn_path=conn_path, company_id=company_id)
+async def financial_report(financial_analysis: FinancialAnalysis = Depends(get_financial_analysis)):
     result = financial_analysis.financial_report()
-
     return JSONResponse(result)
 
 

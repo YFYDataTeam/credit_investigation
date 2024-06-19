@@ -16,8 +16,6 @@ from langchain_google_genai import (
 
 class CreditInvest(MySQLAgent):
     def __init__(self, conn_configs):
-        # self.configs = read_config(path=conn_path)
-        # self.conn_configs = self.configs["CREDITREPORT"]['VM1_mysql_conn_info']
         self.no_data_msg = 'NoData'
         super().__init__(conn_configs)
         self.company_id = None
