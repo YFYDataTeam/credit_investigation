@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useRef} from "react";
 import Container from "./Container";
 import '../../assets/css/basicinfo.css';
 
@@ -6,6 +6,7 @@ import '../../assets/css/basicinfo.css';
 const BasicInfo = ({endPoint, companyId}) => {
     const [basicInfo, setBasicInfo] = useState(null);
     const [errorMessage, setErrorMessage] = useState('');
+
     console.log('basic company_id:', companyId);
     useEffect(() => {
         const fetchData = async () => {
@@ -50,6 +51,25 @@ const BasicInfo = ({endPoint, companyId}) => {
             alert(errorMessage);    
         }
     },[errorMessage]);
+
+    const scrollAnchorRef = useRef(null)
+    useEffect(() => {
+        if (!companyId||loading) {
+            return;
+        }
+
+        const scrollAnchor = scrollAnchorRef.current;
+
+        if (!scrollAnchor) {
+            return;
+        }
+
+        scrollAnchor.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+            inline: 'start'
+        });
+    }, [companyId, loading])
   
   if(!companyId){
       return (
@@ -67,7 +87,7 @@ const BasicInfo = ({endPoint, companyId}) => {
   }
 
     return (
-      <Container title="公司基本資訊">
+      <Container title="公司基本資訊" ref={scrollAnchorRef}>
         {basicInfo ? (
           <div>
             <div class="info-row">
