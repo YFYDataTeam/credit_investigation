@@ -7,6 +7,8 @@ from fastapi.responses import JSONResponse
 from .models import BasicInfo, Message
 from src.utils import read_config
 from src.credit_invest import CreditInvest
+from src.cdd_clustering import CddClustering
+from src.llm_agent import LlmAgent
 # from src.ar_invest import ARAnalysis
 from src.financial_analysis import FinancialAnalysis
 from typing import Union
@@ -20,7 +22,10 @@ ALGORITHM = "HS256"
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 conn_path = ".env/connections.json"
-credit_invest = CreditInvest(conn_path=conn_path)
+configs = read_config(path=conn_path)
+conn_configs = configs["CREDITREPORT"]['VM1_mysql_conn_info']
+credit_invest = CreditInvest(conn_configs=conn_configs)
+
 # ar_analysis = ARAnalysis(conn_path=conn_path)
 
 # def verify_token(token: str):
@@ -92,27 +97,37 @@ async def pst_invest_result(time_config: str = Query(..., enum=['past', 'future'
     return JSONResponse(content=convert_dict(pst_result))
 
 
-@router.get('/revenue_analysis/{company_id}')
-async def revenue_analysis(company_id: str):
-    financial_analysis = FinancialAnalysis(conn_path=conn_path, company_id=company_id)
-    revenue_result = financial_analysis.revenue_analysis()
+def get_financial_analysis(company_id: str):
+    return FinancialAnalysis(conn_path=conn_path, company_id=company_id)
 
+@router.get('/revenue_analysis/{company_id}')
+async def revenue_analysis(financial_analysis: FinancialAnalysis = Depends(get_financial_analysis)):
+    revenue_result = financial_analysis.revenue_analysis()
     return JSONResponse(revenue_result)
 
 
 @router.get('/financial_report/{company_id}')
-async def financial_report(company_id: str):
-    financial_analysis = FinancialAnalysis(conn_path=conn_path, company_id=company_id)
+async def financial_report(financial_analysis: FinancialAnalysis = Depends(get_financial_analysis)):
     result = financial_analysis.financial_report()
-
     return JSONResponse(result)
 
 
-@router.get('/cdd_result')
-async def cdd_result():
-    model_result_cdd = credit_invest.cdd_result()
 
-    return JSONResponse(convert_dict(model_result_cdd))
+@router.get('/cdd_result/{company_id}')
+async def cdd_clustering(company_id: str):
+    conn_configs = configs["CREDITREPORT"]['VM1_news_mysql_conn_info']
+    cdd_cluster = CddClustering(conn_configs=conn_configs, company_id=company_id)
+    cdd_weekly_clustering = cdd_cluster.weekly_clustering()
+
+    return JSONResponse(convert_dict(cdd_weekly_clustering))
+
+@router.get('/judgement_summary/{company_id}')
+async def judgement_summary(company_id: str):
+    conn_configs = configs["CREDITREPORT"]['Crawler_mysql_conn_info']
+    llm_agent = LlmAgent(conn_configs=conn_configs, company_id=company_id)
+    summary = llm_agent.judgement_summary()
+
+    return JSONResponse(summary)
 
 
 def convert_dict(d):

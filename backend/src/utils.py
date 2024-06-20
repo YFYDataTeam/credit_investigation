@@ -59,9 +59,9 @@ class MySQLAgent:
         port = self.config['port']
         database = self.config['database']
 
-        connection_string = f"mysql+pymysql://{user}:{pw}@{host}:{port}/{database}?charset=utf8mb4"
+        self.connection_string = f"mysql+pymysql://{user}:{pw}@{host}:{port}/{database}?charset=utf8mb4"
 
-        self.engine = create_engine(connection_string)
+        self.engine = create_engine(self.connection_string)
 
     def read_table(self, query) -> pd.DataFrame:
 

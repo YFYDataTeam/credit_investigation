@@ -1,23 +1,26 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useRef} from "react";
 import Container from "./Container";
 import '../../assets/css/basicinfo.css';
 
 
-const BasicInfo = ({end_point, companyId}) => {
+const BasicInfo = ({endPoint, companyId}) => {
     const [basicInfo, setBasicInfo] = useState(null);
     const [errorMessage, setErrorMessage] = useState('');
+    const [loading, setIsLoading] = useState(false);
     console.log('basic company_id:', companyId);
     useEffect(() => {
         const fetchData = async () => {
             if (companyId != ''){
                 try {
-                    const response = await fetch(`${end_point}basicinfo/${companyId}`);
+                    setIsLoading(true);
+                    const response = await fetch(`${endPoint}basicinfo/${companyId}`);
     
                     if(!response.ok){
                         throw new Error("Data not found.");
                     }
     
                     const data = await response.json();
+                    setIsLoading(false);
                     // console.log("data:", data);
                     if (data.message === "NoData"){
                         setBasicInfo(null);
@@ -32,9 +35,11 @@ const BasicInfo = ({end_point, companyId}) => {
     
                 } catch (error) {
                     console.error("Error:", error)
+                } finally {
+                  setIsLoading(false);
                 }
             } else {
-                await fetch(`${end_point}reset_company_id`);
+                await fetch(`${endPoint}reset_company_id`);
                 // console.log('No company found.');
             }
             
@@ -51,15 +56,42 @@ const BasicInfo = ({end_point, companyId}) => {
         }
     },[errorMessage]);
 
+    const scrollAnchorRef = useRef(null)
+    useEffect(() => {
+        if (!companyId||loading) {
+            return;
+        }
+
+        const scrollAnchor = scrollAnchorRef.current;
+
+        if (!scrollAnchor) {
+            return;
+        }
+
+        scrollAnchor.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+            inline: 'start'
+        });
+    }, [companyId, loading])
+  
+  if(!companyId){
+      return (
+          <Container title="營運績效">
+          </Container>
+      );
+  }
+
   if(!basicInfo){
     return (
           <Container title="公司基本資訊">
+            <p>Loading...</p>
           </Container>
       );
   }
 
     return (
-      <Container title="公司基本資訊">
+      <Container title="公司基本資訊" ref={scrollAnchorRef}>
         {basicInfo ? (
           <div>
             <div class="info-row">

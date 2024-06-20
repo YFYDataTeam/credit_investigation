@@ -8,9 +8,10 @@ import MopsReport from "./Mops";
 import FinancialReport from "./FinancialReports";
 import RevenueAnalysis from "./RevenueAnalysis";
 import CddResult from "./CddResult";
+import JudgementSummary from "./JudgementSummary";
 import '../../assets/css/title_section.css';
 
-let end_point = process.env.END_POINT;
+let endPoint = process.env.END_POINT;
 
 const App = () => {
     const [companyId, setCompanyId] = useState("");
@@ -23,16 +24,6 @@ const App = () => {
 
     const basicInfoRef = useRef(null); 
 
-    const handleButtonClick = () => {
-        if (basicInfoRef.current) {
-            basicInfoRef.current.scrollIntoView({
-                behavior: "smooth",
-                block: "start",
-                inline: "nearest"
-            });
-        }
-    };
-
     const handleSearchClick = async () => {
         const company_id = companyId.trim();
         try {
@@ -40,7 +31,6 @@ const App = () => {
                 throw new Error("No company ID entered.");
             }
             setFinalCompanyId(company_id);
-            handleButtonClick(); // Scroll after setting the company ID
         } catch (e) {
             alert(e.message);
         }
@@ -140,23 +130,25 @@ const App = () => {
             </div>
         </Container>
 
-        {/* {finalCompanyId && <BasicInfo end_point={end_point} companyId={finalCompanyId}></BasicInfo>} */}
+        {/* {finalCompanyId && <BasicInfo end_point={endPoint} companyId={finalCompanyId}></BasicInfo>} */}
 
         {finalCompanyId && (
                 <div ref={basicInfoRef}>
-                    <BasicInfo end_point={end_point} companyId={finalCompanyId} />
+                    <BasicInfo endPoint={endPoint} companyId={finalCompanyId} />
                 </div>
             )}
 
-        {finalCompanyId && <CddResult end_point={end_point} companyId={finalCompanyId}></CddResult>}
+        {finalCompanyId && <CddResult endPoint={endPoint} companyId={finalCompanyId}></CddResult>}
         
-        {finalCompanyId && <RevenueAnalysis end_point={end_point} companyId={finalCompanyId}></RevenueAnalysis>}
+        {finalCompanyId && <RevenueAnalysis endPoint={endPoint} companyId={finalCompanyId}></RevenueAnalysis>}
 
-        {finalCompanyId && <FinancialReport end_point={end_point} companyId={finalCompanyId}></FinancialReport>}
+        {finalCompanyId && <FinancialReport endPoint={endPoint} companyId={finalCompanyId}></FinancialReport>}
 
-        {/* {finalCompanyId && <EpaReport end_point={end_point} companyId={finalCompanyId}></EpaReport>} */}
+        {finalCompanyId && <JudgementSummary endPoint={endPoint} companyId={finalCompanyId}></JudgementSummary>}
 
-        {/* {finalCompanyId && <PstReport end_point={end_point} companyId={finalCompanyId}></PstReport>} */}
+        {/* {finalCompanyId && <EpaReport endPoint={endPoint} companyId={finalCompanyId}></EpaReport>} */}
+
+        {/* {finalCompanyId && <PstReport endPoint={endPoint} companyId={finalCompanyId}></PstReport>} */}
     </div>
     )
 };

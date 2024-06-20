@@ -3,7 +3,7 @@ import Container from "./Container";
 import '../../assets/css/epareport.css';
 
 
-const EpaReport = ({end_point, companyId}) => {
+const EpaReport = ({endPoint, companyId}) => {
 
     const [epareport, setEpareport] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -11,7 +11,7 @@ const EpaReport = ({end_point, companyId}) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch(`${end_point}epa_report/${companyId}`);
+                const response = await fetch(`${endPoint}epa_report/${companyId}`);
 
                 if(!response.ok){
                     throw new Error("Data not found.");

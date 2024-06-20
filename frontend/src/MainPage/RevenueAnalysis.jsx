@@ -1,21 +1,21 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import Container from "./Container";
-import {MonthlySalesChart, QuarterlySalesChart,  YearlySalesChart, MonthlyY2M} from "./RevenueChart";
+import { MonthlySalesChart, QuarterlySalesChart, YearlySalesChart, MonthlyY2M } from "./RevenueChart";
 
-const RevenueAnalysis = ({end_point, companyId}) => {
+const RevenueAnalysis = ({ endPoint, companyId }) => {
     const [revenueAnalysis, setRevenueAnalysis] = useState(null);
-    const [loading, setLoading] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
             if (companyId !== '') {
                 try {
                     setLoading(true);
-                    const response = await fetch(`${end_point}revenue_analysis/${companyId}`);
+                    const response = await fetch(`${endPoint}revenue_analysis/${companyId}`);
                     if (!response.ok) {
                         throw new Error("Data not found.");
-                      }
-        
+                    }
+
                     const data = await response.json();
                     setRevenueAnalysis({
                         monthly_sales: data.monthly_sales,
@@ -23,49 +23,61 @@ const RevenueAnalysis = ({end_point, companyId}) => {
                         annual_sales: data.annual_sales,
                         monthly_y2m: data.monthly_y2m
                     });
-    
                 } catch (error) {
                     console.error("Error fetching data", error);
                     setRevenueAnalysis(null);
+                } finally {
+                    setLoading(false);
                 }
             } else {
-                await fetch(`${end_point}reset_company_id`);
+                try {
+                    await fetch(`${endPoint}reset_company_id`);
+                } catch (error) {
+                    console.error("Error resetting company ID", error);
+                }
             }
-            
         };
 
         fetchData();
+    }, [companyId, endPoint]);
 
-    }, [companyId]);
-
-    if(!companyId){
+    if (!companyId) {
         return (
             <Container title="營運績效">
+                <p>請提供公司 ID。</p>
             </Container>
         );
     }
 
-    if (!revenueAnalysis) {
+    if (loading) {
         return (
             <Container title="營運績效">
                 <p>Loading...</p>
             </Container>
         );
     }
-    
+
+    if (!revenueAnalysis && !loading) {
+        return (
+            <Container title="營運績效">
+                <p>查無資料</p>
+            </Container>
+        );
+    }
+
     const labels_monthly_sales = revenueAnalysis.monthly_sales.map(item => item.period);
     const monthly_sales_data = revenueAnalysis.monthly_sales.map(item => item.sales);
 
     const labels_yq = revenueAnalysis.quarterly_sales.map(item => item.year_quarter);
-    const quarterly_sales_data = revenueAnalysis.quarterly_sales.map(item => item.year_quarter_sales)
+    const quarterly_sales_data = revenueAnalysis.quarterly_sales.map(item => item.year_quarter_sales);
     const sales_qoq_data = revenueAnalysis.quarterly_sales.map(item => item.QoQ);
 
     const labels_y = revenueAnalysis.annual_sales.map(item => item.period_year.toString());
-    const annual_sales_data = revenueAnalysis.annual_sales.map(item => item.annual_sales)
+    const annual_sales_data = revenueAnalysis.annual_sales.map(item => item.annual_sales);
     const sales_yoy_data = revenueAnalysis.annual_sales.map(item => item.YoY);
 
-    const y2m_data =  revenueAnalysis.monthly_y2m;
-    // console.log("y2m_data:", y2m_data);
+    const y2m_data = revenueAnalysis.monthly_y2m;
+
     return (
         <Container title="營運績效">
             <YearlySalesChart 
@@ -76,9 +88,11 @@ const RevenueAnalysis = ({end_point, companyId}) => {
                 labels={labels_yq} 
                 quarterlySales={quarterly_sales_data} 
                 qoqData={sales_qoq_data} />
-            <MonthlySalesChart labels={labels_monthly_sales} salesData={monthly_sales_data} />
-            <MonthlyY2M y2mData={y2m_data} />
-
+            <MonthlySalesChart 
+                labels={labels_monthly_sales} 
+                salesData={monthly_sales_data} />
+            <MonthlyY2M 
+                y2mData={y2m_data} />
         </Container>
     );
 };

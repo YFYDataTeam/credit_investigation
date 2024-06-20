@@ -3,20 +3,14 @@ import pandas as pd
 from src.utils import (
     read_config, 
     MySQLAgent, 
-    OracleAgent,
     create_qurter)
 from datetime import datetime
-import matplotlib.pyplot as plt
-
-plt.rcParams['font.sans-serif'] = ['Microsoft JhengHei'] 
-plt.rcParams['axes.unicode_minus'] = False
 
 class CreditInvest(MySQLAgent):
-    def __init__(self, conn_path):
-        self.configs = read_config(path=conn_path)
-        self.job_configs = self.configs["CREDITREPORT"]['VM1_mysql_conn_info']
+    def __init__(self, conn_configs):
+        # self.configs = read_config(path=conn_path)
         self.no_data_msg = 'NoData'
-        super().__init__(self.job_configs)
+        super().__init__(conn_configs)
         self.company_id = None
         self.company_name = None
 
@@ -162,8 +156,8 @@ class CreditInvest(MySQLAgent):
             return {"message": self.no_data_msg}, None, None
         
         try:
-            job_configs = self.configs["CREDITREPORT"]['Crawler_mysql_conn_info']
-            sql_agent = MySQLAgent(job_configs)
+            conn_configs = self.configs["CREDITREPORT"]['Crawler_mysql_conn_info']
+            sql_agent = MySQLAgent(conn_configs)
 
             query = f"""
             select * from w_yfy_crd_pst_f
@@ -258,24 +252,25 @@ class CreditInvest(MySQLAgent):
 
         return pst_dict
 
-    def cdd_result(self):
+    # def cdd_result(self):
 
-        if self.company_id == None:
-            return {"message": self.no_data_msg}, None, None
+    #     if self.company_id == None:
+    #         return {"message": self.no_data_msg}, None, None
     
-        job_configs = self.configs["CREDITREPORT"]['VM1_news_mysql_conn_info']
-        sql_agent = MySQLAgent(job_configs)
-        query = f"""
-                select company_name, week_date, light_status AS cred_invest_result from cdd_result
-                where company_name = '{self.company_name}'
-            """
-        df_cdd = sql_agent.read_table(query=query)
+    #     conn_configs = self.job_config['VM1_news_mysql_conn_info']
+    #     print('cdd conn_configs:',conn_configs)
+    #     sql_agent = MySQLAgent(conn_configs)
+    #     query = f"""
+    #             select company_name, week_date, light_status AS cred_invest_result from cdd_result
+    #             where company_name = '{self.company_name}'
+    #         """
+    #     df_cdd = sql_agent.read_table(query=query)
 
-        if df_cdd.empty:
-            return {"message": self.no_data_msg}, None
+    #     if df_cdd.empty:
+    #         return {"message": self.no_data_msg}, None
             
-        model_result_cdd = {
-            "cdd_weekly_category": df_cdd.to_dict(orient="records")
-        }
+    #     model_result_cdd = {
+    #         "cdd_weekly_category": df_cdd.to_dict(orient="records")
+    #     }
 
-        return model_result_cdd
+    #     return model_result_cdd

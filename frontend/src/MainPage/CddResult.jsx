@@ -16,26 +16,27 @@ ChartJS.register(
 );
 
 
-const CddResult = ({end_point, companyId}) => {
+const CddResult = ({endPoint, companyId}) => {
     const [cddAnalysis, setCddAnalysis] = useState(null);
     const [loading, setLoading] = useState(null);
-    
+    console.log("cddAnalysis companyId",companyId);
     useEffect(() => {
         const fetchData = async() => {
             if (companyId !== '') {
                 try {
                     setLoading(true);
-                    const response = await fetch(`${end_point}cdd_result`);
+                    const response = await fetch(`${endPoint}cdd_result/${companyId}`);
                     
                     if (!response.ok) {
                         throw new Error('Error fetching data');
                     }
     
                     const data = await response.json();
+                    
                     if (data.message === 'NoData') {
                         setCddAnalysis(null);
                     } else {
-                        setCddAnalysis({cdd_result:data.cdd_weekly_category});
+                        setCddAnalysis({cdd_result:data.cdd_weekly_clustering});
                     }
     
                 } catch (error) {
@@ -44,32 +45,51 @@ const CddResult = ({end_point, companyId}) => {
                     setLoading(false);
                 }
             } else {
-                await fetch(`${end_point}reset_company_id`);
+                await fetch(`${endPoint}reset_company_id`);
             }
                 
         };
 
         fetchData();
-    }, [companyId, end_point]);
+    }, [companyId, endPoint]);
 
-    if(!cddAnalysis){
+    if(!companyId){
         return (
-              <Container title="信用評估模型">
-              </Container>
-          );
-      }
+            <Container title="每周信用評分結果">
+            </Container>
+        );
+    } 
+    
+    if (loading) {
+        return (
+            <Container title="每周信用評分結果">
+                <p>Loading...</p>
+            </Container>
+        );
+    }
 
+    if (!cddAnalysis && !loading) {
+        return (
+            <Container title="每周信用評分結果">
+                <p>查無資料</p>
+            </Container>
+        );
+    }
 
     const label_week = cddAnalysis.cdd_result.map(item => item.week_date);
     const cred_invest_result = cddAnalysis.cdd_result.map(item => item.cred_invest_result);
-    return (
-        <Container title="每周信用評分結果">
-            <CddResultPlot
-                labels={label_week}
-                cred_data={cred_invest_result}
-                />
-        </Container>
-    )
+
+    if (companyId && cddAnalysis) {
+        return (
+            <Container title="每周信用評分結果">
+                <CddResultPlot
+                    labels={label_week}
+                    cred_data={cred_invest_result}
+                    />
+            </Container>
+        )
+    }
+    
 };
 
 export default CddResult;
