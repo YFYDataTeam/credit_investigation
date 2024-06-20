@@ -2,7 +2,7 @@ import requests
 
 
 end_point = "https://yfy.ideaxpress.biz/api"
-companyCategoryUuid =""
+companyCategoryUuid = ""
 token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJiYjViOWIxYy05YmNjLTQwZWYtODViNS04Mzc2MWU2OWYwYjYiLCJpYXQiOjE3MTg4NjA4MzUsImV4cCI6MTcxODk0NzIzNX0.pG1mgcmL2Kx2LWUopwze7DTnIhM8cECxfxVAaCsI8Go"
 url = f"{end_point}auth/categorySetting/:{companyCategoryUuid}"
 
@@ -17,4 +17,4 @@ if response.status_code == 200:
     startDate = data['startDate']
     endDate = data['endDate']
     isEnable = data['isEnable']
-
+    

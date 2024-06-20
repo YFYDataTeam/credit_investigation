@@ -1,195 +1,198 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import Container from "./Container";
-import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, PointElement, Filler, plugins } from 'chart.js';
-import { Chart, Line, Bar } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  PointElement,
+  Filler,
+  plugins,
+} from "chart.js";
+import { Chart, Line, Bar } from "react-chartjs-2";
 
 ChartJS.register(
-    BarElement,
-    CategoryScale,
-    LinearScale,
-    LineElement,
-    Title,
-    Tooltip,
-    Legend,
-    PointElement,
-    Filler
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  PointElement,
+  Filler
 );
 
+const CddResult = ({ endPoint, companyId }) => {
+  const [cddAnalysis, setCddAnalysis] = useState(null);
+  const [loading, setLoading] = useState(null);
+  console.log("cddAnalysis companyId", companyId);
+  useEffect(() => {
+    const fetchData = async () => {
+      if (companyId !== "") {
+        try {
+          setLoading(true);
+          const response = await fetch(`${endPoint}cdd_result/${companyId}`);
 
-const CddResult = ({endPoint, companyId}) => {
-    const [cddAnalysis, setCddAnalysis] = useState(null);
-    const [loading, setLoading] = useState(null);
-    console.log("cddAnalysis companyId",companyId);
-    useEffect(() => {
-        const fetchData = async() => {
-            if (companyId !== '') {
-                try {
-                    setLoading(true);
-                    const response = await fetch(`${endPoint}cdd_result/${companyId}`);
-                    
-                    if (!response.ok) {
-                        throw new Error('Error fetching data');
-                    }
-    
-                    const data = await response.json();
-                    
-                    if (data.message === 'NoData') {
-                        setCddAnalysis(null);
-                    } else {
-                        setCddAnalysis({cdd_result:data.cdd_weekly_clustering});
-                    }
-    
-                } catch (error) {
-                    console.error('Error fetching data:', error);
-                } finally {
-                    setLoading(false);
-                }
-            } else {
-                await fetch(`${endPoint}reset_company_id`);
-            }
-                
-        };
+          if (!response.ok) {
+            throw new Error("Error fetching data");
+          }
 
-        fetchData();
-    }, [companyId, endPoint]);
+          const data = await response.json();
 
-    if(!companyId){
-        return (
-            <Container title="每周信用評分結果">
-            </Container>
-        );
-    } 
-    
-    if (loading) {
-        return (
-            <Container title="每周信用評分結果">
-                <p>Loading...</p>
-            </Container>
-        );
-    }
+          if (data.message === "NoData") {
+            setCddAnalysis(null);
+          } else {
+            setCddAnalysis({ cdd_result: data.cdd_weekly_clustering });
+          }
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        await fetch(`${endPoint}reset_company_id`);
+      }
+    };
 
-    if (!cddAnalysis && !loading) {
-        return (
-            <Container title="每周信用評分結果">
-                <p>查無資料</p>
-            </Container>
-        );
-    }
+    fetchData();
+  }, [companyId, endPoint]);
 
-    const label_week = cddAnalysis.cdd_result.map(item => item.week_date);
-    const cred_invest_result = cddAnalysis.cdd_result.map(item => item.cred_invest_result);
+  if (!companyId) {
+    return <Container title="每周信用評分結果"></Container>;
+  }
 
-    if (companyId && cddAnalysis) {
-        return (
-            <Container title="每周信用評分結果">
-                <CddResultPlot
-                    labels={label_week}
-                    cred_data={cred_invest_result}
-                    />
-            </Container>
-        )
-    }
-    
+  if (loading) {
+    return (
+      <Container title="每周信用評分結果">
+        <p>Loading...</p>
+      </Container>
+    );
+  }
+
+  if (!cddAnalysis && !loading) {
+    return (
+      <Container title="每周信用評分結果">
+        <p>查無資料</p>
+      </Container>
+    );
+  }
+
+  const label_week = cddAnalysis.cdd_result.map((item) => item.week_date);
+  const cred_invest_result = cddAnalysis.cdd_result.map(
+    (item) => item.cred_invest_result
+  );
+
+  if (companyId && cddAnalysis) {
+    return (
+      <Container title="每周信用評分結果">
+        <CddResultPlot labels={label_week} cred_data={cred_invest_result} />
+      </Container>
+    );
+  }
 };
 
 export default CddResult;
 
-
-const CddResultPlot = ({labels, cred_data}) => {
-    const getColor = (value) => {
-        switch (value.toLowerCase()) {
-            case 'green':
-                return 'green';
-            case 'red':
-                return 'red';
-            case 'yellow':
-                return 'darkorange';
-            default:
-                return 'black';
-        }
-    };
-    const getNumericValue = (value) => {
-        switch (value.toLowerCase()) {
-            case 'green':
-                return 1;
-            case 'yellow':
-                return 2;
-            case 'red':
-                return 3;
-            default:
-                return 0;
-        }
-    };
-    const pointColors = cred_data.map(value => getColor(value));
-    const numericValues = cred_data.map(value => getNumericValue(value));
-    const chartData ={
-        labels: labels,
-        datasets: [
-            {
-                data: numericValues,
-                borderColor: 'black',
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                fill: true,
-                pointBackgroundColor: pointColors,
-                pointBorderColor: pointColors,
-                pointRadius: 6, // Bigger node size
-                pointHoverRadius: 8, // Bigger hover node size
-            }
-        ]
+const CddResultPlot = ({ labels, cred_data }) => {
+  const getColor = (value) => {
+    switch (value.toLowerCase()) {
+      case "green":
+        return "green";
+      case "red":
+        return "red";
+      case "yellow":
+        return "darkorange";
+      default:
+        return "black";
     }
-    const options = {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-            x: {
-                grid: {
-                    display: false
-                }
-            },
-            y: {
-                type: 'linear',
-                display: true,
-                grid: {
-                    display: false
-                },
-                title: {
-                    display: true,
-                    text: '信用評估'
-                },
-                ticks: {
-                    callback: (value) => {
-                        switch (value) {
-                            case 1:
-                                return 'green';
-                            case 2:
-                                return 'yellow';
-                            case 3:
-                                return 'red';
-                            default:
-                                return '';
-                        }
-                    }
-                }
-            }
+  };
+  const getNumericValue = (value) => {
+    switch (value.toLowerCase()) {
+      case "green":
+        return 1;
+      case "yellow":
+        return 2;
+      case "red":
+        return 3;
+      default:
+        return 0;
+    }
+  };
+  const pointColors = cred_data.map((value) => getColor(value));
+  const numericValues = cred_data.map((value) => getNumericValue(value));
+  const chartData = {
+    labels: labels,
+    datasets: [
+      {
+        data: numericValues,
+        borderColor: "black",
+        backgroundColor: "rgba(75, 192, 192, 0.2)",
+        fill: true,
+        pointBackgroundColor: pointColors,
+        pointBorderColor: pointColors,
+        pointRadius: 6, // Bigger node size
+        pointHoverRadius: 8, // Bigger hover node size
+      },
+    ],
+  };
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: {
+        grid: {
+          display: false,
         },
-        plugins: {
-            title: {
-                display: false,
-                align: 'center',
-                text: "信用評估燈號紀錄",
-                font: {
-                    size: 18,
-                    color: 'red'
-                },
-            },
-            legend: {
-                display: false,
+      },
+      y: {
+        type: "linear",
+        display: true,
+        grid: {
+          display: false,
+        },
+        title: {
+          display: true,
+          text: "信用評估",
+        },
+        ticks: {
+          callback: (value) => {
+            switch (value) {
+              case 1:
+                return "green";
+              case 2:
+                return "yellow";
+              case 3:
+                return "red";
+              default:
+                return "";
             }
-        }
-    }
-    return (
-        <div className="sub_container">
-             <Chart type='line' data={chartData} options={options} />
-        </div>
-    );
+          },
+        },
+      },
+    },
+    plugins: {
+      title: {
+        display: false,
+        align: "center",
+        text: "信用評估燈號紀錄",
+        font: {
+          size: 18,
+          color: "red",
+        },
+      },
+      legend: {
+        display: false,
+      },
+    },
+  };
+  return (
+    <div className="sub_container">
+      <Chart type="line" data={chartData} options={options} />
+    </div>
+  );
 };
