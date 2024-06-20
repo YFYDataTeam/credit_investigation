@@ -42,7 +42,15 @@ const App = () => {
             <AuthCheck onValidation={setIsAuthValid} />
 
             {isAuthValid === false ? (
-                <Redirect to="/invalid-user" /> // redirect
+                // <Redirect to="/invalid-user" /> // redirect
+                <section className="welcome-hero">
+                <div className="header-text">
+                    <h1>徵信報告</h1>
+                    <p className="subheading">
+                        整合公司基本資訊、財部報表、公示資料等資料，快速評估公司運營情況
+                    </p>
+                </div>
+            </section>
             ) : (
                 <>
                     <section className="welcome-hero">

@@ -4,12 +4,13 @@ const AuthCheck = ({ onValidation }) => {
     const [isValid, setIsValid] = useState(false);
     const end_point = "https://yfy.ideaxpress.biz/api";
     const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJiYjViOWIxYy05YmNjLTQwZWYtODViNS04Mzc2MWU2OWYwYjYiLCJpYXQiOjE3MTg4NjA4MzUsImV4cCI6MTcxODk0NzIzNX0.pG1mgcmL2Kx2LWUopwze7DTnIhM8cECxfxVAaCsI8Go';
-    const companyCategoryUuid = '';
+    const companyCategoryUuid = '266db9b5-62c7-4e58-8e20-26d8d582a4f1';
 
     useEffect(() => {
         const fetchToken = async () => {
             try {
                 const url = `${end_point}/auth/categorySetting/${companyCategoryUuid}`;
+                console.log('url:', url);
                 const response = await fetch(url, {
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -23,8 +24,8 @@ const AuthCheck = ({ onValidation }) => {
                         const currentDate = new Date();
                         const startDate = new Date(category.startDate);
                         const endDate = new Date(category.endDate);
-
-                        if (category.isEnable && category.service === '徵信報告' && currentDate >= startDate && currentDate <= endDate) {
+                        console.log('current date:', category);
+                        if (category.isEnable && category.service === 'ESG新聞' && currentDate >= startDate && currentDate <= endDate) {
                             setIsValid(true);
                             onValidation(true);
                         } else {
