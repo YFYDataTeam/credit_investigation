@@ -2,7 +2,9 @@ import re
 import os
 from src.utils import read_config
 from src.credit_invest import CreditInvest
-from langchain.schema import SystemMessage, HumanMessage
+from langchain_core.messages import SystemMessage
+from langchain_core.prompts import ChatPromptTemplate, HumanMessagePromptTemplate
+from langchain.schema.output_parser import StrOutputParser
 import google.generativeai as genai
 import google.ai.generativelanguage as glm
 from langchain_google_genai import (
@@ -66,36 +68,55 @@ class LlmAgent(CreditInvest):
         if df_judgement.empty:
             return {"message": self.no_data_msg}
 
+        df_judgement_selected = df_judgement.head(5)
+
         judgement_summary_result = {}
-        for _, row in df_judgement.iterrows():
-            cleaned_data = self._clean_data(row.judgement_text01)
+        for _, row in df_judgement_selected.iterrows():
+            cleaned_text = self._clean_data(row.judgement_text01)
 
             llm = ChatGoogleGenerativeAI(
                 model="gemini-pro",
                 convert_system_message_to_human=True,
+                temperature=0,
                 safety_settings={
                     HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
                     HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
                     HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
                 },
             )
+            output = {}
 
+            chat_template = ChatPromptTemplate.from_messages(
+                [
+                    SystemMessage(
+                        content="你是一個專業的摘要統整AI助手，擅長於理解並找出法律判決文件中的重點，針對我提出的問題使用繁體中文回覆。"
+                    ),
+                    HumanMessagePromptTemplate.from_template("{text}")
+                ]
+            )
+            
 
-            messages = [
-                SystemMessage(content="你是一個專業的摘要統整AI助手，針對我提出的問題使用繁體中文回覆。"),
-                HumanMessage(content=f"""
-                #### INSTRUCTION: 仔細閱讀 REF 的內容，提供我以下內容:
-                            1. REF 的摘要
-                            2. COMPANY 公司在其中扮演的腳色
-                            3. COMPANY 公司在其中受到的影響
-                            若沒有找到滿足我需求的內容則說沒有，不要亂作答不然外婆會難過。
-                #### REF: {cleaned_data}
-                #### COMPANY: {self.company_name}
-            """)
-            ]
+            summary_text = f"仔細閱讀 REF 的內容，提供我摘要，不要特殊符號跟摘要這兩個字:{cleaned_text}"
+            role_text = f"仔細閱讀 REF 的內容，只要告訴我COMPANY扮演的腳色:{cleaned_text}。COMPANY: {self.company_name}"
+            influence_text = f"""
+            仔細閱讀 REF 的內容，告訴我 COMPANY 公司受到的懲罰為何，包括刑責或是罰錢，若沒有則說沒有受到裁罰。不要有COMPANY字，
+            #### REF: {cleaned_text}。
+            #### COMPANY: {self.company_name}
+            """
+            
+            output_parser = StrOutputParser()
+            chain = chat_template | llm | output_parser
 
-            llm_response = llm(messages)
-            judgement_summary_result[row.judgement_no] = llm_response.content
+            summary_output = chain.invoke({"text": summary_text})
+            role_output = chain.invoke({"text": role_text})
+            influence_output = chain.invoke({'text': influence_text})
+
+            output['summary'] = summary_output
+            output['role'] = role_output
+            output['influence'] = influence_output
+            
+            
+            judgement_summary_result[row.judgement_no] = output
 
 
         return judgement_summary_result
