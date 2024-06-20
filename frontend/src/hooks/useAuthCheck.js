@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const useAuthCheck = ({ onValidation }) => {
+const useAuthCheck = () => {
   const [isValid, setIsValid] = useState(false);
   const end_point = "https://yfy.ideaxpress.biz/api";
   const token =
@@ -33,23 +33,18 @@ const useAuthCheck = ({ onValidation }) => {
               currentDate <= endDate
             ) {
               setIsValid(true);
-              onValidation(true);
             } else {
               setIsValid(false);
-              onValidation(false);
             }
           } else {
             setIsValid(false);
-            onValidation(false);
           }
         } else {
           setIsValid(false);
-          onValidation(false);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
         setIsValid(false);
-        onValidation(false);
       }
     };
 
