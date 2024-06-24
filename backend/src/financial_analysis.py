@@ -106,13 +106,13 @@ class FinancialAnalysis(MySQLAgent):
 
             df['row_seq'] = df.groupby(partitions).cumcount() + 1
 
-            df_output = df[df['row_seq'] == 2].drop(['row_seq'], axis=1) 
+            df_output = df[df['row_seq'] == 1].drop(['row_seq'], axis=1) 
 
             return df_output
 
         df_mops_season = clean_mops_season_duplicants(df_mops_season_raw, partitions=partitions)
 
-        columns_for_drop = ['report_name', 'company_id', 'company_name', 'creation_date', 'seq']
+        columns_for_drop = ['company_id', 'company_name', 'creation_date', 'seq']
         cashflow = df_mops_season[df_mops_season['report_name'] == 'CashFlowStatement'].drop(columns_for_drop, axis=1)
         balance = df_mops_season[df_mops_season['report_name'] == 'BalanceSheet'].drop(columns_for_drop, axis=1)
         profitloss = df_mops_season[df_mops_season['report_name'] == 'ProfitAndLose'].drop(columns_for_drop, axis=1)
