@@ -39,6 +39,7 @@ const EpaReport = ({ endPoint, companyId }) => {
 		fetchData();
 	}, [companyId]);
 
+
   if(!companyId){
     return (
         <Container title="環保署汙染裁處記錄分析">
@@ -65,9 +66,13 @@ const EpaReport = ({ endPoint, companyId }) => {
 	const is_improve_counts = epaAnalysis.improve_state.map(item => item.count);
 
 	const label_paymentstate = epaAnalysis.penaltykind_unpay.map(item => item.paymentstate);
+
+
+
 	const penaltykind_amount_payment_state = epaAnalysis.penaltykind_unpay.map(item => item.penaltykind_amount);
 
 	console.log('epa test:', penaltykind_amount_payment_state);
+
 
 	// penaltykindcount
 	const penaltykindcount_config = {
@@ -143,6 +148,7 @@ const EpaReport = ({ endPoint, companyId }) => {
 				)
 			}
 		</Container>
+
 
 	)
 

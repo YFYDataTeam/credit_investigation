@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Container from "./Container";
 import { MonthlySalesChart, QuarterlySalesChart, YearlySalesChart, MonthlyY2M } from "../common/components/charts/RevenueChart";
 
+
 const RevenueAnalysis = ({ endPoint, companyId }) => {
     const [revenueAnalysis, setRevenueAnalysis] = useState(null);
     const [loading, setLoading] = useState(false);
