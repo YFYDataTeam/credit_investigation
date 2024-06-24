@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Container from "./Container";
+import textContent from "@/common/components/utils/textContent";
 
+const description = textContent.jud.des;
+const nodatamessage = textContent.jud.msg;
 
 const JudgementSummary = ({ endPoint, companyId }) => {
 	const [judgementSummary, setJudgementSummary] = useState(null);
@@ -15,13 +18,14 @@ const JudgementSummary = ({ endPoint, companyId }) => {
 					if (!response.ok) {
 						throw new Error('Data not found.')
 					}
-
 					const data = await response.json();
 					setJudgementSummary(data);
 					setLoading(false);
 				} catch (error) {
 					console.error("Error fetching data", error);
-					setRevenueAnalysis(null);
+					setJudgementSummary(null);
+				} finally {
+					setJudgementSummary(null);
 					setLoading(false);
 				}
 			} else {
@@ -39,7 +43,7 @@ const JudgementSummary = ({ endPoint, companyId }) => {
 		);
 	}
 
-	if (!judgementSummary) {
+	if (loading) {
 		return (
 			<Container title="法院判決摘要">
 				<p>Loading...</p>
@@ -47,8 +51,18 @@ const JudgementSummary = ({ endPoint, companyId }) => {
 		);
 	}
 
+	if (!judgementSummary && !loading) {
+    return (
+        <Container title="法院判決摘要">
+					<p className="description">{description}</p>
+					<p className="message">{nodatamessage}</p>
+        </Container>
+    );
+}
+
 	return (
 		<Container title='法院判決摘要'>
+			<p className="description">{description}</p>
 			<table>
 				<thead>
 					<tr>

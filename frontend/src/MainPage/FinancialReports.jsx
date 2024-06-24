@@ -13,11 +13,13 @@ const formatFinancialData = (data) => {
 
 const FinancialReport = ({endPoint, companyId}) => {
   const [financialReport, setFinancialReport] = useState(null);
+	const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       if(companyId !== ''){
         try {
+            setLoading(true);
             const response = await fetch(`${endPoint}financial_report/${companyId}`);
             if (!response.ok) {
               throw new Error("Data not found.");
@@ -39,10 +41,12 @@ const FinancialReport = ({endPoint, companyId}) => {
     
             });
           }
-    
+          setLoading(false);
           } catch (error) {
             console.error("Error fetching data", error);
             setFinancialReport(null);
+          } finally {
+            setLoading(false);
           }
       } else {
         await fetch(`${endPoint}reset_company_id`);
@@ -59,10 +63,19 @@ const FinancialReport = ({endPoint, companyId}) => {
         </Container>
     );
   }
+
+  if (loading) {
+		return (
+			<Container title="營運績效">
+				<p>Loading...</p>
+			</Container>
+		);
+	}
+
   if (!financialReport) {
     return (
         <Container title="財報報表">
-            <p>Loading...</p>
+            <p>無相關資料</p>
         </Container>
     );
 }

@@ -139,3 +139,40 @@ button:hover:not(:disabled) {
   max-width: 1900px;
   margin: auto;
 }
+
+.container-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.description {
+  color: #666;
+  font-size: 14px;
+  line-height: 1.6;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.message {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+  padding: 10px 20px;
+  margin: 20px 0;
+  /* background-color: #f0f8ff; */
+  border-radius: 8px;
+  /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
+  text-align: center;
+  /* transition: background-color 0.3s, transform 0.3s; */
+}
+
+
+.cdd-chart {
+
+  width: 1200px; /* Set a max-width to control the broadness */
+  margin: 0 ; /* Center the chart */
+  height: 300px;
+}

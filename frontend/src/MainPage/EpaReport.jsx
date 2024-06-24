@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import Container from "./Container";
-import CustomBarChart from "../common/components/utils/EpaChartFunc.jsx";
-import '../../assets/css/epareport.css';
+import CustomBarChart from "@/common/components/utils/EpaChartFunc";
+import '@assets/css/epareport.css';
+import textContent from "@/common/components/utils/textContent";
 
+const description = textContent.epa.des;
+const nodatamessage = textContent.epa.msg;
 
 const EpaReport = ({ endPoint, companyId }) => {
 
@@ -12,27 +15,32 @@ const EpaReport = ({ endPoint, companyId }) => {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
+				setLoading(true);
 				const response = await fetch(`${endPoint}epa_report`);
 
 				if (!response.ok) {
 					throw new Error("Data not found.");
 				}
 				const data = await response.json();
-				console.log('epa data:', data);
+
 				if (data.message === 'NoData') {
 					setEpareport(null);
 				} else {
-
 					setEpareport({
 						penaltykind_count: data.penaltykind_count,
 						penaltykind_total_money: data.penaltykind_total_money,
 						improve_state: data.improve_state,
 						penaltykind_unpay: data.penaltykind_unpay
 					});
-
+					setLoading(false);
 				};
 			} catch (error) {
 				console.error("Error:", error)
+				setEpareport(null);
+				setLoading(false);
+			} finally {
+				setEpareport(null);
+				setLoading(false);
 			}
 		};
 
@@ -47,10 +55,19 @@ const EpaReport = ({ endPoint, companyId }) => {
     );
   }
 
-	if (!epaAnalysis) {
+	if (loading) {
+		return (
+			<Container title="環保署汙染裁處記錄分析">
+				<p>Loading...</p>
+			</Container>
+		);
+	}
+
+	if (!epaAnalysis && !loading) {
     return (
-        <Container title="環保署汙染裁處記錄分析">
-            <p>Loading...</p>
+        <Container title="環保署汙染裁處記錄分析"  className="container-center">
+					<p className="description">{description}</p>
+					<p className="message">{nodatamessage}</p>
         </Container>
     );
 }
@@ -66,12 +83,7 @@ const EpaReport = ({ endPoint, companyId }) => {
 	const is_improve_counts = epaAnalysis.improve_state.map(item => item.count);
 
 	const label_paymentstate = epaAnalysis.penaltykind_unpay.map(item => item.paymentstate);
-
-
-
 	const penaltykind_amount_payment_state = epaAnalysis.penaltykind_unpay.map(item => item.penaltykind_amount);
-
-	console.log('epa test:', penaltykind_amount_payment_state);
 
 
 	// penaltykindcount
@@ -111,7 +123,7 @@ const EpaReport = ({ endPoint, companyId }) => {
 
 	return (
 		<Container title="環保署汙染裁處記錄分析">
-			
+			<p className="description">{description}</p>
 			{ epaAnalysis ? (
 				<div className="grid-container">
 				<CustomBarChart
