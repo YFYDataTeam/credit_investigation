@@ -31,10 +31,11 @@ if __name__ == "__main__":
     port = configs.get('port', 8000)
 
     # conn_path = "backend/.env/connections.json"
-    # credit_invest = CreditInvest(conn_path=conn_path)
+    # configs = read_config(path=conn_path)
+    # conn_configs = configs["CREDITREPORT"]['Crawler_mysql_conn_info']
+    # credit_invest = CreditInvest(conn_configs=conn_configs)
 
-    # for debug
-    # company_id = '86156446'
+    # company_id = '83387850'
     # credit_invest.set_up(company_id=company_id)
     # basic_info_dict = credit_invest.basic_info()
     # epa_invest_result, plot_is_improve = credit_invest.epa_analysis()

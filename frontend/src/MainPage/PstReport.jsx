@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Container from "./Container";
-import { AnnualAgreementPlot } from './PstChart';
+import { AnnualAgreementPlot } from '../common/components/utils/PstChart';
 
 const getCurrencyCode = (currencyName) => {
     const currencyMap = {

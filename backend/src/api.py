@@ -17,13 +17,9 @@ import base64
 
 router = APIRouter()
 
-SECRET_KEY = "your_secret_key"
-ALGORITHM = "HS256"
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
 conn_path = ".env/connections.json"
 configs = read_config(path=conn_path)
-conn_configs = configs["CREDITREPORT"]['VM1_mysql_conn_info']
+conn_configs = configs["CREDITREPORT"]['Crawler_mysql_conn_info']
 credit_invest = CreditInvest(conn_configs=conn_configs)
 
 # ar_analysis = ARAnalysis(conn_path=conn_path)
@@ -67,20 +63,9 @@ async def reset_company_id():
 @router.get("/epa_report")
 async def epa_invest_result():
 
-    epa_result, plot_is_improve = credit_invest.epa_analysis()
+    epa_result = credit_invest.epa_analysis()
 
-    if plot_is_improve:
-        plot_is_improve_base64 = base64.b64encode(plot_is_improve.getvalue()).decode('utf8')
-    else:
-        plot_is_improve_base64 = None
-
-    # Construct response
-    response_data = {
-        **epa_result,
-        "plot_image": plot_is_improve_base64
-    }
-
-    return response_data
+    return JSONResponse(epa_result)
 
 # class PstReport(BaseModel)
 
@@ -94,7 +79,7 @@ async def pst_invest_result(time_config: str = Query(..., enum=['past', 'future'
 
 
 
-    return JSONResponse(content=convert_dict(pst_result))
+    return JSONResponse(convert_dict(pst_result))
 
 
 def get_financial_analysis(company_id: str):
