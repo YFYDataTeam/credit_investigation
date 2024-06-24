@@ -138,13 +138,13 @@ const App = () => {
                 </div>
             )}
 
-        {finalCompanyId && <CddResult endPoint={endPoint} companyId={finalCompanyId}></CddResult>}
+        {/* {finalCompanyId && <CddResult endPoint={endPoint} companyId={finalCompanyId}></CddResult>} */}
         
         {/* {finalCompanyId && <RevenueAnalysis endPoint={endPoint} companyId={finalCompanyId}></RevenueAnalysis>} */}
 
         {/* {finalCompanyId && <FinancialReport endPoint={endPoint} companyId={finalCompanyId}></FinancialReport>} */}
 
-        {finalCompanyId && <JudgementSummary endPoint={endPoint} companyId={finalCompanyId}></JudgementSummary>}
+        {/* {finalCompanyId && <JudgementSummary endPoint={endPoint} companyId={finalCompanyId}></JudgementSummary>} */}
 
         {finalCompanyId && <EpaReport endPoint={endPoint} companyId={finalCompanyId}></EpaReport>}
 
