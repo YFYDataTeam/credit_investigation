@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import Container from "./Container";
-import { MonthlySalesChart, QuarterlySalesChart, YearlySalesChart, MonthlyY2M } from "../common/components/charts/RevenueChart";
+import { MonthlySalesChart, QuarterlySalesChart, YearlySalesChart, MonthlyY2M } from "@/common/components/charts/RevenueChart";
+import textContent from "@/common/components/utils/textContent";
 
+const description = textContent.revAna.des;
+const nodatamessage = textContent.revAna.msg;
 
 const RevenueAnalysis = ({ endPoint, companyId }) => {
 	const [revenueAnalysis, setRevenueAnalysis] = useState(null);
@@ -62,7 +65,8 @@ const RevenueAnalysis = ({ endPoint, companyId }) => {
 	if (!revenueAnalysis && !loading) {
 		return (
 			<Container title="營運績效">
-				<p>無相關資料</p>
+					<p className="description">{description}</p>
+					<p className="message">{nodatamessage}</p>
 			</Container>
 		);
 	}
@@ -82,6 +86,8 @@ const RevenueAnalysis = ({ endPoint, companyId }) => {
 
 	return (
 		<Container title="營運績效">
+			<p className="description">{description}</p>
+			<div className="grid-container">
 			<YearlySalesChart
 				labels={labels_y}
 				annualSales={annual_sales_data}
@@ -95,6 +101,8 @@ const RevenueAnalysis = ({ endPoint, companyId }) => {
 				salesData={monthly_sales_data} />
 			<MonthlyY2M
 				y2mData={y2m_data} />
+			</div>
+
 		</Container>
 	);
 };

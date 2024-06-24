@@ -56,7 +56,10 @@ const MonthlySalesChart = ({ labels, salesData }) => {
             },
             legend: {
                 display: false,  // Hide the legend
-            }
+            },
+            datalabels: {
+				display: false
+			}
         }
     };
 
@@ -137,7 +140,10 @@ const QuarterlySalesChart = ({ labels, quarterlySales, qoqData }) => {
             },
             legend: {
                 display: true,  // Show the legend to distinguish between the datasets
-            }
+            },
+            datalabels: {
+				display: false
+			}
         }
     };
 
@@ -222,7 +228,10 @@ const YearlySalesChart = ({ labels, annualSales, yoyData }) => {
             },
             legend: {
                 display: true,  // Show the legend to distinguish between the datasets
-            }
+            },
+            datalabels: {
+				display: false
+			}
         }
     };
 
@@ -316,7 +325,10 @@ const MonthlyY2M = ({y2mData}) => {
             },
             legend: {
               display: true  // Show the legend to distinguish between the datasets
-            }
+            },
+            datalabels: {
+				display: false
+			}
           }
         }
       };

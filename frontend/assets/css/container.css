@@ -1,9 +1,9 @@
 .container {
   padding: 20px;
   margin: 20px auto;
-  /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 12px;
-  /* background: linear-gradient(135deg, #f0f0f0, #ffffff); */
+  background: linear-gradient(135deg, #f0f0f0, #ffffff);
   background-color: transparent;
   width: 100%; 
   max-width: 1900px;

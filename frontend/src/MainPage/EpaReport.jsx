@@ -124,7 +124,6 @@ const EpaReport = ({ endPoint, companyId }) => {
 	return (
 		<Container title="環保署汙染裁處記錄分析">
 			<p className="description">{description}</p>
-			{ epaAnalysis ? (
 				<div className="grid-container">
 				<CustomBarChart
 					labels={label_penaltykind_in_count}
@@ -155,10 +154,6 @@ const EpaReport = ({ endPoint, companyId }) => {
 					color={paymentstate_config.color}
 				/>
 				</div>
-				) : (
-					<div><h3>查無資料</h3></div>
-				)
-			}
 		</Container>
 
 

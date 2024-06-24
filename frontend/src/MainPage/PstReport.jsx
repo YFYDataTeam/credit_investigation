@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Container from "./Container";
-import { AnnualAgreementPlot } from '../common/components/charts/PstChart';
+import { AnnualAgreementPlot } from '@/common/components/charts/PstChart';
+import textContent from '@/common/components/utils/textContent';
+
+const description = textContent.pst.des;
+const nodatamessage = textContent.pst.msg;
 
 const getCurrencyCode = (currencyName) => {
 	const currencyMap = {
@@ -68,17 +72,18 @@ const PstAnalysis = ({ endPoint, companyId }) => {
 
 
 	if (loading) {
-	    return (
-	        <Container title="動產擔保分析">
-	            <p>Loading...</p>
-	        </Container>
-	    );
+		return (
+			<Container title="動產擔保分析">
+				<p>Loading...</p>
+			</Container>
+		);
 	}
 
 	if (!pstAnalysis && !loading) {
 		return (
 			<Container title="動產擔保分析">
-				<p>無動產擔保紀錄</p>
+				<p className="description">{description}</p>
+				<p className="message">{nodatamessage}</p>
 			</Container>
 		);
 	}
@@ -89,6 +94,7 @@ const PstAnalysis = ({ endPoint, companyId }) => {
 	const annual_agreement_count = pstAnalysis.annualAgreement.map(item => item.agreement_count);
 	return (
 		<Container title="動產擔保分析">
+			<p className="description">{description}</p>
 			<AnnualAgreementPlot
 				labels={label_agreement}
 				annual_total_agreement_amount={annual_total_agreement_amount}
