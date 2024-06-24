@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Container from "./Container";
-import FinancialTable from "../common/components/utils/FinancialTable"; 
+import FinancialTable from "../common/components/charts/FinancialTable"; 
 import '../../assets/css/financialtable.css';
 
 const formatFinancialData = (data) => {

@@ -1,12 +1,6 @@
-/* EPAPenaltyReport.css */
-.penalty-details p {
-    margin: 10px 0;
-    color: #333; /* Dark gray for text */
-    font-size: 16px; /* Medium font size */
-}
-
-.penalty-details img {
-    margin-top: 20px;
-    width: 100%; /* Ensure the image is responsive */
-    border-radius: 8px; /* Optional: rounded corners for the image */
-}
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 columns */
+    grid-template-rows: auto; /* Adjust row height automatically */
+    gap: 20px; /* Adjust the gap between items */
+  }
