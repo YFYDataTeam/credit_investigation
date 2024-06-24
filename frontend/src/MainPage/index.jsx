@@ -9,7 +9,7 @@ import FinancialReport from "./FinancialReports";
 import RevenueAnalysis from "./RevenueAnalysis";
 import CddResult from "./CddResult";
 import JudgementSummary from "./JudgementSummary";
-import '../../assets/css/title_section.css';
+import "@assets/css/title_section.css";
 
 let endPoint = process.env.END_POINT;
 
