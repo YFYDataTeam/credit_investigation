@@ -1,0 +1,32 @@
+.financial-section {
+	display: flex;
+	align-items: first baseline;
+	margin-bottom: 0px;
+
+}
+
+.small-title {
+	flex-grow: 1;
+	font-size: 1.2em;
+	/* margin-left: -700px;  */
+}
+
+.toggle-button {
+	background: none;
+	border: none;
+	font-size: 1.2em;
+	cursor: pointer;
+	outline: none;
+	color: black;
+	transform: scale(0.8);
+}
+
+.toggle-button:focus,
+.toggle-button:active {
+	background: none;
+	/* Remove background on focus/active */
+	border: none;
+	/* Remove border on focus/active */
+	outline: none;
+	/* Remove outline on focus/active */
+}

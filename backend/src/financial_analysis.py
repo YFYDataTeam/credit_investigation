@@ -112,10 +112,16 @@ class FinancialAnalysis(MySQLAgent):
 
         df_mops_season = clean_mops_season_duplicants(df_mops_season_raw, partitions=partitions)
 
+
+        max_year = df_mops_season.period_year.max()
+        max_quarter = df_mops_season[df_mops_season['period_year'] == max_year]['season'].max()
+
+        df_mops_last_season = df_mops_season[(df_mops_season['period_year'] == max_year) & (df_mops_season['season'] == max_quarter)]
+
         columns_for_drop = ['company_id', 'company_name', 'creation_date', 'seq']
-        cashflow = df_mops_season[df_mops_season['report_name'] == 'CashFlowStatement'].drop(columns_for_drop, axis=1)
-        balance = df_mops_season[df_mops_season['report_name'] == 'BalanceSheet'].drop(columns_for_drop, axis=1)
-        profitloss = df_mops_season[df_mops_season['report_name'] == 'ProfitAndLose'].drop(columns_for_drop, axis=1)
+        cashflow = df_mops_last_season[df_mops_last_season['report_name'] == 'CashFlowStatement'].drop(columns_for_drop, axis=1)
+        balance = df_mops_last_season[df_mops_last_season['report_name'] == 'BalanceSheet'].drop(columns_for_drop, axis=1)
+        profitloss = df_mops_last_season[df_mops_last_season['report_name'] == 'ProfitAndLose'].drop(columns_for_drop, axis=1)
 
         result = {
             'balance': balance.to_dict(orient='records'),
