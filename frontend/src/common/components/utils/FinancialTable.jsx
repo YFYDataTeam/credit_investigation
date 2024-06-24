@@ -1,5 +1,5 @@
 import React from "react";
-import '../../assets/css/financialtable.css'
+import '../../../../assets/css/financialtable.css'
 
 const FinancialTable = ({ title, data }) => {
   return (
