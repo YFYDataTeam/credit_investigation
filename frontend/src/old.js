@@ -1,48 +1,47 @@
 // App.js
 
-
 // get the endpoint config
 // fetch('C:/Users/sean.chang/yfy/git/credit_investigation/frontend/public/configs.json').then(response => response.json()).then(config => {
 //   const endpoint = config.endpoint
 // })
-endpoint = 'http://localhost:8000/'
-
+endpoint = 'http://localhost:8000/';
 
 // Initial the flag
 let isSubmitting = false;
 
-document.getElementById('GetIDFromInput').addEventListener('submit', async (event) => {
-  event.preventDefault();
-  if (isSubmitting) {
-    console.log('Submission already in progress. Please wait.');
-    return; // Exit if already submitting
-  }
+document
+  .getElementById('GetIDFromInput')
+  .addEventListener('submit', async event => {
+    event.preventDefault();
+    if (isSubmitting) {
+      console.log('Submission already in progress. Please wait.');
+      return; // Exit if already submitting
+    }
 
-  const company_id = document.getElementById('companyID').value;
+    const company_id = document.getElementById('companyID').value;
 
-  if (company_id.trim() !== '') {
-    isSubmitting = true; // Set the flag
+    if (company_id.trim() !== '') {
+      isSubmitting = true; // Set the flag
 
-    // Call your API functions
-    await fetchBasicInfo(company_id);
-    await fetchEpaReport();
+      // Call your API functions
+      await fetchBasicInfo(company_id);
+      await fetchEpaReport();
 
-    isSubmitting = false; // Reset the flag
-  } else {
-    console.log('No company ID entered. API call prevented.');
-  }
-});
+      isSubmitting = false; // Reset the flag
+    } else {
+      console.log('No company ID entered. API call prevented.');
+    }
+  });
 
-
-async function fetchBasicInfo(company_id){
-  try{
+async function fetchBasicInfo(company_id) {
+  try {
     console.log('input', company_id);
     const response = await fetch(endpoint + `basicinfo/${company_id}`);
     if (response.ok) {
       const data = await response.json();
-      if (data.message && data.message == 'NoData'){
+      if (data.message && data.message == 'NoData') {
         displayNoDataMessage();
-      } else{
+      } else {
         displayBasicInfo(data);
       }
     } else {
@@ -90,80 +89,80 @@ function displayBasicInfo(data) {
   BasicInfoElement.innerHTML = BasicInfoContent;
 }
 
-function displayNoDataMessage(){
+function displayNoDataMessage() {
   const BasicInfoElement = document.getElementById('basicInfo');
-  BasicInfoElement.innerHTML = "<p>No basic information available for the given company ID.</p>";
+  BasicInfoElement.innerHTML =
+    '<p>No basic information available for the given company ID.</p>';
 }
-
-
 
 window.addEventListener('load', fetchBasicInfo);
 
 // Function to fetch EPA report data from the provided endpoint
 async function fetchEpaReport() {
-    try {
-      const response = await fetch(endpoint + `epa_report`); // Fetch data from the provided endpoint
-      const data = await response.json();
-      displayEpaReport(data);
-    } catch (error) {
-      console.error('Error fetching EPA report data:', error);
-    }
+  try {
+    const response = await fetch(endpoint + `epa_report`); // Fetch data from the provided endpoint
+    const data = await response.json();
+    displayEpaReport(data);
+  } catch (error) {
+    console.error('Error fetching EPA report data:', error);
   }
-  
-  // Function to display EPA report on the web page
-function displayEpaReport(data) {
-    const epaReportElement = document.getElementById('epaReport');
+}
 
-    // Construct the EPA report content
-    let epaReportContent = `
+// Function to display EPA report on the web page
+function displayEpaReport(data) {
+  const epaReportElement = document.getElementById('epaReport');
+
+  // Construct the EPA report content
+  let epaReportContent = `
       <p>裁處總次數: ${data.penalty_times}</p>
       <p>最高裁處金額紀錄: ${data.max_penalty_money}</p>
       <p>最近一次裁處金額: ${data.latest_penalty_money}</p>
     `;
 
-    // Check if there is a plot image and add it to the content
-    if (data.plot_image) {
-        epaReportContent += `<img src="data:image/png;base64,${data.plot_image}" alt="Plot Image" style="max-width: 100%; height: auto;">`;
-    } else {
-        epaReportContent += `<p>No plot image available.</p>`;
-    }
+  // Check if there is a plot image and add it to the content
+  if (data.plot_image) {
+    epaReportContent += `<img src="data:image/png;base64,${data.plot_image}" alt="Plot Image" style="max-width: 100%; height: auto;">`;
+  } else {
+    epaReportContent += `<p>No plot image available.</p>`;
+  }
 
-    // Set the HTML content of the #epaReport div
-    epaReportElement.innerHTML = epaReportContent;
+  // Set the HTML content of the #epaReport div
+  epaReportElement.innerHTML = epaReportContent;
 }
-  
+
 // Call the fetchEpaReport function when the page loads
 window.addEventListener('load', fetchEpaReport);
 
-
-async function fecthPstReport(){
+async function fecthPstReport() {
   try {
     const respone = await fetch(endpoint + 'pst_report');
     const data = await respone.json();
     displayPstReport(data);
-  } catch(error) {
-    console.error('Error fetching Psrt Report data:', error)
+  } catch (error) {
+    console.error('Error fetching Psrt Report data:', error);
   }
 }
 
-function displayPstReport(data){
-    const pstReportElement = document.getElementById('pstReport');
+function displayPstReport(data) {
+  const pstReportElement = document.getElementById('pstReport');
 
-    let pstReportContent = `
+  let pstReportContent = `
     <h3>Report Details</h3>
     <p>Nearest End Date: ${data.nearest_end_date}</p>
     <div id="total_agreement_currency"></div>
     <img src="data:image/png;base64,${data.pieplot_img_buf}" alt="Pie Plot Image" style="max-width: 100%; height: auto;">
     <img src="data:image/png;base64,${data.lineplot_img_buf}" alt="Line Plot Image" style="max-width: 100%; height: auto;">
   `;
-  
+
   pstReportElement.innerHTML = pstReportContent;
- 
+
   displayTotalAgreement(data.total_agreement_currency);
 }
 
-function displayTotalAgreement(df){
-  const totalAgreementElement = document.getElementById(total_agreement_currency);
+function displayTotalAgreement(df) {
+  const totalAgreementElement = document.getElementById(
+    total_agreement_currency
+  );
 
   let totalAgreementContent = '<h4>過去5年動產擔保紀錄總額</h4>';
   df.forEach(row => {
@@ -176,16 +175,14 @@ function displayTotalAgreement(df){
       `;
   });
 
-  totalAgreementElement.innerHTML = totalAgreement
-
+  totalAgreementElement.innerHTML = totalAgreement;
 }
-
 
 // async function fetchPstReport(timeConfig) {
 //   try {
 //     let url = new URL(endpoint + 'pst_report');
 //     url.searchParams.append('time_config', timeConfig);
-    
+
 //     const response = await fetch(url);
 //     const data = await response.json();
 //     return data; // Return the fetched data
@@ -217,7 +214,7 @@ function displayTotalAgreement(df){
 //     <img src="data:image/png;base64,${data.pieplot_img_buf}" alt="Pie Plot Image" style="max-width: 100%; height: auto;">
 //     <img src="data:image/png;base64,${data.lineplot_img_buf}" alt="Line Plot Image" style="max-width: 100%; height: auto;">
 //   `;
-  
+
 //   reportElement.innerHTML = reportContent;
 // }
 

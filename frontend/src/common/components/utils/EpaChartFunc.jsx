@@ -1,7 +1,19 @@
-import React from 'react';
-import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, PointElement, Filler } from 'chart.js';
-import { Bar } from 'react-chartjs-2';
+import {
+  BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  Filler,
+  Legend,
+  LineElement,
+  LinearScale,
+  PointElement,
+  Title,
+  Tooltip,
+} from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import React from 'react';
+import { Bar } from 'react-chartjs-2';
+
 ChartJS.register(
   BarElement,
   CategoryScale,
@@ -13,9 +25,7 @@ ChartJS.register(
   PointElement,
   Filler,
   ChartDataLabels
-); 
-
-
+);
 
 const CustomBarChart = ({ labels, data, color, title, noDataMsg }) => {
   if (!data || data.length === 0) {
@@ -67,13 +77,12 @@ const CustomBarChart = ({ labels, data, color, title, noDataMsg }) => {
       datalabels: {
         anchor: 'end',
         align: 'bottom',
-        formatter: (value) => value,
+        formatter: value => value,
         font: {
           size: 12,
         },
         color: 'black',
       },
-      
     },
   };
 
