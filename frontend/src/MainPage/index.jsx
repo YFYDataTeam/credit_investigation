@@ -129,24 +129,24 @@ const App = () => {
 
       {/* {finalCompanyId && <BasicInfo end_point={endPoint} companyId={finalCompanyId}></BasicInfo>} */}
 
-      {finalCompanyId && (
+      {!!finalCompanyId && (
         <div ref={basicInfoRef}>
           <BasicInfo endPoint={endPoint} companyId={finalCompanyId} />
         </div>
       )}
 
-      {finalCompanyId && (
+      {!!finalCompanyId && (
         <CddResult endPoint={endPoint} companyId={finalCompanyId}></CddResult>
       )}
 
-      {finalCompanyId && (
+      {!!finalCompanyId && (
         <RevenueAnalysis
           endPoint={endPoint}
           companyId={finalCompanyId}
         ></RevenueAnalysis>
       )}
 
-      {finalCompanyId && (
+      {!!finalCompanyId && (
         <FinancialReport
           endPoint={endPoint}
           companyId={finalCompanyId}
@@ -155,11 +155,11 @@ const App = () => {
 
       {/* {finalCompanyId && <JudgementSummary endPoint={endPoint} companyId={finalCompanyId}></JudgementSummary>} */}
 
-      {finalCompanyId && (
+      {!!finalCompanyId && (
         <EpaReport endPoint={endPoint} companyId={finalCompanyId}></EpaReport>
       )}
 
-      {finalCompanyId && (
+      {!!finalCompanyId && (
         <PstReport endPoint={endPoint} companyId={finalCompanyId}></PstReport>
       )}
     </div>

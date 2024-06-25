@@ -5,7 +5,8 @@
   "source": "index.html",
   "scripts": {
     "dev": "parcel -p 8080 --open",
-    "build": "parcel build"
+    "build": "parcel build",
+    "format": "prettier ./src --write --ignore-unknown"
   },
   "keywords": [],
   "author": "",
