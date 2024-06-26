@@ -66,3 +66,16 @@
 .info-column p {
   margin: 0 0 10px;
 }
+
+.business-items {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Two columns */
+  gap: 10px; /* Space between the items */
+  list-style-type: none; /* Remove the list dots */
+  padding: 0; /* Remove padding */
+  margin: 0; /* Remove margin */
+}
+
+.business-items li {
+  margin-bottom: 10px; /* Space between list items */
+}

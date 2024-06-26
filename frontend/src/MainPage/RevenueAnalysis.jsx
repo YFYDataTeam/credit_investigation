@@ -30,13 +30,18 @@ const RevenueAnalysis = ({ endPoint, companyId }) => {
           }
 
           const data = await response.json();
-          setRevenueAnalysis({
-            monthly_sales: data.monthly_sales,
-            quarterly_sales: data.quarterly_sales,
-            annual_sales: data.annual_sales,
-            monthly_y2m: data.monthly_y2m,
-          });
-          setLoading(false);
+
+          if (data.message === 'NoData') {
+            setRevenueAnalysis(null);
+          } else {
+            setRevenueAnalysis({
+              monthly_sales: data.monthly_sales,
+              quarterly_sales: data.quarterly_sales,
+              annual_sales: data.annual_sales,
+              monthly_y2m: data.monthly_y2m,
+            });
+            setLoading(false);
+          }
         } catch (error) {
           console.error('Error fetching data', error);
           setRevenueAnalysis(null);

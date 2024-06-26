@@ -98,13 +98,25 @@ class CreditInvest(MySQLAgent):
             directors_str = ''
             chairman = ''
 
+        try:
+            query = f"""
+                select Business_Item_Old AS busi_item
+                from companyinfo03_detail_busi
+                where Business_Accounting_No = '{self.company_id}'
+            """
+
+            df_item = self.read_table(query=query)
+        except Exception as e:
+            print("An error occurred:", e)
+
         basic_info_dict = {
             "company_account": self.company_id,
             "company_name": self.company_name,
             "company_status": company_status,
             "company_captial": company_captial,
             "chairman": chairman,
-            "directors": directors_str
+            "directors": directors_str,
+            "busi_item": df_item.busi_item.values[0],
 
         }
 

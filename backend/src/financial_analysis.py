@@ -1,10 +1,9 @@
 import io
 import pandas as pd
 from src.utils import (
-    read_config, 
+    read_config,
     MySQLAgent,
     create_qurter)
-
 
 
 class FinancialAnalysis(MySQLAgent):
@@ -16,18 +15,19 @@ class FinancialAnalysis(MySQLAgent):
         self.company_id = company_id
         self.stock_num = self.stock_num_mapping()
 
-            
     def stock_num_mapping(self):
 
-        query = f"""
-        SELECT 公司代號 AS stock_num
-        FROM listed_otc_company
-        WHERE 營利事業統一編號 = {self.company_id}
-        """
-        df_mapping = self.read_table(query=query)
-        return df_mapping['stock_num'][0]
+        try:
+            query = f"""
+            SELECT 公司代號 AS stock_num
+            FROM listed_otc_company
+            WHERE 營利事業統一編號 = {self.company_id}
+            """
+            df_mapping = self.read_table(query=query)
+            return df_mapping['stock_num'][0]
+        except:
+            return None
 
-    
     def revenue_analysis(self):
         """
         Demo:
@@ -36,33 +36,43 @@ class FinancialAnalysis(MySQLAgent):
         1231 聯華食品工業股份有限公司
         """
 
-        if self.company_id == None:
-            return {"message": self.no_data_msg}, None
+        if self.company_id == None or self.stock_num == None:
+            return {"message": self.no_data_msg}
 
         # DB on VM1
-        query = f"""
-            select * from mops_monthly_report
-            where company_id = {self.stock_num}
-        """
-        df_mops = self.read_table(query=query)
+        try:
+            query = f"""
+                select * from mops_monthly_report
+                where company_id = {self.stock_num}
+            """
+            df_mops = self.read_table(query=query)
+        except:
+            return {"message": self.no_data_msg}
 
         if df_mops.empty:
-            return {"message": self.no_data_msg}, None
-        
-        df_mops['period'] = df_mops['period_year'].astype(str) + '-' + df_mops['period_month'].astype(str)
+            return {"message": self.no_data_msg}
+
+        df_mops['period'] = df_mops['period_year'].astype(
+            str) + '-' + df_mops['period_month'].astype(str)
 
         # Monthly Sales
-        df_monthly_sales = df_mops[['period','sales']]
+        df_monthly_sales = df_mops[['period', 'sales']]
         # Sales QoQ
         df_mops['quarter'] = df_mops['period_month'].apply(create_qurter)
-        df_mops['year_quarter'] = df_mops['period_year'].astype(str) + df_mops['quarter']
-        df_mops_QoQ = df_mops.groupby('year_quarter').agg(year_quarter_sales= ('sales','sum')).reset_index()
-        df_mops_QoQ['QoQ'] = (df_mops_QoQ['year_quarter_sales']/df_mops_QoQ['year_quarter_sales'].shift(1))-1
+        df_mops['year_quarter'] = df_mops['period_year'].astype(
+            str) + df_mops['quarter']
+        df_mops_QoQ = df_mops.groupby('year_quarter').agg(
+            year_quarter_sales=('sales', 'sum')).reset_index()
+        df_mops_QoQ['QoQ'] = (
+            df_mops_QoQ['year_quarter_sales']/df_mops_QoQ['year_quarter_sales'].shift(1))-1
         # Sales YoY
-        df_mops_YoY = df_mops.groupby('period_year').agg(annual_sales= ('sales','sum')).reset_index()
-        df_mops_YoY['YoY'] = (df_mops_YoY['annual_sales']/df_mops_YoY['annual_sales'].shift(1))-1
+        df_mops_YoY = df_mops.groupby('period_year').agg(
+            annual_sales=('sales', 'sum')).reset_index()
+        df_mops_YoY['YoY'] = (df_mops_YoY['annual_sales'] /
+                              df_mops_YoY['annual_sales'].shift(1))-1
         # Monthly Y2M
-        df_monthly_y2m = df_mops[['period_year', 'period_month', 'sales']].sort_values(['period_year'], ascending=False)
+        df_monthly_y2m = df_mops[['period_year', 'period_month', 'sales']].sort_values(
+            ['period_year'], ascending=False)
 
         # col_for_drop = ['period', 'comment']
         # df_mops = df_mops.drop(col_for_drop, axis=1)
@@ -80,48 +90,56 @@ class FinancialAnalysis(MySQLAgent):
         }
 
         return result
-    
+
     def financial_report(self):
 
-        if self.company_id == None:
+        if self.company_id == None or self.stock_num == None:
             return {"message": self.no_data_msg}
-        
-        #TODO: switch to CrawlerDB
-        #TODO: add a function to check if the MOPS data existed,
-        #TODO: write in DB if the data does not existed
-        query = f"""
-            select * from mops_season_report
-            WHERE company_id = {self.stock_num}
-        """
-        df_mops_season_raw = self.read_table(query=query)
 
+        # TODO: switch to CrawlerDB
+        # TODO: add a function to check if the MOPS data existed,
+        # TODO: write in DB if the data does not existed
+        try:
+            query = f"""
+                select * from mops_season_report
+                WHERE company_id = {self.stock_num}
+            """
+            df_mops_season_raw = self.read_table(query=query)
+            print("stock num:", self.stock_num)
+        except:
+            return {"message": self.no_data_msg}
 
         if df_mops_season_raw.empty:
             return {"message": self.no_data_msg}
-    
 
-        partitions = ['company_id', 'period_year' ,'season', 'acct_name']
+        partitions = ['company_id', 'period_year', 'season', 'acct_name']
 
         def clean_mops_season_duplicants(df, partitions):
 
             df['row_seq'] = df.groupby(partitions).cumcount() + 1
 
-            df_output = df[df['row_seq'] == 1].drop(['row_seq'], axis=1) 
+            df_output = df[df['row_seq'] == 1].drop(['row_seq'], axis=1)
 
             return df_output
 
-        df_mops_season = clean_mops_season_duplicants(df_mops_season_raw, partitions=partitions)
-
+        df_mops_season = clean_mops_season_duplicants(
+            df_mops_season_raw, partitions=partitions)
 
         max_year = df_mops_season.period_year.max()
-        max_quarter = df_mops_season[df_mops_season['period_year'] == max_year]['season'].max()
+        max_quarter = df_mops_season[df_mops_season['period_year']
+                                     == max_year]['season'].max()
 
-        df_mops_last_season = df_mops_season[(df_mops_season['period_year'] == max_year) & (df_mops_season['season'] == max_quarter)]
+        df_mops_last_season = df_mops_season[(df_mops_season['period_year'] == max_year) & (
+            df_mops_season['season'] == max_quarter)]
 
-        columns_for_drop = ['company_id', 'company_name', 'creation_date', 'seq']
-        cashflow = df_mops_last_season[df_mops_last_season['report_name'] == 'CashFlowStatement'].drop(columns_for_drop, axis=1)
-        balance = df_mops_last_season[df_mops_last_season['report_name'] == 'BalanceSheet'].drop(columns_for_drop, axis=1)
-        profitloss = df_mops_last_season[df_mops_last_season['report_name'] == 'ProfitAndLose'].drop(columns_for_drop, axis=1)
+        columns_for_drop = ['company_id',
+                            'company_name', 'creation_date', 'seq']
+        cashflow = df_mops_last_season[df_mops_last_season['report_name']
+                                       == 'CashFlowStatement'].drop(columns_for_drop, axis=1)
+        balance = df_mops_last_season[df_mops_last_season['report_name'] == 'BalanceSheet'].drop(
+            columns_for_drop, axis=1)
+        profitloss = df_mops_last_season[df_mops_last_season['report_name'] == 'ProfitAndLose'].drop(
+            columns_for_drop, axis=1)
 
         result = {
             'balance': balance.to_dict(orient='records'),
@@ -129,8 +147,4 @@ class FinancialAnalysis(MySQLAgent):
             'profitloss': profitloss.to_dict(orient='records')
         }
 
-
         return result
-    
-
-    
