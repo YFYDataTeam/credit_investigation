@@ -89,6 +89,16 @@ const BasicInfo = ({ endPoint, companyId }) => {
     );
   }
 
+  let businessItems = [];
+  if (basicInfo.busi_item) {
+    try {
+      businessItems = JSON.parse(basicInfo.busi_item).map(
+        item => item.Business_Item_Desc
+      );
+    } catch (e) {
+      console.error('Failed to parse busi_item:', e);
+    }
+  }
   return (
     <Container title="公司基本資訊" ref={scrollAnchorRef}>
       {basicInfo ? (
@@ -119,6 +129,16 @@ const BasicInfo = ({ endPoint, companyId }) => {
             <div class="info-column">
               <h3>董事</h3>
               <p>{basicInfo.directors}</p>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-column">
+              <h3>營業項目</h3>
+              <ul className="business-items">
+                {businessItems.map((item, index) => (
+                  <li key={index}>{item}</li>
+                ))}
+              </ul>
             </div>
           </div>
         </div>
