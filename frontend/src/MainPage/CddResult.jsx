@@ -14,6 +14,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import { Bar, Chart, Line } from 'react-chartjs-2';
 
+import useFetchData from '@/common/components/hooks/useFetchData';
 import textContent from '@/common/components/utils/textContent';
 
 import Container from './Container';
@@ -34,41 +35,8 @@ const description = textContent.cdd.des;
 const nodatamessage = textContent.cdd.msg;
 
 const CddResult = ({ endPoint, companyId }) => {
-  const [cddAnalysis, setCddAnalysis] = useState(null);
-  const [loading, setLoading] = useState(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (companyId !== '') {
-        try {
-          setLoading(true);
-          const response = await fetch(`${endPoint}cdd_result/${companyId}`);
-
-          if (!response.ok) {
-            throw new Error('Error fetching data');
-          }
-
-          const data = await response.json();
-
-          if (data.message === 'NoData') {
-            setCddAnalysis(null);
-          } else {
-            setCddAnalysis({ cdd_result: data.cdd_weekly_clustering });
-            setLoading(false);
-          }
-        } catch (error) {
-          console.error('Error fetching data:', error);
-          setCddAnalysis(null);
-        } finally {
-          setLoading(false);
-        }
-      } else {
-        await fetch(`${endPoint}reset_company_id`);
-      }
-    };
-
-    fetchData();
-  }, [companyId, endPoint]);
+  const apiUrl = `${endPoint}cdd_result/${companyId}`;
+  const { loading, data: cddAnalysis, error } = useFetchData(apiUrl, companyId);
 
   if (!companyId) {
     return <Container title="每周信用評分結果"></Container>;
@@ -91,8 +59,10 @@ const CddResult = ({ endPoint, companyId }) => {
     );
   }
 
-  const label_week = cddAnalysis.cdd_result.map(item => item.week_date);
-  const cred_invest_result = cddAnalysis.cdd_result.map(
+  const label_week = cddAnalysis.cdd_weekly_clustering.map(
+    item => item.week_date
+  );
+  const cred_invest_result = cddAnalysis.cdd_weekly_clustering.map(
     item => item.cred_invest_result
   );
 
