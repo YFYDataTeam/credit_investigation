@@ -125,7 +125,7 @@ class CreditInvest(MySQLAgent):
     def epa_analysis(self):
 
         if self.company_id == None:
-            return {"message": self.no_data_msg}, None
+            return {"message": self.no_data_msg}
 
         try:
 
@@ -137,7 +137,7 @@ class CreditInvest(MySQLAgent):
             df_epa = self.read_table(query=query)
 
             if df_epa.empty:
-                return {"message": self.no_data_msg}, None
+                return {"message": self.no_data_msg}
 
             # record count in terms of penaltykind
             penaltykind_count = df_epa.groupby(
@@ -164,7 +164,7 @@ class CreditInvest(MySQLAgent):
 
         except Exception as e:
             error_message = str(e)
-            return {"message": "An error occurred while fetching data: " + error_message}, None
+            return {"message": "An error occurred while fetching data: " + error_message}
 
     # analyze the pre- and post-timepoint pst data with identical functions
     def pst_analysis(self, time_config, year_region):
