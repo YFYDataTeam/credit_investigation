@@ -1,46 +1,46 @@
 .welcome-hero {
-    /* background: linear-gradient(135deg, #c41230, #ffc6d0); */
-    color: #fff; /* Default color for the section */
-    padding: 60px 20px;
-    text-align: center;
-    border-radius: 15px;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-    margin-bottom: 40px;
-    border-bottom: 10px solid #c41230; /* Add a red line at the bottom */
+  /* background: linear-gradient(135deg, #c41230, #ffc6d0); */
+  color: #fff; /* Default color for the section */
+  padding: 60px 20px;
+  text-align: center;
+  border-radius: 15px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 40px;
+  border-bottom: 10px solid #c41230; /* Add a red line at the bottom */
 }
 
 .welcome-hero .container {
-    max-width: 900px;
-    margin: 0 auto;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
 .welcome-hero .header-text {
-    max-width: 800px;
-    margin: 0 auto;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 .welcome-hero h1 {
-    font-size: 100px;
-    margin-bottom: 20px;
-    font-weight: bold;
-    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
-    color: #000; /* Override color to black */
+  font-size: 100px;
+  margin-bottom: 20px;
+  font-weight: bold;
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+  color: #000; /* Override color to black */
 }
 
 .welcome-hero .subheading {
-    font-size: 20px;
-    font-weight: 300;
-    margin-bottom: 0;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-    color: #000; /* Override color to black */
-    font-family: Arial, Helvetica, sans-serif;
-    font-weight: bold;
+  font-size: 20px;
+  font-weight: 300;
+  margin-bottom: 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  color: #000; /* Override color to black */
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
 }
 
 .small-title {
-    font-size: 18px; /* Adjust the font size as needed */
-    font-weight: bold; /* Optional: keep bold styling */
-    color: #333; /* Optional: define a color */
-    text-align: center; /* Optional: center the text */
-    font-family: 'Arial, sans-serif'; /* Specify the font family here */
+  font-size: 18px; /* Adjust the font size as needed */
+  font-weight: bold; /* Optional: keep bold styling */
+  color: #333; /* Optional: define a color */
+  text-align: center; /* Optional: center the text */
+  font-family: 'Arial, sans-serif'; /* Specify the font family here */
 }
