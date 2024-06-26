@@ -1,55 +1,55 @@
 /* FinancialTable.css */
 
 .table-container {
-    margin: 20px;
-    font-family: Arial, sans-serif;
-  }
-  
-  .table-container h2 {
-    text-align: center;
-    color: #6b6262;
-    margin-bottom: 20px;
-  }
-  
-  .dataframe {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  .dataframe thead {
-    background-color: #e57373;
-    color: white;
-  }
-  
-  .dataframe th, .dataframe td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: center;
-  }
-  
-  .dataframe th {
-    padding-top: 12px;
-    padding-bottom: 12px;
-    background-color: #837c7c;
-    color: white;
-  }
-  
-  .dataframe tr:nth-child(even) {
-    background-color: #f2f2f2;
-  }
-  
-  .dataframe tr:hover {
-    background-color: #ffebee; 
-  }
-  
-  .dataframe td[colspan="7"] {
-    text-align: left;
-    background-color: #e0d9da; 
-    font-weight: bold;
-  }
-  
-  .center-content {
-    text-align: center;
-    vertical-align: middle;
-  }
-  
+  margin: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.table-container h2 {
+  text-align: center;
+  color: #6b6262;
+  margin-bottom: 20px;
+}
+
+.dataframe {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.dataframe thead {
+  background-color: #e57373;
+  color: white;
+}
+
+.dataframe th,
+.dataframe td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.dataframe th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  background-color: #837c7c;
+  color: white;
+}
+
+.dataframe tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.dataframe tr:hover {
+  background-color: #ffebee;
+}
+
+.dataframe td[colspan='7'] {
+  text-align: left;
+  background-color: #e0d9da;
+  font-weight: bold;
+}
+
+.center-content {
+  text-align: center;
+  vertical-align: middle;
+}

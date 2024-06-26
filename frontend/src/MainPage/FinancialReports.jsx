@@ -1,18 +1,22 @@
-import React, { useState, useEffect } from "react";
-import Container from "./Container";
-import FinancialTable from "@/common/components/charts/FinancialTable";
+import React, { useEffect, useState } from 'react';
+
+import FinancialTable from '@/common/components/charts/FinancialTable';
+import textContent from '@/common/components/utils/textContent';
+import '@assets/css/financialreport.css';
 import '@assets/css/financialtable.css';
-import textContent from "@/common/components/utils/textContent";
-import '@assets/css/financialreport.css'; // Add this line to import the custom CSS
+
+import Container from './Container';
+
+// Add this line to import the custom CSS
 
 const description = textContent.revRep.des;
 const nodatamessage = textContent.revRep.msg;
 
-const formatFinancialData = (data) => {
+const formatFinancialData = data => {
   return data.map(item => ({
     ...item,
     this_year_amt: item.this_year_amt.toLocaleString(),
-    last_year_amt: item.last_year_amt.toLocaleString()
+    last_year_amt: item.last_year_amt.toLocaleString(),
   }));
 };
 
@@ -28,13 +32,15 @@ const FinancialReport = ({ endPoint, companyId }) => {
       if (companyId !== '') {
         try {
           setLoading(true);
-          const response = await fetch(`${endPoint}financial_report/${companyId}`);
+          const response = await fetch(
+            `${endPoint}financial_report/${companyId}`
+          );
           if (!response.ok) {
-            throw new Error("Data not found.");
+            throw new Error('Data not found.');
           }
 
           const data = await response.json();
-          if (data.message === "NoData") {
+          if (data.message === 'NoData') {
             setFinancialReport(null);
           } else {
             const formattedCashflow = formatFinancialData(data.cashflow);
@@ -43,12 +49,12 @@ const FinancialReport = ({ endPoint, companyId }) => {
             setFinancialReport({
               cashflow: formattedCashflow,
               balance: formattedBalance,
-              profitloss: formattedProfitloss
+              profitloss: formattedProfitloss,
             });
           }
           setLoading(false);
         } catch (error) {
-          console.error("Error fetching data", error);
+          console.error('Error fetching data', error);
           setFinancialReport(null);
         } finally {
           setLoading(false);
@@ -56,17 +62,13 @@ const FinancialReport = ({ endPoint, companyId }) => {
       } else {
         await fetch(`${endPoint}reset_company_id`);
       }
-
     };
 
     fetchData();
   }, [companyId]);
 
   if (!companyId) {
-    return (
-      <Container title="財報報表">
-      </Container>
-    );
+    return <Container title="財報報表"></Container>;
   }
 
   if (loading) {
@@ -92,24 +94,33 @@ const FinancialReport = ({ endPoint, companyId }) => {
       <div>
         <div className="financial-section">
           <span className="small-title">資產負債表</span>
-          <button className="toggle-button" onClick={() => setShowBalance(!showBalance)}>
-            {showBalance ? "▼" : "▶"}
+          <button
+            className="toggle-button"
+            onClick={() => setShowBalance(!showBalance)}
+          >
+            {showBalance ? '▼' : '▶'}
           </button>
         </div>
         {showBalance && <FinancialTable data={financialReport.balance} />}
-        
+
         <div className="financial-section">
           <span className="small-title">損益表</span>
-          <button className="toggle-button" onClick={() => setShowProfitloss(!showProfitloss)}>
-            {showProfitloss ? "▼" : "▶"}
+          <button
+            className="toggle-button"
+            onClick={() => setShowProfitloss(!showProfitloss)}
+          >
+            {showProfitloss ? '▼' : '▶'}
           </button>
         </div>
         {showProfitloss && <FinancialTable data={financialReport.profitloss} />}
-        
+
         <div className="financial-section">
           <span className="small-title">現金流量表</span>
-          <button className="toggle-button" onClick={() => setShowCashflow(!showCashflow)}>
-            {showCashflow ? "▼" : "▶"}
+          <button
+            className="toggle-button"
+            onClick={() => setShowCashflow(!showCashflow)}
+          >
+            {showCashflow ? '▼' : '▶'}
           </button>
         </div>
         {showCashflow && <FinancialTable data={financialReport.cashflow} />}

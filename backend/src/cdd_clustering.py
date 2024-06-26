@@ -1,7 +1,6 @@
 from src.credit_invest import CreditInvest
 
 
-
 class CddClustering(CreditInvest):
     def __init__(self, conn_configs, company_id):
         super().__init__(conn_configs)
@@ -12,18 +11,20 @@ class CddClustering(CreditInvest):
 
         if self.company_id == None:
             return {"message": self.no_data_msg}, None, None
-    
-        # print('cdd conn_configs:',conn_configs)
 
-        query = f"""
-                select company_name, week_date, light_status AS cred_invest_result from cdd_result
-                where company_name = '{self.company_name}'
-            """
-        df_cdd = self.read_table(query=query)
+        # print('cdd conn_configs:',conn_configs)
+        try:
+            query = f"""
+                    select company_name, week_date, light_status AS cred_invest_result from cdd_result
+                    where company_name = '{self.company_name}'
+                """
+            df_cdd = self.read_table(query=query)
+        except Exception as e:
+            return {"message": self.no_data_msg}
 
         if df_cdd.empty:
-            return {"message": self.no_data_msg}, None
-            
+            return {"message": self.no_data_msg}
+
         model_result_cdd = {
             "cdd_weekly_clustering": df_cdd.to_dict(orient="records")
         }

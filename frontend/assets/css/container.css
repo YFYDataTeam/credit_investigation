@@ -5,13 +5,15 @@
   border-radius: 12px;
   background: linear-gradient(135deg, #f0f0f0, #ffffff);
   background-color: transparent;
-  width: 100%; 
+  width: 100%;
   max-width: 1900px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  transition: transform 0.3s, box-shadow 0.3s;
+  transition:
+    transform 0.3s,
+    box-shadow 0.3s;
 }
 
 /* .container:hover {
@@ -37,25 +39,25 @@
   line-height: 1.6;
 }
 
-
 .input-container {
   display: flex;
-  align-items: center; 
+  align-items: center;
   justify-content: center;
   margin: 20px 0;
-  width: 100%; 
+  width: 100%;
 }
 
-input[type="number"] {
-  width: 50%; 
+input[type='number'] {
+  width: 50%;
   padding: 10px;
   margin-right: 10px;
   border: 2px solid #ccc;
   border-radius: 4px;
   font-size: 16px;
-  transition: border-color 0.3s, box-shadow 0.3s;
+  transition:
+    border-color 0.3s,
+    box-shadow 0.3s;
 }
-
 
 button {
   padding: 10px 20px;
@@ -66,7 +68,9 @@ button {
   border-radius: 4px;
   font-size: 16px;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.3s;
+  transition:
+    background-color 0.3s,
+    transform 0.3s;
 }
 
 button:disabled {
@@ -79,14 +83,12 @@ button:hover:not(:disabled) {
   transform: translateY(-2px);
 }
 
-
-
 .section-content p {
   margin-bottom: 15px;
 }
 
 .section-content a {
-  color: #007BFF;
+  color: #007bff;
   text-decoration: none;
   transition: color 0.3s;
 }
@@ -106,7 +108,9 @@ button:hover:not(:disabled) {
   text-align: center;
   font-size: 16px;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.3s;
+  transition:
+    background-color 0.3s,
+    transform 0.3s;
 }
 
 .button:hover {
@@ -114,21 +118,19 @@ button:hover:not(:disabled) {
   transform: translateY(-3px);
 }
 
-
-
-
 .chart-container {
   width: 100%;
   position: relative;
-  margin-bottom: 20px; 
+  margin-bottom: 20px;
 }
 
-.chart-container, .sub_container {
+.chart-container,
+.sub_container {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 600px;
-  height: 300px; 
+  height: 300px;
 }
 
 .grid-container {
@@ -169,10 +171,8 @@ button:hover:not(:disabled) {
   /* transition: background-color 0.3s, transform 0.3s; */
 }
 
-
 .cdd-chart {
-
   width: 1200px; /* Set a max-width to control the broadness */
-  margin: 0 ; /* Center the chart */
+  margin: 0; /* Center the chart */
   height: 300px;
 }
