@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { AnnualAgreementPlot } from '@/common/components/charts/PstChart';
+import useConditionalRendering from '@/common/components/hooks/useConditionalRendering';
 import useFetchData from '@/common/components/hooks/useFetchData';
 import textContent from '@/common/components/utils/textContent';
 
@@ -8,9 +9,10 @@ import Container from './Container';
 
 const description = textContent.pst.des;
 const nodatamessage = textContent.pst.msg;
+const title = textContent.pst.title;
 
 const PstAnalysis = ({ endPoint, companyId }) => {
-  const year_region = process.env.YEAR_REGION || 5;
+  const year_region = process.env.YEAR_REGION || 1;
   const apiUrl = `${endPoint}pst_report?time_config=past&year_region=${year_region}`;
 
   const { loading, data: pstAnalysis, error } = useFetchData(apiUrl, companyId);
@@ -19,29 +21,17 @@ const PstAnalysis = ({ endPoint, companyId }) => {
     return <Container title="動產擔保分析"></Container>;
   }
 
-  if (loading) {
-    return (
-      <Container title="動產擔保分析">
-        <p>Loading...</p>
-      </Container>
-    );
-  }
+  const conditionalContent = useConditionalRendering(
+    title,
+    description,
+    nodatamessage,
+    companyId,
+    loading,
+    pstAnalysis
+  );
 
-  if (error) {
-    return (
-      <Container title="動產擔保分析">
-        <p>Error: {error.message}</p>
-      </Container>
-    );
-  }
-
-  if (!pstAnalysis) {
-    return (
-      <Container title="動產擔保分析">
-        <p className="description">{description}</p>
-        <p className="message">{nodatamessage}</p>
-      </Container>
-    );
+  if (conditionalContent) {
+    return conditionalContent;
   }
 
   const label_agreement = pstAnalysis.annualAgreement.map(

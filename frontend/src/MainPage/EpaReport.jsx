@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
+import useConditionalRendering from '@/common/components/hooks/useConditionalRendering';
 import useFetchData from '@/common/components/hooks/useFetchData';
 import CustomBarChart from '@/common/components/utils/EpaChartFunc';
 import textContent from '@/common/components/utils/textContent';
@@ -9,6 +10,7 @@ import Container from './Container';
 
 const description = textContent.epa.des;
 const nodatamessage = textContent.epa.msg;
+const title = textContent.revRep.title;
 
 const EpaReport = ({ endPoint, companyId }) => {
   const apiUrl = `${endPoint}epa_report`;
@@ -28,24 +30,18 @@ const EpaReport = ({ endPoint, companyId }) => {
   } else if (!rawData) {
     epaAnalysis = null;
   }
+  const conditionalContent = useConditionalRendering(
+    title,
+    description,
+    nodatamessage,
+    companyId,
+    loading,
+    epaAnalysis
+  );
 
-  if (loading) {
-    return (
-      <Container title="環保署汙染裁處記錄分析">
-        <p>Loading...</p>
-      </Container>
-    );
+  if (conditionalContent) {
+    return conditionalContent;
   }
-
-  if (!epaAnalysis && !loading) {
-    return (
-      <Container title="環保署汙染裁處記錄分析" className="container-center">
-        <p className="description">{description}</p>
-        <p className="message">{nodatamessage}</p>
-      </Container>
-    );
-  }
-
   const label_penaltykind_in_count = epaAnalysis.penaltykind_count.map(
     item => item.penaltykind
   );

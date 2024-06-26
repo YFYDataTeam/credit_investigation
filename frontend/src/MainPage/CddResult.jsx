@@ -14,6 +14,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import { Bar, Chart, Line } from 'react-chartjs-2';
 
+import useConditionalRendering from '@/common/components/hooks/useConditionalRendering';
 import useFetchData from '@/common/components/hooks/useFetchData';
 import textContent from '@/common/components/utils/textContent';
 
@@ -33,30 +34,23 @@ ChartJS.register(
 
 const description = textContent.cdd.des;
 const nodatamessage = textContent.cdd.msg;
+const title = textContent.revRep.title;
 
 const CddResult = ({ endPoint, companyId }) => {
   const apiUrl = `${endPoint}cdd_result/${companyId}`;
   const { loading, data: cddAnalysis, error } = useFetchData(apiUrl, companyId);
 
-  if (!companyId) {
-    return <Container title="每周信用評分結果"></Container>;
-  }
+  const conditionalContent = useConditionalRendering(
+    title,
+    description,
+    nodatamessage,
+    companyId,
+    loading,
+    cddAnalysis
+  );
 
-  if (loading) {
-    return (
-      <Container title="每周信用評分結果">
-        <p>Loading...</p>
-      </Container>
-    );
-  }
-
-  if (!cddAnalysis && !loading) {
-    return (
-      <Container title="每周信用評分結果">
-        <p className="description">{description}</p>
-        <p className="message">{nodatamessage}</p>
-      </Container>
-    );
+  if (conditionalContent) {
+    return conditionalContent;
   }
 
   const label_week = cddAnalysis.cdd_weekly_clustering.map(

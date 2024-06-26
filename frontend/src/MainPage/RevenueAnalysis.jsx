@@ -6,6 +6,7 @@ import {
   QuarterlySalesChart,
   YearlySalesChart,
 } from '@/common/components/charts/RevenueChart';
+import useConditionalRendering from '@/common/components/hooks/useConditionalRendering';
 import useFetchData from '@/common/components/hooks/useFetchData';
 import textContent from '@/common/components/utils/textContent';
 
@@ -13,6 +14,7 @@ import Container from './Container';
 
 const description = textContent.revAna.des;
 const nodatamessage = textContent.revAna.msg;
+const title = textContent.revAna.title;
 
 const RevenueAnalysis = ({ endPoint, companyId }) => {
   const apiUrl = `${endPoint}revenue_analysis/${companyId}`;
@@ -30,25 +32,17 @@ const RevenueAnalysis = ({ endPoint, companyId }) => {
     revenueAnalysis = null;
   }
 
-  if (!companyId) {
-    return <Container title="營運績效"></Container>;
-  }
+  const conditionalContent = useConditionalRendering(
+    title,
+    description,
+    nodatamessage,
+    companyId,
+    loading,
+    revenueAnalysis
+  );
 
-  if (loading) {
-    return (
-      <Container title="營運績效">
-        <p>Loading...</p>
-      </Container>
-    );
-  }
-
-  if (!revenueAnalysis && !loading) {
-    return (
-      <Container title="營運績效">
-        <p className="description">{description}</p>
-        <p className="message">{nodatamessage}</p>
-      </Container>
-    );
+  if (conditionalContent) {
+    return conditionalContent;
   }
 
   const labels_monthly_sales = revenueAnalysis.monthly_sales.map(

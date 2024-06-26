@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
+import useConditionalRendering from '@/common/components/hooks/useConditionalRendering';
 import useFetchData from '@/common/components/hooks/useFetchData';
 import textContent from '@/common/components/utils/textContent';
 
@@ -7,6 +8,7 @@ import Container from './Container';
 
 const description = textContent.jud.des;
 const nodatamessage = textContent.jud.msg;
+const title = textContent.jud.title;
 
 const JudgementSummary = ({ endPoint, companyId }) => {
   const apiUrl = `${endPoint}judgement_summary/${companyId}`;
@@ -16,25 +18,17 @@ const JudgementSummary = ({ endPoint, companyId }) => {
     error,
   } = useFetchData(apiUrl, companyId);
 
-  if (!companyId) {
-    return <Container title="法院判決摘要"></Container>;
-  }
+  const conditionalContent = useConditionalRendering(
+    title,
+    description,
+    nodatamessage,
+    companyId,
+    loading,
+    judgementSummary
+  );
 
-  if (loading) {
-    return (
-      <Container title="法院判決摘要">
-        <p>Loading...</p>
-      </Container>
-    );
-  }
-
-  if (!judgementSummary && !loading) {
-    return (
-      <Container title="法院判決摘要">
-        <p className="description">{description}</p>
-        <p className="message">{nodatamessage}</p>
-      </Container>
-    );
+  if (conditionalContent) {
+    return conditionalContent;
   }
 
   return (
