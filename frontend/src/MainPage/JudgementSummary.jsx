@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
+import useFetchData from '@/common/components/hooks/useFetchData';
 import textContent from '@/common/components/utils/textContent';
 
 import Container from './Container';
@@ -8,37 +9,12 @@ const description = textContent.jud.des;
 const nodatamessage = textContent.jud.msg;
 
 const JudgementSummary = ({ endPoint, companyId }) => {
-  const [judgementSummary, setJudgementSummary] = useState(null);
-  const [loading, setLoading] = useState(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (companyId !== '') {
-        try {
-          setLoading(true);
-          const response = await fetch(
-            `${endPoint}judgement_summary/${companyId}`
-          );
-          if (!response.ok) {
-            throw new Error('Data not found.');
-          }
-          const data = await response.json();
-          setJudgementSummary(data);
-          setLoading(false);
-        } catch (error) {
-          console.error('Error fetching data', error);
-          setJudgementSummary(null);
-        } finally {
-          setJudgementSummary(null);
-          setLoading(false);
-        }
-      } else {
-        await fetch(`${endPoint}reset_company_id`);
-      }
-    };
-
-    fetchData();
-  }, [companyId]);
+  const apiUrl = `${endPoint}judgement_summary/${companyId}`;
+  const {
+    loading,
+    data: judgementSummary,
+    error,
+  } = useFetchData(apiUrl, companyId);
 
   if (!companyId) {
     return <Container title="法院判決摘要"></Container>;
