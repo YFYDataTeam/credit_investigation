@@ -11,7 +11,7 @@ const description = textContent.epa.des;
 const nodatamessage = textContent.epa.msg;
 
 const EpaReport = ({ endPoint, companyId }) => {
-  apiUrl = `${endPoint}epa_report`;
+  const apiUrl = `${endPoint}epa_report`;
   // const [epaAnalysis, setEpareport] = useState(null);
   // const [loading, setLoading] = useState(true);
 

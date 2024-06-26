@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import FinancialTable from '@/common/components/charts/FinancialTable';
+import useFetchData from '@/common/components/hooks/useFetchData';
 import textContent from '@/common/components/utils/textContent';
 import '@assets/css/financialreport.css';
 import '@assets/css/financialtable.css';
@@ -21,51 +22,61 @@ const formatFinancialData = data => {
 };
 
 const FinancialReport = ({ endPoint, companyId }) => {
-  const [financialReport, setFinancialReport] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const apiUrl = `${endPoint}financial_report/${companyId}`;
+  const { loading, data: rawData, error } = useFetchData(apiUrl, companyId);
   const [showBalance, setShowBalance] = useState(false);
   const [showProfitloss, setShowProfitloss] = useState(false);
   const [showCashflow, setShowCashflow] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (companyId !== '') {
-        try {
-          setLoading(true);
-          const response = await fetch(
-            `${endPoint}financial_report/${companyId}`
-          );
-          if (!response.ok) {
-            throw new Error('Data not found.');
-          }
-
-          const data = await response.json();
-          if (data.message === 'NoData') {
-            setFinancialReport(null);
-          } else {
-            const formattedCashflow = formatFinancialData(data.cashflow);
-            const formattedBalance = formatFinancialData(data.balance);
-            const formattedProfitloss = formatFinancialData(data.profitloss);
-            setFinancialReport({
-              cashflow: formattedCashflow,
-              balance: formattedBalance,
-              profitloss: formattedProfitloss,
-            });
-          }
-          setLoading(false);
-        } catch (error) {
-          console.error('Error fetching data', error);
-          setFinancialReport(null);
-        } finally {
-          setLoading(false);
-        }
-      } else {
-        await fetch(`${endPoint}reset_company_id`);
-      }
+  let financialReport = null;
+  if (rawData && rawData.message !== 'NoData') {
+    financialReport = {
+      cashflow: formatFinancialData(rawData.cashflow),
+      balance: formatFinancialData(rawData.balance),
+      profitloss: formatFinancialData(rawData.profitloss),
     };
+  } else if (!rawData) {
+    financialReport = null;
+  }
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     if (companyId !== '') {
+  //       try {
+  //         setLoading(true);
+  //         const response = await fetch(
+  //           `${endPoint}financial_report/${companyId}`
+  //         );
+  //         if (!response.ok) {
+  //           throw new Error('Data not found.');
+  //         }
 
-    fetchData();
-  }, [companyId]);
+  //         const data = await response.json();
+  //         if (data.message === 'NoData') {
+  //           setFinancialReport(null);
+  //         } else {
+  //           const formattedCashflow = formatFinancialData(data.cashflow);
+  //           const formattedBalance = formatFinancialData(data.balance);
+  //           const formattedProfitloss = formatFinancialData(data.profitloss);
+  //           setFinancialReport({
+  //             cashflow: formattedCashflow,
+  //             balance: formattedBalance,
+  //             profitloss: formattedProfitloss,
+  //           });
+  //         }
+  //         setLoading(false);
+  //       } catch (error) {
+  //         console.error('Error fetching data', error);
+  //         setFinancialReport(null);
+  //       } finally {
+  //         setLoading(false);
+  //       }
+  //     } else {
+  //       await fetch(`${endPoint}reset_company_id`);
+  //     }
+  //   };
+
+  //   fetchData();
+  // }, [companyId]);
 
   if (!companyId) {
     return <Container title="財報報表"></Container>;
