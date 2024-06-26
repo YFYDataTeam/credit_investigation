@@ -175,15 +175,22 @@ class CreditInvest(MySQLAgent):
         try:
             query = f"""
             select * from w_yfy_crd_pst_f
-            where debtor_accounting_no = '{self.company_id}'
+            where debtor_accounting_no = '{self.company_id} 
+            AND REGISTER_DATE BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL {year_region} YEAR) 
+							      AND DATE_ADD(CURRENT_DATE(), INTERVAL {year_region} YEAR);
             """
 
             df_pst = self.read_table(query=query)
+            if df_pst.empty:
+                return {"message": self.no_data_msg}
+        except:
+            return {"message": self.no_data_msg}
 
+        try:
             df_pst = df_pst[~df_pst['register_no'].isnull()]
 
             if df_pst.empty:
-                return {"message": self.no_data_msg}, None, None
+                return {"message": self.no_data_msg}
 
             df_pst['agreement_end_date'] = pd.to_datetime(
                 df_pst['agreement_end_date'])
@@ -208,7 +215,7 @@ class CreditInvest(MySQLAgent):
                     # for past : max
                     nearest_end_date = df_sliced['agreement_end_date'].max()
                 elif df_sliced['agreement_end_date'].max() > datetime.now():
-                    return {"message": self.no_data_msg}, None, None
+                    return {"message": self.no_data_msg}
 
             elif time_config == 'future':
                 df_sliced = sliced_data(df_pst)
@@ -221,14 +228,14 @@ class CreditInvest(MySQLAgent):
                     nearest_end_date = df_sliced['agreement_end_date'].min()
 
                 elif df_pst['agreement_end_date'].min() < datetime.now():
-                    return {"message": self.no_data_msg}, None, None
+                    return {"message": self.no_data_msg}
 
             else:
                 return {"message": 'wrong time config for pst_analysis'}
 
         except Exception as e:
             error_message = str(e)
-            return {"message": "An error occurred while fetching data: " + error_message}, None, None
+            return {"message": "An error occurred while fetching data: " + error_message}
 
         # clean the string in the agreement_amount column
 
@@ -276,26 +283,3 @@ class CreditInvest(MySQLAgent):
         }
 
         return pst_dict
-
-    # def cdd_result(self):
-
-    #     if self.company_id == None:
-    #         return {"message": self.no_data_msg}, None, None
-
-    #     conn_configs = self.job_config['VM1_news_mysql_conn_info']
-    #     print('cdd conn_configs:',conn_configs)
-    #     sql_agent = MySQLAgent(conn_configs)
-    #     query = f"""
-    #             select company_name, week_date, light_status AS cred_invest_result from cdd_result
-    #             where company_name = '{self.company_name}'
-    #         """
-    #     df_cdd = sql_agent.read_table(query=query)
-
-    #     if df_cdd.empty:
-    #         return {"message": self.no_data_msg}, None
-
-    #     model_result_cdd = {
-    #         "cdd_weekly_category": df_cdd.to_dict(orient="records")
-    #     }
-
-    #     return model_result_cdd

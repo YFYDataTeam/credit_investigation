@@ -140,25 +140,16 @@ const App = () => {
       )}
 
       {!!finalCompanyId && (
-        <RevenueAnalysis
-          endPoint={endPoint}
-          companyId={finalCompanyId}
-        ></RevenueAnalysis>
+        <RevenueAnalysis endPoint={endPoint} companyId={finalCompanyId} />
       )}
 
       {!!finalCompanyId && (
-        <FinancialReport
-          endPoint={endPoint}
-          companyId={finalCompanyId}
-        ></FinancialReport>
+        <FinancialReport endPoint={endPoint} companyId={finalCompanyId} />
       )}
 
-      {finalCompanyId && (
-        <JudgementSummary
-          endPoint={endPoint}
-          companyId={finalCompanyId}
-        ></JudgementSummary>
-      )}
+      {/* {finalCompanyId && (
+        <JudgementSummary endPoint={endPoint} companyId={finalCompanyId} />
+      )} */}
 
       {!!finalCompanyId && (
         <EpaReport endPoint={endPoint} companyId={finalCompanyId}></EpaReport>

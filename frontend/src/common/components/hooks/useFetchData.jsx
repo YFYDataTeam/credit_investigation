@@ -16,12 +16,18 @@ const useFetchData = (apiUrl, companyId) => {
             throw new Error('Error fetching data');
           }
 
-          const result = await response.json();
-          setData(result);
-          setLoading(false);
+          const data = await response.json();
+          if (data.message === 'NoData') {
+            setData(null);
+          } else {
+            setData(data);
+            setLoading(false);
+          }
         } catch (err) {
           console.error('Error:', err);
           setError(err);
+          setLoading(false);
+        } finally {
           setLoading(false);
         }
       } else {

@@ -15,10 +15,9 @@ const PstAnalysis = ({ endPoint, companyId }) => {
 
   const { loading, data: pstAnalysis, error } = useFetchData(apiUrl, companyId);
 
-  if (pstAnalysis)
-    if (!companyId) {
-      return <Container title="動產擔保分析"></Container>;
-    }
+  if (!companyId) {
+    return <Container title="動產擔保分析"></Container>;
+  }
 
   if (loading) {
     return (
