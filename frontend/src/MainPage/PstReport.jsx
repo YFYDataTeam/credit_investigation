@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import { AnnualAgreementPlot } from '@/common/components/charts/PstChart';
+import useFetchData from '@/common/components/hooks/useFetchData';
 import textContent from '@/common/components/utils/textContent';
 
 import Container from './Container';
@@ -8,65 +9,16 @@ import Container from './Container';
 const description = textContent.pst.des;
 const nodatamessage = textContent.pst.msg;
 
-const getCurrencyCode = currencyName => {
-  const currencyMap = {
-    新台幣: 'TWD',
-    日圓: 'JPY',
-    美金: 'USD',
-  };
-
-  return currencyMap[currencyName] || currencyName;
-};
-
 const PstAnalysis = ({ endPoint, companyId }) => {
-  const [pstAnalysis, setPstAnalysis] = useState(null);
-  const [loading, setLoading] = useState(null);
-
   const year_region = process.env.YEAR_REGION || 5;
+  const apiUrl = `${endPoint}pst_report?time_config=past&year_region=${year_region}`;
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (companyId !== '') {
-        try {
-          setLoading(true);
-          const response = await fetch(
-            `${endPoint}pst_report?time_config=past&year_region=${year_region}`
-          );
-          if (!response.ok) {
-            throw new Error('Error fetching data');
-          }
+  const { loading, data: pstAnalysis, error } = useFetchData(apiUrl, companyId);
 
-          const data = await response.json();
-          if (data.message === 'NoData') {
-            setAgreements(null);
-          } else {
-            setPstAnalysis({
-              timeConfig: data.time_config,
-              nearestEndDate: data.nearest_end_date,
-              annualAgreement: data.annual_agreement_aggregates,
-              overallTypeCounts: data.overall_type_counts,
-              annualTypeCounts: data.annual_type_counts,
-            });
-            setLoading(false);
-          }
-        } catch (error) {
-          console.error('Error:', error);
-          setLoading(false);
-        } finally {
-          setPstAnalysis(null);
-          setLoading(false);
-        }
-      } else {
-        await fetch(`${endPoint}reset_company_id`);
-      }
-    };
-
-    fetchData();
-  }, [companyId, endPoint, year_region]);
-
-  if (!companyId) {
-    return <Container title="動產擔保分析"></Container>;
-  }
+  if (pstAnalysis)
+    if (!companyId) {
+      return <Container title="動產擔保分析"></Container>;
+    }
 
   if (loading) {
     return (
@@ -76,7 +28,15 @@ const PstAnalysis = ({ endPoint, companyId }) => {
     );
   }
 
-  if (!pstAnalysis && !loading) {
+  if (error) {
+    return (
+      <Container title="動產擔保分析">
+        <p>Error: {error.message}</p>
+      </Container>
+    );
+  }
+
+  if (!pstAnalysis) {
     return (
       <Container title="動產擔保分析">
         <p className="description">{description}</p>
@@ -94,6 +54,7 @@ const PstAnalysis = ({ endPoint, companyId }) => {
   const annual_agreement_count = pstAnalysis.annualAgreement.map(
     item => item.agreement_count
   );
+
   return (
     <Container title="動產擔保分析">
       <p className="description">{description}</p>

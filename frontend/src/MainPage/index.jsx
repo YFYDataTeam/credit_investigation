@@ -153,7 +153,12 @@ const App = () => {
         ></FinancialReport>
       )}
 
-      {/* {finalCompanyId && <JudgementSummary endPoint={endPoint} companyId={finalCompanyId}></JudgementSummary>} */}
+      {finalCompanyId && (
+        <JudgementSummary
+          endPoint={endPoint}
+          companyId={finalCompanyId}
+        ></JudgementSummary>
+      )}
 
       {!!finalCompanyId && (
         <EpaReport endPoint={endPoint} companyId={finalCompanyId}></EpaReport>
