@@ -9,8 +9,6 @@ import '@assets/css/financialtable.css';
 
 import Container from './Container';
 
-// Add this line to import the custom CSS
-
 const description = textContent.revRep.des;
 const nodatamessage = textContent.revRep.msg;
 const title = textContent.revRep.title;

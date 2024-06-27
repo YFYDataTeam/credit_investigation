@@ -6,7 +6,7 @@ import '@assets/css/basicinfo.css';
 
 const BasicInfo = ({ endPoint, companyId }) => {
   const apiUrl = `${endPoint}basicinfo/${companyId}`;
-  const { loading, data: basicInfo, error } = useFetchData(apiUrl, companyId);
+  const { loading, data: basicInfo } = useFetchData(apiUrl, companyId);
   const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {

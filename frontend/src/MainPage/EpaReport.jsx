@@ -17,7 +17,7 @@ const EpaReport = ({ endPoint, companyId }) => {
   // const [epaAnalysis, setEpareport] = useState(null);
   // const [loading, setLoading] = useState(true);
 
-  const { loading, data: rawData, error } = useFetchData(apiUrl, companyId);
+  const { loading, data: rawData } = useFetchData(apiUrl, companyId);
 
   let epaAnalysis = null;
   if (rawData && rawData.message !== 'NoData') {

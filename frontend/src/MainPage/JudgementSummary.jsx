@@ -12,11 +12,7 @@ const title = textContent.jud.title;
 
 const JudgementSummary = ({ endPoint, companyId }) => {
   const apiUrl = `${endPoint}judgement_summary/${companyId}`;
-  const {
-    loading,
-    data: judgementSummary,
-    error,
-  } = useFetchData(apiUrl, companyId);
+  const { loading, data: judgementSummary } = useFetchData(apiUrl, companyId);
 
   const conditionalContent = useConditionalRendering(
     title,

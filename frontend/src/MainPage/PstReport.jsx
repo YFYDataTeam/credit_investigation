@@ -15,7 +15,7 @@ const PstAnalysis = ({ endPoint, companyId }) => {
   const year_region = process.env.YEAR_REGION || 1;
   const apiUrl = `${endPoint}pst_report?time_config=past&year_region=${year_region}`;
 
-  const { loading, data: pstAnalysis, error } = useFetchData(apiUrl, companyId);
+  const { loading, data: pstAnalysis } = useFetchData(apiUrl, companyId);
 
   if (!companyId) {
     return <Container title="動產擔保分析"></Container>;

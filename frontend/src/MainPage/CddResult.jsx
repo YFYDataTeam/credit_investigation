@@ -38,7 +38,7 @@ const title = textContent.revRep.title;
 
 const CddResult = ({ endPoint, companyId }) => {
   const apiUrl = `${endPoint}cdd_result/${companyId}`;
-  const { loading, data: cddAnalysis, error } = useFetchData(apiUrl, companyId);
+  const { loading, data: cddAnalysis } = useFetchData(apiUrl, companyId);
 
   const conditionalContent = useConditionalRendering(
     title,

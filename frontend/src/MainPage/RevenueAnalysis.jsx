@@ -18,7 +18,7 @@ const title = textContent.revAna.title;
 
 const RevenueAnalysis = ({ endPoint, companyId }) => {
   const apiUrl = `${endPoint}revenue_analysis/${companyId}`;
-  const { loading, data: rawData, error } = useFetchData(apiUrl, companyId);
+  const { loading, data: rawData } = useFetchData(apiUrl, companyId);
 
   let revenueAnalysis = null;
   if (rawData && rawData.message !== 'NoData') {
