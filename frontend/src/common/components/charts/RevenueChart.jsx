@@ -357,7 +357,7 @@ const MonthlyY2M = ({ y2mData }) => {
       },
     },
   };
-  console.log('config.data:', config.data);
+
   return (
     <div className="sub_container">
       <Line data={config.data} options={config.options} />

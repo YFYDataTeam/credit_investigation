@@ -14,6 +14,8 @@ import {
 import React, { useEffect, useState } from 'react';
 import { Bar, Chart, Line } from 'react-chartjs-2';
 
+import useConditionalRendering from '@/common/components/hooks/useConditionalRendering';
+import useFetchData from '@/common/components/hooks/useFetchData';
 import textContent from '@/common/components/utils/textContent';
 
 import Container from './Container';
@@ -32,67 +34,29 @@ ChartJS.register(
 
 const description = textContent.cdd.des;
 const nodatamessage = textContent.cdd.msg;
+const title = textContent.revRep.title;
 
 const CddResult = ({ endPoint, companyId }) => {
-  const [cddAnalysis, setCddAnalysis] = useState(null);
-  const [loading, setLoading] = useState(null);
+  const apiUrl = `${endPoint}cdd_result/${companyId}`;
+  const { loading, data: cddAnalysis } = useFetchData(apiUrl, companyId);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (companyId !== '') {
-        try {
-          setLoading(true);
-          const response = await fetch(`${endPoint}cdd_result/${companyId}`);
+  const conditionalContent = useConditionalRendering(
+    title,
+    description,
+    nodatamessage,
+    companyId,
+    loading,
+    cddAnalysis
+  );
 
-          if (!response.ok) {
-            throw new Error('Error fetching data');
-          }
-
-          const data = await response.json();
-
-          if (data.message === 'NoData') {
-            setCddAnalysis(null);
-          } else {
-            setCddAnalysis({ cdd_result: data.cdd_weekly_clustering });
-            setLoading(false);
-          }
-        } catch (error) {
-          console.error('Error fetching data:', error);
-          setCddAnalysis(null);
-        } finally {
-          setLoading(false);
-        }
-      } else {
-        await fetch(`${endPoint}reset_company_id`);
-      }
-    };
-
-    fetchData();
-  }, [companyId, endPoint]);
-
-  if (!companyId) {
-    return <Container title="每周信用評分結果"></Container>;
+  if (conditionalContent) {
+    return conditionalContent;
   }
 
-  if (loading) {
-    return (
-      <Container title="每周信用評分結果">
-        <p>Loading...</p>
-      </Container>
-    );
-  }
-
-  if (!cddAnalysis && !loading) {
-    return (
-      <Container title="每周信用評分結果">
-        <p className="description">{description}</p>
-        <p className="message">{nodatamessage}</p>
-      </Container>
-    );
-  }
-
-  const label_week = cddAnalysis.cdd_result.map(item => item.week_date);
-  const cred_invest_result = cddAnalysis.cdd_result.map(
+  const label_week = cddAnalysis.cdd_weekly_clustering.map(
+    item => item.week_date
+  );
+  const cred_invest_result = cddAnalysis.cdd_weekly_clustering.map(
     item => item.cred_invest_result
   );
 

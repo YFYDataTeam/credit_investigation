@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
+import useConditionalRendering from '@/common/components/hooks/useConditionalRendering';
+import useFetchData from '@/common/components/hooks/useFetchData';
 import CustomBarChart from '@/common/components/utils/EpaChartFunc';
 import textContent from '@/common/components/utils/textContent';
 import '@assets/css/epareport.css';
@@ -8,67 +10,38 @@ import Container from './Container';
 
 const description = textContent.epa.des;
 const nodatamessage = textContent.epa.msg;
+const title = textContent.revRep.title;
 
 const EpaReport = ({ endPoint, companyId }) => {
-  const [epaAnalysis, setEpareport] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const apiUrl = `${endPoint}epa_report`;
+  // const [epaAnalysis, setEpareport] = useState(null);
+  // const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch(`${endPoint}epa_report`);
+  const { loading, data: rawData } = useFetchData(apiUrl, companyId);
 
-        if (!response.ok) {
-          throw new Error('Data not found.');
-        }
-        const data = await response.json();
-
-        if (data.message === 'NoData') {
-          setEpareport(null);
-        } else {
-          setEpareport({
-            penaltykind_count: data.penaltykind_count,
-            penaltykind_total_money: data.penaltykind_total_money,
-            improve_state: data.improve_state,
-            penaltykind_unpay: data.penaltykind_unpay,
-          });
-          setLoading(false);
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        setEpareport(null);
-        setLoading(false);
-      } finally {
-        setEpareport(null);
-        setLoading(false);
-      }
+  let epaAnalysis = null;
+  if (rawData && rawData.message !== 'NoData') {
+    epaAnalysis = {
+      penaltykind_count: rawData.penaltykind_count,
+      penaltykind_total_money: rawData.penaltykind_total_money,
+      improve_state: rawData.improve_state,
+      penaltykind_unpay: rawData.penaltykind_unpay,
     };
-
-    fetchData();
-  }, [companyId]);
-
-  if (!companyId) {
-    return <Container title="環保署汙染裁處記錄分析"></Container>;
+  } else if (!rawData) {
+    epaAnalysis = null;
   }
+  const conditionalContent = useConditionalRendering(
+    title,
+    description,
+    nodatamessage,
+    companyId,
+    loading,
+    epaAnalysis
+  );
 
-  if (loading) {
-    return (
-      <Container title="環保署汙染裁處記錄分析">
-        <p>Loading...</p>
-      </Container>
-    );
+  if (conditionalContent) {
+    return conditionalContent;
   }
-
-  if (!epaAnalysis && !loading) {
-    return (
-      <Container title="環保署汙染裁處記錄分析" className="container-center">
-        <p className="description">{description}</p>
-        <p className="message">{nodatamessage}</p>
-      </Container>
-    );
-  }
-
   const label_penaltykind_in_count = epaAnalysis.penaltykind_count.map(
     item => item.penaltykind
   );

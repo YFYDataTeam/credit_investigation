@@ -6,83 +6,43 @@ import {
   QuarterlySalesChart,
   YearlySalesChart,
 } from '@/common/components/charts/RevenueChart';
+import useConditionalRendering from '@/common/components/hooks/useConditionalRendering';
+import useFetchData from '@/common/components/hooks/useFetchData';
 import textContent from '@/common/components/utils/textContent';
 
 import Container from './Container';
 
 const description = textContent.revAna.des;
 const nodatamessage = textContent.revAna.msg;
+const title = textContent.revAna.title;
 
 const RevenueAnalysis = ({ endPoint, companyId }) => {
-  const [revenueAnalysis, setRevenueAnalysis] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const apiUrl = `${endPoint}revenue_analysis/${companyId}`;
+  const { loading, data: rawData } = useFetchData(apiUrl, companyId);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (companyId !== '') {
-        try {
-          setLoading(true);
-          const response = await fetch(
-            `${endPoint}revenue_analysis/${companyId}`
-          );
-          if (!response.ok) {
-            throw new Error('Data not found.');
-          }
-
-          const data = await response.json();
-
-          if (data.message === 'NoData') {
-            setRevenueAnalysis(null);
-          } else {
-            setRevenueAnalysis({
-              monthly_sales: data.monthly_sales,
-              quarterly_sales: data.quarterly_sales,
-              annual_sales: data.annual_sales,
-              monthly_y2m: data.monthly_y2m,
-            });
-            setLoading(false);
-          }
-        } catch (error) {
-          console.error('Error fetching data', error);
-          setRevenueAnalysis(null);
-        } finally {
-          setLoading(false);
-        }
-      } else {
-        try {
-          await fetch(`${endPoint}reset_company_id`);
-        } catch (error) {
-          console.error('Error resetting company ID', error);
-        }
-      }
+  let revenueAnalysis = null;
+  if (rawData && rawData.message !== 'NoData') {
+    revenueAnalysis = {
+      monthly_sales: rawData.monthly_sales,
+      quarterly_sales: rawData.quarterly_sales,
+      annual_sales: rawData.annual_sales,
+      monthly_y2m: rawData.monthly_y2m,
     };
-
-    fetchData();
-  }, [companyId, endPoint]);
-
-  if (!companyId) {
-    return (
-      <Container title="營運績效">
-        <p>請提供公司 ID。</p>
-      </Container>
-    );
+  } else if (!rawData) {
+    revenueAnalysis = null;
   }
 
-  if (loading) {
-    return (
-      <Container title="營運績效">
-        <p>Loading...</p>
-      </Container>
-    );
-  }
+  const conditionalContent = useConditionalRendering(
+    title,
+    description,
+    nodatamessage,
+    companyId,
+    loading,
+    revenueAnalysis
+  );
 
-  if (!revenueAnalysis && !loading) {
-    return (
-      <Container title="營運績效">
-        <p className="description">{description}</p>
-        <p className="message">{nodatamessage}</p>
-      </Container>
-    );
+  if (conditionalContent) {
+    return conditionalContent;
   }
 
   const labels_monthly_sales = revenueAnalysis.monthly_sales.map(

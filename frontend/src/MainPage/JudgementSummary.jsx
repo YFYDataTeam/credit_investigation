@@ -1,64 +1,30 @@
 import React, { useEffect, useState } from 'react';
 
+import useConditionalRendering from '@/common/components/hooks/useConditionalRendering';
+import useFetchData from '@/common/components/hooks/useFetchData';
 import textContent from '@/common/components/utils/textContent';
 
 import Container from './Container';
 
 const description = textContent.jud.des;
 const nodatamessage = textContent.jud.msg;
+const title = textContent.jud.title;
 
 const JudgementSummary = ({ endPoint, companyId }) => {
-  const [judgementSummary, setJudgementSummary] = useState(null);
-  const [loading, setLoading] = useState(null);
+  const apiUrl = `${endPoint}judgement_summary/${companyId}`;
+  const { loading, data: judgementSummary } = useFetchData(apiUrl, companyId);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (companyId !== '') {
-        try {
-          setLoading(true);
-          const response = await fetch(
-            `${endPoint}judgement_summary/${companyId}`
-          );
-          if (!response.ok) {
-            throw new Error('Data not found.');
-          }
-          const data = await response.json();
-          setJudgementSummary(data);
-          setLoading(false);
-        } catch (error) {
-          console.error('Error fetching data', error);
-          setJudgementSummary(null);
-        } finally {
-          setJudgementSummary(null);
-          setLoading(false);
-        }
-      } else {
-        await fetch(`${endPoint}reset_company_id`);
-      }
-    };
+  const conditionalContent = useConditionalRendering(
+    title,
+    description,
+    nodatamessage,
+    companyId,
+    loading,
+    judgementSummary
+  );
 
-    fetchData();
-  }, [companyId]);
-
-  if (!companyId) {
-    return <Container title="法院判決摘要"></Container>;
-  }
-
-  if (loading) {
-    return (
-      <Container title="法院判決摘要">
-        <p>Loading...</p>
-      </Container>
-    );
-  }
-
-  if (!judgementSummary && !loading) {
-    return (
-      <Container title="法院判決摘要">
-        <p className="description">{description}</p>
-        <p className="message">{nodatamessage}</p>
-      </Container>
-    );
+  if (conditionalContent) {
+    return conditionalContent;
   }
 
   return (
