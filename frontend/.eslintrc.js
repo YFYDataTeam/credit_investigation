@@ -4,6 +4,11 @@ module.exports = {
       version: 'detect',
     },
   },
+  env: {
+    node: true,
+    browser: true,
+    es6: true,
+  },
   root: true,
   parser: '@typescript-eslint/parser',
   plugins: ['@typescript-eslint', 'prefer-arrow', 'react', 'react-hooks'],
